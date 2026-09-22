@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 2 · What was actually measured</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+<link rel="stylesheet" href="../assets/quiz.css">
+</head>
+<body>
+<main class="page">
+
+<header class="masthead">
+  <p class="eyebrow">Lesson 2 of 5 · ICE-ing the Economy</p>
+  <h1>What was actually measured</h1>
+  <p class="standfirst">Three panels glued together: a news-built raid file, weekly visits at 5.4 million POIs, and card spend at a much thinner slice of those POIs. Treatment is an absorbing metro switch, not a raid dummy on the store’s doorstep.</p>
+  <p class="meta">≈8 minutes · Unlocks Data and Methods plus supplement §§1–5</p>
+</header>
+
+<blockquote class="article">
+  <p>I rely on media reports, rather than official arrest records, for two reasons. First, I am interested in how individuals’ economic behaviour is affected by their perceptions of immigration enforcement activities. … Second, arrest records are incomplete and not well-suited to geocoding.</p>
+  <cite>Hernandez (2026), Data and Methods</cite>
+</blockquote>
+
+<h2>Layer 1 — 5,388 geocoded events</h2>
+
+<p>The raid database is an NLP pipeline, not a FOIA dump. Common Crawl News (~778k filtered articles) plus LexisNexis (~137k) are dual-keyword gated (agency term × action term, with “ice cream / ice hockey” exclusions). DeepSeek V3 extracts structured events against a 200-article human validation set (precision 77.8% vs Haiku 3.5’s 61.8%). Deduplication (within source, then BallTree across sources, then manual audit) takes 12,284 candidates down to <strong>5,388</strong> geocodable interior events.</p>
+
+<p>Geocoding is mostly named establishments via Google Places (66%), then neighbourhood centroids (14%), rarely rooftop addresses (2%). That precision is good enough to support Lesson 3’s distance bins; it is not a GPS trace of every agent.</p>
+
+<p class="sidenote">The same LLM pass yields 46,174 articles with chilling-effect language. That corpus is <em>not</em> the treatment. It is qualitative corroboration (Lesson 4).</p>
+
+<h2>Layer 2 — Advan visits</h2>
+
+<p>Advan Weekly Patterns Plus (Dewey): ~45 million devices, Monday–Sunday weeks, January 2024 through the first week of February 2026 (110 weeks). After dropping non-CBSA POIs and mega-infrastructure (&gt;1 million visits/week), <strong>5.36 million POIs in 935 metros</strong>. Panel: 494 million POI-weeks, ~84% balanced, outcomes transformed with the <em class="term">inverse hyperbolic sine</em> because of zeros and skew (mean weekly visitors 1,935; median 567).</p>
+
+<h2>Layer 3 — SafeGraph spend</h2>
+
+<p>Weekly card spend is aggregated from <code>SPEND_BY_DAY</code> to the same Monday–Sunday weeks, ending December 2025. Matching PLACEKEY to Advan <code>footprint_id</code> is a four-tier NAICS/distance/name/address crosswalk: <strong>1.17 million</strong> unique pairs — about 24% of POIs, and only ~11% of POI-weeks in the analysis panel have spend.</p>
+
+<p>Two vendor facts a data scientist should refuse to skip:</p>
+<ul>
+  <li>Mid-October 2025, SafeGraph’s coding of non-branded POIs dropped spend ~33%. Hernandez applies Dewey’s recommended <strong>1.5× multiplier</strong> after 20 October 2025 — which <em>shrinks</em> a finding of decline — and also drops post-break weeks in Table S14.</li>
+  <li>Eleven insane POIs are dropped; spend is winsorized at the 99.9th percentile.</li>
+</ul>
+
+<div class="quiz" data-answer="b">
+  <span class="label">Check yourself</span>
+  <p class="q">Why is the spend result estimated on a different sample than the visit result?</p>
+  <div class="opts">
+    <button class="opt">SafeGraph only covers restaurants.</button>
+    <button class="opt">Only a minority of Advan POIs match to SafeGraph, and spend is missing in many weeks even after a match.</button>
+    <button class="opt">Advan visits are monthly, so they cannot be aligned to spend.</button>
+    <button class="opt">Workplace POIs have spend but no visits.</button>
+  </div>
+  <div class="answer-reveal">
+    <p>The crosswalk is 24% of POIs and ~11% of POI-weeks. Workplace sites generally have visits and no retail spend. Table S12 re-runs visits on the spend-reporting subset as a check that the visit result is not an artifact of sample composition.</p>
+  </div>
+</div>
+
+<h2>Treatment is a metro burst, then it never turns off</h2>
+
+<p>ICE names city-level operations. Onset for CBSA \(m\) is the first week, after 20 January 2025, in which <strong>three or more events fall in a 14-day window</strong>. 100 of 935 metros are treated; 835 never are. Once on, treatment is <em class="term">absorbing</em> in this sample — consistent with a standing interior presence, not a one-off raid. Large metros use Census Metropolitan Divisions rather than the consolidated CBSA.</p>
+
+<p>Table S15 reports 5-event and 10-event onset rules. The binary treatment is still endogenous: treated metros are larger, richer, more immigrant, more Hispanic, more Democratic, and had different 2024 visit and spend <em>trends</em>. That table is why Lesson 3 exists.</p>
+
+<figure>
+<svg viewBox="0 0 640 200" role="img" aria-label="Timeline: 2024 is pre-period; inauguration; absorbing treatment after a 3-in-14 burst.">
+  <line x1="40" y1="90" x2="600" y2="90" class="dg-rule" stroke-width="2"/>
+  <rect x="40" y="70" width="220" height="40" class="dg-box" opacity="0.9"/>
+  <text x="150" y="95" class="dg-label-b" text-anchor="middle">2024 · all untreated</text>
+  <line x1="280" y1="55" x2="280" y2="125" stroke="#8c2f16" stroke-width="2"/>
+  <text x="280" y="48" class="dg-label-b" text-anchor="middle">20 Jan 2025</text>
+  <rect x="300" y="70" width="140" height="40" fill="#8c2f16" opacity="0.25" stroke="#8c2f16"/>
+  <text x="370" y="95" class="dg-label-b" text-anchor="middle">burst 3 / 14d</text>
+  <rect x="450" y="70" width="150" height="40" fill="#8c2f16" opacity="0.5" stroke="#8c2f16"/>
+  <text x="525" y="95" class="dg-label-b" text-anchor="middle">treated = 1</text>
+  <text x="40" y="160" class="dg-label">Jan 2024</text>
+  <text x="600" y="160" class="dg-label" text-anchor="end">Feb 2026</text>
+  <text x="320" y="188" class="dg-label" text-anchor="middle">100 metros eventually cross the burst; treatment does not switch back off</text>
+</svg>
+<figcaption>Onset is a cluster detector, not “any article mentioning ICE.” Isolated events do not turn the metro on. After onset, every subsequent POI-week in that metro is treated.</figcaption>
+</figure>
+
+<h2>Covariates you will see interacted later</h2>
+
+<p>Visitor demographics are not individual race or nativity. Advan reports home census block groups of devices; those blocks are joined to 2023 ACS foreign-born and Hispanic shares, then compared to the <em>metro</em> median. The visitor mix is computed on January–October 2024 so it is not itself caused by the regime (or even by the November 2024 election). Chain vs independent uses Advan brand vs NAICS subcategory. Online spend and delivery-app overlap are monthly SafeGraph fields copied onto weeks, identified off POI and time fixed effects.</p>
+
+<div class="recall">
+  <span class="label">Retrieval practice</span>
+  <p class="prompt">Name the three reasons a naïve POI-week regression of IHS(visits) on the treated dummy is not “the effect of ICE.”</p>
+  <textarea placeholder="Bullet the reasons."></textarea>
+  <div class="model-answer">
+    <p>(1) Treated metros differ in levels and in 2024 trends (size, nativity, partisanship, spend/visit slopes). (2) Treatment is defined from news, so coverage intensity could correlate with local media markets and with the same economic outcomes. (3) Onset is staggered and absorbing; OLS two-way FE with endogenous targeting is not a design. Lesson 3’s instrument and spatial gradient are the proposed answers — not extra controls in the same OLS.</p>
+  </div>
+</div>
+
+<h2>What you can now read</h2>
+<p>You can read the Data and Methods section as a <em>measurement paper</em> stuffed inside a causal paper. Next: why 2SLS with a 2010×national-week instrument, and why a second design throws the instrument away: <a href="0003-two-designs.html">Lesson 3</a>.</p>
+
+<div class="ask">
+  <strong>Ask your teacher</strong> if the 3-in-14 rule feels arbitrary. The honest answer is: it is a burst detector chosen to mark operations, and S15 is the sensitivity table — not a proof that three is a natural constant.
+</div>
+
+<div class="source-box">
+  <span class="label">Read one thing</span>
+  <ol>
+    <li>Supplement §§1–5 of Hernandez (2026): event pipeline, Advan filters, SafeGraph crosswalk and the October 2025 vendor break.</li>
+  </ol>
+</div>
+
+<nav class="lesson-nav">
+  <span><a href="0001-the-demand-side-was-missing.html">← Lesson 1</a></span>
+  <span><a href="../reference/cheatsheet.html">Cheat sheet</a></span>
+  <span><a href="0003-two-designs.html">Lesson 3: Two designs →</a></span>
+</nav>
+
+</main>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

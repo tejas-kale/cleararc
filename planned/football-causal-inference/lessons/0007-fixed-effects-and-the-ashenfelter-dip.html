@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Use fixed effects without mistaking recovery for impact</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<header class="topbar"><div><a href="../README.md">Course index</a><span>Lesson 7 of 17</span></div></header>
+<main>
+  <p class="eyebrow">Panel data</p>
+  <h1>Use fixed effects without mistaking recovery for impact</h1>
+  <p class="lead">Fixed effects remove stable differences within a panel unit. They do not remove every changing shock, and they do not prevent regression to the mean after a poor run.</p>
+  <div class="lesson-meta"><span>About 20 minutes</span><span>Includes guided exercises</span><span><a href="../exercises/0007-fixed-effects-and-the-ashenfelter-dip.html">Exercise sheet</a></span></div>
+  <section class="objective"><h2>What you will be able to do</h2><p>You will be able to state what team-season fixed effects remove, explain the Ashenfelter dip and identify remaining time-varying confounding.</p></section>
+  <section class="scenario"><h2>The apparent recovery after dismissal</h2><p>De Paola and Scoppa studied coach dismissals in Serie A. A simple before-and-after comparison often shows better results after a new coach arrives. The improvement may look persuasive because dismissal usually follows an extreme run of poor results. However, unusually bad results tend to move back towards a team's usual level even without intervention.</p></section>
+      <h2>Fixed effects use changes within the same unit</h2><p>A team-season fixed effect gives each team in each season its own intercept. It absorbs characteristics that do not change during that team-season, including much of the squad's underlying quality, the club's broad resources and its season objective. Calendar effects can also absorb shocks common to all teams at a given time.</p><p class="formula">Points_it = team-season effect_i + time effect_t + beta dismissal_it + controls_it + error_it</p><p>The dismissal coefficient is identified from changes within a team-season after accounting for the included time patterns and controls. The comparison is not driven by permanent differences between a wealthy title contender and a newly promoted club.</p>
+      <h2>The Ashenfelter dip is a selection pattern</h2><p>Treatment often begins after an outcome has fallen unusually far. If the outcome later returns towards its normal level, a before-and-after analysis assigns that recovery to treatment. This pattern is called the Ashenfelter dip in programme evaluation.</p><p>Coach dismissal is a clear example. A board reacts to recent defeats, but defeats contain both persistent weakness and temporary bad luck. The temporary part can reverse. A suitable comparison must have a similar pre-treatment path and face a similar post-treatment schedule.</p>
+      <section class="worked"><h2>Worked example</h2><p>A club usually earns 1.4 points per match. It earns 0.4 points per match over five unusually poor matches, dismisses the coach and then earns 1.3 points per match. The before-and-after change is +0.9. If a comparable club with the same temporary slump would also have returned to 1.3 without dismissal, the causal effect is zero.</p><p>A team-season fixed effect accounts for the 1.4-point long-run level, but it does not by itself account for the temporary shock that both caused dismissal and later reversed.</p></section>
+      <h2>List the threats that still change over time</h2><ul class="assumptions"><li>Opponent quality and home-away composition may differ before and after dismissal.</li><li>Injuries, suspensions and player returns can cause both the board's decision and future points.</li><li>The board may anticipate dismissal, and players may react before the recorded treatment date.</li><li>Serial correlation within teams affects uncertainty and requires suitable standard errors.</li></ul>
+      <section class="exercise"><h2>Exercise 1. Sort the variables</h2><p>Which variables are absorbed by a team-season fixed effect, and which need separate handling: stadium capacity, current opponent strength, season-long ownership model and an injury to the first-choice goalkeeper?</p><details><summary>Show a suggested answer</summary><p>Stable stadium capacity and a stable ownership model are absorbed within that team-season. Current opponent strength and a new goalkeeper injury change over time, so the fixed effect does not remove them.</p></details></section>
+      <section class="exercise"><h2>Exercise 2. Build a better comparison</h2><p>Suggest a comparison that would help separate coach impact from recovery after a slump.</p><details><summary>Show a suggested answer</summary><p>Compare dismissed teams with retained-coach teams that had similar recent form, season position, squad strength and opponent schedules. Inspect several pre-treatment matches to confirm that the paths were similar before the decision. The comparison still relies on measured causes, but it addresses the dip more directly than a simple before-and-after design.</p></details></section>
+      <div class="exercise">
+    <h2>Practice</h2>
+    <p>An <a href="../exercises/0007-fixed-effects-and-the-ashenfelter-dip.html">exercise sheet of 7 questions</a> accompanies this lesson. It takes about thirty minutes and carries worked answers at the end. Attempt it before moving on.</p>
+  </div>
+
+  <section class="quiz" data-quiz data-answer="b" data-correct="Correct. Team-season fixed effects remove characteristics that remain stable within that team and season." data-incorrect="Ask which characteristics do not change within a team-season."><fieldset><legend>What do team-season fixed effects remove?</legend><label><input type="radio" name="q" value="a"> Every changing performance shock completely</label><label><input type="radio" name="q" value="b"> Stable team-season characteristics from comparisons</label><label><input type="radio" name="q" value="c"> All measurement error in outcomes</label></fieldset><button type="button">Check answer</button><p class="feedback" aria-live="polite"></p></section>
+  <section class="summary"><h2>What to remember</h2><ul><li>Fixed effects remove stable unobserved differences within the chosen panel unit.</li><li>They do not remove time-varying common causes.</li><li>A poor run before treatment can produce an apparent recovery through regression to the mean.</li><li>The comparison should reproduce both the level and pre-treatment path of treated teams.</li></ul></section>
+  <p class="citation"><strong>Primary reading.</strong> <a href="https://doi.org/10.1177/1527002511402155">De Paola and Scoppa (2012)</a>; Wooldridge, <em>Introductory Econometrics</em>, Chapters 13 and 14; and Hayashi, <em>Econometrics</em>, Chapter 17.</p>
+  <p>If any step is unclear, ask your teaching agent to work through another football example with you.</p>
+  <nav class="lesson-nav"><a href="0006-weighting-standardisation-and-aipw.html">Previous lesson: Compare adjustment estimators</a><a href="0008-difference-in-differences.html">Next lesson: Estimate a difference-in-differences effect</a></nav>
+</main>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

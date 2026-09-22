@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 5 · What a reviewer still owns</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+<link rel="stylesheet" href="../assets/quiz.css">
+</head>
+<body>
+<main class="page">
+
+<header class="masthead">
+  <p class="eyebrow">Lesson 5 of 5 · ICE-ing the Economy</p>
+  <h1>What a reviewer still owns</h1>
+  <p class="standfirst">The paper is a draft. The honest close is not a recap of −2.7%. It is the list of questions that would change your mind, plus the research agenda Hernandez names and does not estimate.</p>
+  <p class="meta">≈7 minutes · Unlocks caveats, S13–S15, and the last page of the Discussion</p>
+</header>
+
+<blockquote class="article">
+  <p>Future work should expand beyond this study and explore longer-term outcomes of sustained enforcement such as entrepreneurship, investment, and innovation. Outcomes in these areas take longer to manifest, and may be even more damaging, than the short-term outcomes I study here.</p>
+  <cite>Hernandez (2026), Discussion</cite>
+</blockquote>
+
+<h2>Open questions the draft already points at</h2>
+
+<ol>
+  <li><strong>Longer-run firm outcomes.</strong> Visits and weekly spend can mean deferred errands. Exit, delayed investment, and less founding are different parameters with different welfare weights. The panel ends early February 2026. That clock has not run.</li>
+  <li><strong>Pure-play e-commerce.</strong> Null online spend is spend <em>at the merchant’s own digital channel</em>. Amazon, Temu, a regional grocer’s warehouse that is not in the POI file — all off-screen. Delivery-app use falling is a hint against “everything moved to Uber Eats,” not a proof that consumption vanished rather than rerouted.</li>
+  <li><strong>Income vs fear.</strong> Workplace visit drops imply lost labour supply and possibly lost earnings, which can explain no online substitution. The paper does not decompose the spend decline into “scared to go out” versus “pay cheque missing.”</li>
+  <li><strong>Who is the complier?</strong> 2SLS with a shift-share is not the ATE for every US metro. It is a weighted response among metros whose onset is predicted by 2010 nativity × national volume. Small, low-immigrant places in the control pool are not the same object.</li>
+</ol>
+
+<h2>Identification questions a data scientist should keep live</h2>
+
+<ul>
+  <li><strong>Share versus shock.</strong> If 2010 immigrant metros are on a 2025 demand path that state×week FE miss (remote work, industrial mix, tourism), Design A is in trouble. Design B does not rescue the between-metro contrast. GSS vs BHJ is not pedantry here.</li>
+  <li><strong>News as treatment.</strong> Places with more local TV may enter the 5,388 with higher probability. If those same places have different foot-traffic measurement error (Advan device density), you have correlated selection into treatment and outcome. Manual audit helps; it does not break that knot.</li>
+  <li><strong>Pre-trends and power.</strong> Slope tests look fine; joint Wald often does not. With 494 million rows, “we fail to reject a zero slope” is more informative than “the joint test is happy.” Spending’s S4 panel with state×week FE is the one Hernandez himself flags.</li>
+  <li><strong>1950 shares (S13).</strong> Visits survive; spend’s first stage does not. That is a sensitivity, not a footnote to skip.</li>
+  <li><strong>Vendor break.</strong> The 1.5× fix is conservative for finding a decline, and S14 drops the post-20 Oct 2025 weeks. Still: independents are both the group with the vendor break and the group with the largest spend drop. Stay awake.</li>
+  <li><strong>IHS and zeros.</strong> Coefficients are approximate percent changes. They are not the same as a Poisson/PPML incidence-rate ratio, and they are a poor machine for summing to GDP without extra assumptions.</li>
+  <li><strong>Staggered absorbing treatment.</strong> The instrument is meant to handle endogenous timing. A reader trained on Goodman-Bacon / Sun-Abraham / Borusyak-Jaravel-Spiess should still ask how much of the pooled β is later-treated vs early-treated comparisons, even under IV.</li>
+</ul>
+
+<div class="quiz" data-answer="c">
+  <span class="label">Check yourself</span>
+  <p class="q">Which critique actually targets Design B rather than Design A?</p>
+  <div class="opts">
+    <button class="opt">2010 immigrant shares predict 2025 housing booms that state×week FE miss.</button>
+    <button class="opt">The $14 billion figure double-counts SafeGraph coverage.</button>
+    <button class="opt">Raids are reported more often in busy commercial corridors, so distance-to-raid partly picks “where journalists stand,” which is also where spend was always higher — unless POI FE and the running-minimum fully handle that.</button>
+    <button class="opt">First-stage F below 10 in the 1950-share spend specification.</button>
+  </div>
+  <div class="answer-reveal">
+    <p>Design B lives on raid coordinates. If media geocoding concentrates on downtown retail, “near the epicenter” is not a random location in the metro. POI FE help with levels; they do not automatically fix time-varying reporting intensity along those corridors. The other options are Design A, scale-up, or weak-IV issues.</p>
+  </div>
+</div>
+
+<h2>What would count as a follow-up project</h2>
+
+<p>If you wanted to <em>use</em> this paper rather than summarise it:</p>
+<ul>
+  <li>Rebuild onset with official ERO statistics at the finest geography they allow, and report the jaccard with the news file — even if you cannot geocode to POIs.</li>
+  <li>PPML or a bounded IHS-to-percent translation on a 1% POI sample, to see whether the −6% spend is transformation-sensitive.</li>
+  <li>A store-exit or employment (QCEW/ADP) outcome one year out — Hernandez’s stated next object.</li>
+  <li>A BHJ-style shock-level design that treats weekly national (or regional) enforcement intensity as the as-if-random shifter and reports exposure-weighted reduced forms.</li>
+</ul>
+
+<div class="recall">
+  <span class="label">Retrieval practice</span>
+  <p class="prompt">In four bullets: motivation, data, method, headline. Then one open question you personally find most threatening.</p>
+  <textarea placeholder="This is the journal-club opener. Write it cold."></textarea>
+  <div class="model-answer">
+    <p><strong>Motivation:</strong> 2025 interior enforcement is general, not focused; demand-side activity was unmeasured.<br>
+    <strong>Data:</strong> 5,388 news-geocoded raids; 5.4 million Advan POIs; ~1.1 million SafeGraph spend matches; absorbing metro onset after a 3-in-14 burst.<br>
+    <strong>Method:</strong> Shift-share IV (2010 foreign-born × national weekly raids) with POI and state×week FE; plus within-treated-metro distance bins with POI and CBSA×week FE.<br>
+    <strong>Headline:</strong> ≈ −2.7% visits, −6.2% spend per POI-week; broader than the targeted demographic; workplaces and independents hit harder; no clear online offset.<br>
+    <strong>Open (example):</strong> news coverage defining both treatment and qualitative “chilling,” plus the spend sample’s vendor break landing on independents.</p>
+  </div>
+</div>
+
+<h2>What you can now read</h2>
+<p>Re-read the abstract. Every clause should map to a lesson: regime shift (1), 5,388 raids and 5.4 million POIs (2), the implied contrast across metros (3), the percents and the generality claim (4), and the unsaid “draft, first year, visits and spend only” (5). The <a href="../reference/paper-decoded.html">paper, decoded</a> is the keep-file.</p>
+
+<div class="ask">
+  <strong>This is a conversation.</strong> If one threat above would make you refuse to cite the billions in a memo, that is the next session — not a reread of Figure 1.
+</div>
+
+<div class="source-box">
+  <span class="label">Read one thing</span>
+  <ol>
+    <li>Borusyak, Hull and Jaravel, <em>REStud</em> 2022, through the section on when identification comes from shocks rather than shares — then decide which story you think Hernandez actually needs.</li>
+  </ol>
+</div>
+
+<nav class="lesson-nav">
+  <span><a href="0004-what-the-estimates-say.html">← Lesson 4</a></span>
+  <span><a href="../reference/cheatsheet.html">Cheat sheet</a> · <a href="../reference/glossary.html">Glossary</a></span>
+  <span><a href="../index.html">Course index →</a></span>
+</nav>
+
+</main>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

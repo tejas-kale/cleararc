@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Exercise sheet 4: Emulate a target trial</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<header class="topbar"><div><a href="../index.html">Course index</a><span>Exercise sheet 4 of 17</span></div></header>
+<main>
+  <p class="eyebrow">Exercise sheet</p>
+  <h1>Emulate a target trial</h1>
+  <p class="lead">7 questions drawn from <a href="../lessons/0004-emulate-a-target-trial.html">Lesson 4</a>. Eligibility, treatment strategies, time zero, follow-up and the timing errors they prevent.</p>
+  <div class="lesson-meta"><span>30 minutes</span><span>7 questions</span><span>Answers at the end</span></div>
+
+  <section class="sheet-intro">
+    <h2>How to use this sheet</h2>
+    <p>Work through the questions in order and write your answers down before reading any part of the answer section. Give yourself about thirty minutes in total. If one question runs long, write what you have, mark it and move on, because the answer section explains the reasoning in full.</p>
+    <p>Most questions ask for a short written answer rather than a number. The aim is a defensible statement, so a sentence or two of reasoning is worth more than a single word.</p>
+    <p>The questions are collapsed so that you can take them one at a time. Open one, answer it, then open the next. The answers are held behind a single button at the foot of the page, so nothing is revealed until you choose to reveal it.</p>
+  </section>
+
+  <details class="question">
+    <summary><span class="marks">Question 1</span><span class="q-title">Write a protocol</span></summary>
+    <p>Write a target trial protocol, one sentence per part, for the question of whether promoting a goalkeeper from the academy to first-choice status affects goals conceded. Cover eligibility, the two treatment strategies, assignment, time zero, follow-up, outcome and estimand.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 2</span><span class="q-title">Find the immortal time</span></summary>
+    <p>An analyst defines the treated group as clubs that dismissed their coach at any point in the season, and starts follow-up for every club on the opening day. Explain why the treated group's early season is guaranteed in a way the control group's is not, say which direction the resulting bias runs for a survival-style outcome, and propose a correction.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 3</span><span class="q-title">Clone and censor</span></summary>
+    <p>A club is eligible at time zero. It does not dismiss its coach until the third follow-up match, then dismisses. Describe how the cloning and censoring approach handles this club, state when each clone is censored, and explain what has to be assumed for censoring not to bias the result.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 4</span><span class="q-title">Two strategies that are not the same</span></summary>
+    <p>Distinguish these two control strategies, and explain why they can produce different estimates: "retain the coach for the next five league matches" and "do not dismiss the coach today". Which one is easier to emulate from observational records, and which one answers the board's question?</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 5</span><span class="q-title">Fix an eligibility criterion</span></summary>
+    <p>A protocol states: "Eligible clubs are those in the bottom half of the table at matchweek 10 whose coach was still in post at the end of the season or who appointed a permanent, rather than interim, successor." Identify every problem with this criterion and rewrite it.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 6</span><span class="q-title">Versions of treatment</span></summary>
+    <p>Explain how the version-of-treatment problem changes the interpretation of the dismissal effect, and describe the two honest ways a protocol can respond to it. Say which response you would choose if the dataset contains 60 permanent appointments and 40 interim ones, and why.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 7</span><span class="q-title">Emulate a trial you cannot run</span></summary>
+    <p>UEFA is considering a rule that no club may dismiss a coach between matchweeks 1 and 10. Write down the target trial that would settle whether the rule improves competitive balance, then name the two features of that trial that no observational emulation can reproduce, and say what the emulation would have to assume instead.</p>
+  </details>
+
+  <section class="answers">
+    <h2>Answers</h2>
+    <p class="answer-note">Read these only after writing your own answers. Where an answer says "a good answer includes", treat the listed points as the marking scheme rather than as the only wording that works.</p>
+
+    <details class="answer-reveal">
+      <summary>Show all answers</summary>
+      <section class="answer">
+        <span class="marks">Answer 1</span>
+        <h3>Write a protocol</h3>
+      <p>A defensible protocol reads roughly as follows. Eligibility: clubs in the top two divisions at the start of any league matchweek that have an academy goalkeeper registered for first-team selection and no first-choice goalkeeper under a long-term injury lay-off. Strategies: start the academy goalkeeper in each of the next ten league matches, or start the incumbent senior goalkeeper in each of the next ten. Assignment: the ideal trial randomises at the matchweek; the emulation adjusts for measured causes of the observed selection. Time zero: the moment the team sheet is due for the first of those matches. Follow-up: from time zero through those ten league matches. Outcome: goals conceded across the ten matches. Estimand: the per-protocol effect of following the academy strategy rather than the incumbent strategy among eligible club-matchweeks.</p>
+      <p>Mark yourself on three things: eligibility is assessed using information available at time zero only, the two strategies are both sustained strategies rather than a one-off action against a vague alternative, and follow-up starts at the same instant for both.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 2</span>
+        <h3>Find the immortal time</h3>
+      <p>To be classified as treated, a club must survive to its dismissal date without having been excluded. The period between the opening day and the dismissal is time during which the club was, by construction, not yet treated but is counted as treated person-time. That stretch is immortal in the sense that no event could have removed the club from the treated group.</p>
+      <p>The bias favours the treated group. Their record accumulates a guaranteed stretch of exposure, so treatment looks better than it is, whether the outcome is time to relegation, time to a manager-free season or simply points accumulated over misassigned weeks.</p>
+      <p>The correction is to define repeated decision points, one per matchweek. At each matchweek, assess eligibility from information available then, assign each eligible club to the strategy its observed behaviour is consistent with at that moment, and start follow-up there. A club that dismisses in matchweek 20 contributes control-consistent time at earlier matchweeks and treated time from matchweek 20, rather than being retrospectively labelled treated from day one.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 3</span>
+        <h3>Clone and censor</h3>
+      <p>At time zero the club's observed data are compatible with both strategies, because it has not yet done anything that rules either out. The analyst creates two copies. One is assigned to immediate dismissal and one to retention for five matches, and both are followed from time zero.</p>
+      <p>The dismissal clone is censored almost immediately, at the end of the 48-hour window, because the club did not dismiss then and so stopped adhering to that strategy. The retention clone is followed until the third match and is censored at the point of dismissal, because from then on the club no longer adheres to retention.</p>
+      <p>Censoring is informative if the reasons a club deviates also predict the outcome, which they plainly do here, since a club dismisses in match three because results were poor. The assumption needed is exchangeability for censoring given the measured time-varying covariates, meaning that among clubs with the same recorded history up to that point, whether a club continued to adhere is unrelated to its potential outcome. Inverse-probability-of-censoring weights use that assumption, and it also requires positivity, meaning some clubs with each covariate history do continue to adhere.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 4</span>
+        <h3>Two strategies that are not the same</h3>
+      <p>The first is a sustained strategy. It says what the club does over the whole follow-up window, and a club that dismisses in match two has deviated. The second is a point exposure. It constrains only today, and a club that dismisses tomorrow is fully compliant with it.</p>
+      <p>They give different answers whenever the timing of a later dismissal matters. A comparison based on the point exposure mixes clubs that never changed with clubs that changed a week later, so it estimates the effect of a short delay rather than the effect of keeping the coach.</p>
+      <p>The point exposure is easier to emulate, because it needs no adherence tracking and no censoring. The sustained strategy answers the board's question, because a board deciding tonight wants to know what happens if it stays with this coach, not what happens if it waits a week. This is why the sustained version needs the cloning and censoring machinery: the question that matters is the harder one to emulate.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 5</span>
+        <h3>Fix an eligibility criterion</h3>
+      <p>Both halves of the criterion use information from after time zero. Whether the coach lasted the season is known only in May, and whether the successor was permanent rather than interim is a feature of the treatment itself, not of eligibility. Using either one selects clubs on their future, which is the same error as the immortal-time case in Question 2, and the second also conditions on a version of treatment, which distorts the contrast.</p>
+      <p>A rewritten criterion: eligible clubs are those in the bottom half of the table immediately after their matchweek-10 fixture, whose current head coach has been in post for at least eight league matches and for whom no departure has been publicly announced at that point.</p>
+      <p>The general rule is that everything in the eligibility criterion must be measurable at or before time zero using only information the decision-maker had.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 6</span>
+        <h3>Versions of treatment</h3>
+      <p>If "dismiss" covers both a permanent appointment and an interim caretaker, and those two have different effects, then the potential outcome under dismissal is not well defined for a club. The estimate becomes an average over whatever mix of versions happened to occur, and it will not transfer to a club or league with a different mix.</p>
+      <p>The two honest responses are, first, to narrow the strategy so that only one version counts, for example dismissal followed by a permanent appointment within seven days, with interim appointments excluded or censored; and second, to keep the broad strategy but state explicitly that the estimand is the effect of a policy that permits the observed distribution of versions, and to report that distribution.</p>
+      <p>With 60 permanent and 40 interim appointments, either is workable, and I would take the second while also reporting the first as a subgroup. The broad estimand answers the policy question a board actually faces, because at the moment of dismissal a board does not know for certain which version it will end up with, and 100 units is too few to split without losing precision. Reporting the version mix is what makes the estimate interpretable.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 7</span>
+        <h3>Emulate a trial you cannot run</h3>
+      <p>The target trial: eligible units are top-division clubs at the start of a season; the strategies are "dismissal prohibited during matchweeks 1 to 10" and "dismissal permitted throughout"; assignment is randomised at club-season level; time zero is the opening day; follow-up is the full season; the outcome is a competitive balance measure such as the standard deviation of final points across the league, or a club-level measure such as final points; and the estimand is the ATE of the rule across eligible club-seasons.</p>
+      <p>Two features that cannot be reproduced. First, randomisation of a rule: no observational record contains clubs randomly forbidden from sacking, so the emulation must instead find variation in early-season dismissal behaviour and assume it is as good as random given measured covariates. Second, and more fundamental, the outcome is a league-level quantity, so the units interfere with each other by construction: one club's rule changes another club's points. A randomised club-level trial within one league would not even deliver the estimand, which means the true target trial randomises whole leagues.</p>
+      <p>The emulation would therefore have to assume either that leagues which differ in their dismissal norms are comparable after adjustment, which is a strong cross-league exchangeability assumption, or that a natural experiment such as a rule change in one league gives a credible comparison, which is the design Lessons 8 and 12 build.</p>
+      </section>
+    </details>
+  </section>
+
+  <p class="citation"><strong>Related reading.</strong> Hernan and Robins, <em>What If</em>, Section 3.6 and Chapter 22. The dismissal protocol is a constructed teaching example.</p>
+  <p>If your answer and the suggested answer disagree and you cannot see why, ask your teaching agent to work through that question with you rather than assuming the sheet is right.</p>
+  <nav class="lesson-nav"><a href="0003-dags-and-back-door-identification.html">Previous sheet: Causal diagrams and back-door identification</a><a href="0005-matching-and-propensity-scores.html">Next sheet: Matching and propensity scores</a></nav>
+</main>
+</body>
+</html>

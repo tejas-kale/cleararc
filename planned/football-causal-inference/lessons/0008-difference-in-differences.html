@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Estimate a difference-in-differences effect</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<header class="topbar"><div><a href="../README.md">Course index</a><span>Lesson 8 of 17</span></div></header>
+<main>
+  <p class="eyebrow">Natural experiments</p>
+  <h1>Estimate a difference-in-differences effect</h1>
+  <p class="lead">Difference in differences subtracts a comparison group's change from a treated group's change. The design is credible only when the comparison group represents the treated group's untreated trend.</p>
+  <div class="lesson-meta"><span>About 20 minutes</span><span>Includes guided exercises</span><span><a href="../exercises/0008-difference-in-differences.html">Exercise sheet</a></span></div>
+  <section class="objective"><h2>What you will be able to do</h2><p>You will be able to calculate a difference-in-differences estimate and explain the parallel-trends assumption in football terms.</p></section>
+  <section class="scenario"><h2>Matches without supporters</h2><p>Scoppa used closed-door matches during the COVID-19 period to study how the absence of crowds changed player and referee behaviour. The data covered five countries and ten seasons. The design compares the change in affected matches with a change in a comparison group.</p><p>A simple pre-period and post-period comparison is not enough. Many things changed during the pandemic, including fixture congestion, training routines, travel and player fitness. Difference in differences tries to remove changes that the treated and comparison groups would have shared.</p></section>
+      <h2>Calculate the two differences</h2><p>First calculate the treated group's change from before to after. Then calculate the comparison group's change over the same periods. Subtract the second change from the first.</p><p class="formula">DiD = (treated post - treated pre) - (control post - control pre)</p>
+      <section class="worked"><h2>Worked calculation</h2><p>Suppose the average home goal difference falls from +0.40 to +0.10 in the closed-door group. Its change is -0.30. In the comparison group, home goal difference falls from +0.35 to +0.25. Its change is -0.10. The difference-in-differences estimate is -0.30 minus -0.10, which equals -0.20 goals.</p><p>The estimate says that home goal difference fell by 0.20 goals more in the closed-door group than the contemporaneous change in the comparison group. A causal interpretation needs the assumptions below.</p></section>
+      <h2>Parallel trends concerns an unobserved outcome</h2><p>The main assumption says that, without closed-door treatment, the treated group would have had the same average change as the comparison group. We cannot observe that untreated path after treatment. Similar trends across several pre-treatment periods can support the assumption, but they cannot prove it.</p><p>A flat pre-trend test can have low power. A researcher should also explain why the groups were exposed to comparable changes in schedules, rules and health conditions. Subject-matter reasoning is part of the design.</p>
+      <h2>Check the other assumptions</h2><ul class="assumptions"><li>Teams should not change behaviour before the closed-door period in anticipation of treatment.</li><li>The composition of matches should not change in a way caused by treatment and related to outcomes.</li><li>Outcome definitions and data collection should remain stable.</li><li>Standard errors should account for the level of treatment assignment and repeated outcomes.</li></ul>
+      <section class="exercise"><h2>Exercise 1. Calculate the estimate</h2><p>Home yellow cards fall from 2.4 to 2.0 in treated matches and from 2.2 to 2.1 in comparison matches. Calculate the difference-in-differences estimate.</p><details><summary>Show a suggested answer</summary><p>The treated change is -0.4 cards. The comparison change is -0.1 cards. The difference is -0.4 minus -0.1, which equals -0.3 cards per home team.</p></details></section>
+      <section class="exercise"><h2>Exercise 2. Challenge parallel trends</h2><p>Name one change that could affect only the closed-door group at the same time and explain why it is a threat.</p><details><summary>Show a suggested answer</summary><p>If closed-door leagues also adopted a different substitution rule while the comparison leagues did not, the rule could change fatigue, goals and cards. The estimate would combine crowd absence with the rule change unless the design separated them.</p></details></section>
+      <div class="exercise">
+    <h2>Practice</h2>
+    <p>An <a href="../exercises/0008-difference-in-differences.html">exercise sheet of 7 questions</a> accompanies this lesson. It takes about thirty minutes and carries worked answers at the end. Attempt it before moving on.</p>
+  </div>
+
+  <section class="quiz" data-quiz data-answer="c" data-correct="Correct. The second subtraction removes the comparison group's change over the same period." data-incorrect="Difference in differences adds a contemporaneous comparison-group change to the before-and-after contrast."><fieldset><legend>What distinguishes this design from before and after?</legend><label><input type="radio" name="q" value="a"> It randomises access to every stadium</label><label><input type="radio" name="q" value="b"> It removes every possible pandemic shock</label><label><input type="radio" name="q" value="c"> It subtracts one comparison-group outcome change</label></fieldset><button type="button">Check answer</button><p class="feedback" aria-live="polite"></p></section>
+  <section class="summary"><h2>What to remember</h2><ul><li>Difference in differences subtracts the comparison-group change from the treated-group change.</li><li>Parallel trends concerns the treated group's unobserved untreated path.</li><li>Pre-treatment trends support but do not prove the assumption.</li><li>Concurrent changes that differ by group threaten the causal interpretation.</li></ul></section>
+  <p class="citation"><strong>Primary reading.</strong> <a href="https://doi.org/10.1016/j.joep.2020.102344">Scoppa (2021)</a>; Angrist and Pischke, <em>Mastering Metrics</em>, Chapter 5; and Hayashi, <em>Econometrics</em>, Chapter 18.</p>
+  <p>If any step is unclear, ask your teaching agent to work through another football example with you.</p>
+  <nav class="lesson-nav"><a href="0007-fixed-effects-and-the-ashenfelter-dip.html">Previous lesson: Use fixed effects without mistaking recovery for impact</a><a href="0009-event-studies-and-staggered-timing.html">Next lesson: Interpret an event study with staggered timing</a></nav>
+</main>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

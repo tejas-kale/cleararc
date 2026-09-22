@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Football causal inference</title>
+  <link rel="stylesheet" href="assets/course.css">
+</head>
+<body>
+<header class="topbar"><div><span>Football causal inference</span><a href="README.md">Course sources and crosswalk</a></div></header>
+<main>
+  <p class="eyebrow">A guided course in 17 lessons</p>
+  <h1>Learn causal inference through football</h1>
+  <p class="lead">This course teaches you how to turn a football question into a defensible causal analysis. You will define the causal effect first, state the assumptions that connect data to that effect, and then choose an estimator.</p>
+
+  <section class="objective">
+    <h2>How to use the course</h2>
+    <p>Take the lessons in order if causal inference is new to you. Each lesson takes about 20 to 25 minutes and includes written exercises. State your answer before opening a suggested answer or checking the quiz.</p>
+    <p>Each lesson also has an <a href="exercises/index.html">exercise sheet</a> of seven or eight questions, designed for a thirty-minute sitting with the worked answers held back to the end. Attempt the sheet after the lesson and before moving on.</p>
+  </section>
+
+  <ol class="course-list">
+    <li><a href="lessons/0001-from-question-to-estimand.html"><span><strong>Define a causal question and estimand</strong><small>Potential outcomes, ATE, ATT and identification assumptions.</small></span><time>25 minutes</time></a></li>
+    <li><a href="lessons/0002-cluster-randomisation-and-itt.html"><span><strong>Analyse a cluster-randomised football trial</strong><small>Experimental units, clustering and intention to treat.</small></span><time>20 minutes</time></a></li>
+    <li><a href="lessons/0003-dags-and-back-door-identification.html"><span><strong>Use a causal diagram to choose controls</strong><small>Back-door paths, mediators, colliders and adjustment sets.</small><span class="course-note">Constructed football scenario</span></span><time>25 minutes</time></a></li>
+    <li><a href="lessons/0004-emulate-a-target-trial.html"><span><strong>Write a target trial protocol</strong><small>Eligibility, treatment strategies, time zero and follow-up.</small><span class="course-note">Constructed football scenario</span></span><time>25 minutes</time></a></li>
+    <li><a href="lessons/0005-matching-and-propensity-scores.html"><span><strong>Design a matched comparison</strong><small>Propensity scores, common support and balance.</small></span><time>25 minutes</time></a></li>
+    <li><a href="lessons/0006-weighting-standardisation-and-aipw.html"><span><strong>Compare weighting, standardisation and AIPW</strong><small>Three estimators that use measured-confounding adjustment.</small><span class="course-note">AIPW extension is constructed</span></span><time>25 minutes</time></a></li>
+    <li><a href="lessons/0007-fixed-effects-and-the-ashenfelter-dip.html"><span><strong>Use fixed effects without mistaking recovery for impact</strong><small>Stable heterogeneity, time-varying shocks and regression to the mean.</small></span><time>20 minutes</time></a></li>
+    <li><a href="lessons/0008-difference-in-differences.html"><span><strong>Estimate a difference-in-differences effect</strong><small>Before-and-after changes and parallel untreated trends.</small></span><time>20 minutes</time></a></li>
+    <li><a href="lessons/0009-event-studies-and-staggered-timing.html"><span><strong>Interpret an event study with staggered timing</strong><small>Leads, lags, treatment cohorts and valid controls.</small></span><time>20 minutes</time></a></li>
+    <li><a href="lessons/0010-regression-discontinuity.html"><span><strong>Estimate a local effect at a threshold</strong><small>Running variables, cut-offs, continuity and local interpretation.</small></span><time>20 minutes</time></a></li>
+    <li><a href="lessons/0011-instrumental-variables-and-late.html"><span><strong>Interpret an instrumental-variable estimate</strong><small>Relevance, independence, exclusion, monotonicity and LATE.</small></span><time>25 minutes</time></a></li>
+    <li><a href="lessons/0012-synthetic-control.html"><span><strong>Build and assess a synthetic control</strong><small>Donor pools, pre-treatment fit and placebo gaps.</small></span><time>20 minutes</time></a></li>
+    <li><a href="lessons/0013-interrupted-time-series.html"><span><strong>Analyse an interrupted time series</strong><small>Level changes, slope changes, serial correlation and concurrent events.</small></span><time>20 minutes</time></a></li>
+    <li><a href="lessons/0014-longitudinal-g-methods.html"><span><strong>Choose a method for time-varying treatment</strong><small>Treatment-confounder feedback and three longitudinal g-methods.</small><span class="course-note">Constructed football scenario</span></span><time>25 minutes</time></a></li>
+    <li><a href="lessons/0015-double-machine-learning.html"><span><strong>Use double machine learning for a causal effect</strong><small>Residualisation, cross-fitting and leakage-safe folds.</small></span><time>25 minutes</time></a></li>
+    <li><a href="lessons/0016-causal-mediation.html"><span><strong>Separate direct and indirect effects</strong><small>Total effects, mediators and mediator-outcome confounding.</small></span><time>25 minutes</time></a></li>
+    <li><a href="lessons/0017-causal-survival-analysis.html"><span><strong>Choose a causal time-to-event estimand</strong><small>Risk, restricted mean survival time, hazards and censoring.</small></span><time>25 minutes</time></a></li>
+  </ol>
+
+  <h2>Course references</h2>
+  <div class="grid">
+    <div class="card"><strong><a href="exercises/index.html">Exercise sheets</a></strong><p>Practise each lesson for thirty minutes, then mark your own answers.</p></div>
+    <div class="card"><strong><a href="reference/glossary.html">Glossary</a></strong><p>Review the main causal terms and estimands.</p></div>
+    <div class="card"><strong><a href="reference/design-field-guide.html">Design field guide</a></strong><p>Match a football question to a possible causal design.</p></div>
+    <div class="card"><strong><a href="README.md">Source crosswalk</a></strong><p>See the paper and book sections used for every lesson.</p></div>
+  </div>
+</main>
+</body>
+</html>

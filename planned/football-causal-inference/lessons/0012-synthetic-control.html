@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Build and assess a synthetic control</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<header class="topbar"><div><a href="../README.md">Course index</a><span>Lesson 12 of 17</span></div></header>
+<main>
+  <p class="eyebrow">Comparative case studies</p>
+  <h1>Build and assess a synthetic control</h1>
+  <p class="lead">A synthetic control combines untreated units to reproduce one treated unit before intervention. The pre-treatment fit and placebo gaps show whether the comparison is useful.</p>
+  <div class="lesson-meta"><span>About 20 minutes</span><span>Includes guided exercises</span><span><a href="../exercises/0012-synthetic-control.html">Exercise sheet</a></span></div>
+  <section class="objective"><h2>What you will be able to do</h2><p>You will be able to define a donor pool, interpret synthetic-control weights and assess fit and placebo evidence.</p></section>
+  <section class="scenario"><h2>Two football applications</h2><p>Breidenbach and Mitze built a separate synthetic control for each of 41 German districts that hosted professional football matches. Kleven, Landais and Saez built synthetic-country comparisons to study how tax reforms changed football-player migration. Both applications need an untreated trajectory for a treated place.</p></section>
+      <h2>Choose the treated unit and donor pool</h2><p>The treated unit must have a clear intervention date and enough outcome history before treatment. The donor pool contains untreated units that could represent the treated unit's counterfactual. Donors exposed to the same intervention or strong spillovers should be removed.</p><p>The method chooses non-negative weights that sum to one. The weighted donor outcome should reproduce the treated unit's pre-treatment outcomes and important predictors.</p><p class="formula">Synthetic outcome at time t = sum of donor weight_j x donor outcome_jt</p>
+      <section class="worked"><h2>Worked construction</h2><p>A treated district's synthetic control uses three donors with weights 0.50, 0.30 and 0.20. Their infection rates in one week are 10, 14 and 8 per 100,000 people. The synthetic rate is 0.50 times 10, plus 0.30 times 14, plus 0.20 times 8, which equals 10.8.</p><p>If the treated district's rate is 15, the treated-minus-synthetic gap is 4.2. The gap is meaningful only if the weighted donors closely reproduced the district before hosting resumed.</p></section>
+      <h2>Pre-treatment fit is the main design check</h2><p>A large post-treatment gap is not persuasive when the synthetic control missed the treated trajectory before intervention. Report the complete path and a pre-treatment fit measure such as root mean squared prediction error. Do not hide poor pre-periods.</p><p>The analyst should also test whether results depend on one donor, one predictor or the chosen pre-treatment window. A leave-one-out analysis can show whether one heavily weighted donor drives the result.</p>
+      <h2>Use placebo assignments for context</h2><p>Placebo-in-space analysis reassigns treatment to each donor and calculates its gap. If many untreated donors show gaps as large as the treated unit, the observed result is not unusual. Comparisons should account for pre-treatment fit, because a donor with terrible pre-fit can generate a large meaningless post-gap.</p><p>Placebo-in-time analysis moves the intervention date to an earlier untreated period. A large effect at the fake date suggests that the model can create gaps without treatment.</p>
+      <section class="exercise"><h2>Exercise 1. Inspect the donor pool</h2><p>A neighbouring district sends many supporters to the treated district and may receive returning infections. Should it remain in the donor pool?</p><details><summary>Show a suggested answer</summary><p>Probably not without a model of spillovers. The neighbour may be indirectly treated, so its outcome no longer represents an untreated counterfactual. The analyst should remove it or test how its inclusion changes the estimate.</p></details></section>
+      <section class="exercise"><h2>Exercise 2. Read a poor fit</h2><p>The treated unit has a pre-treatment fit error four times larger than most placebo units. What should the analyst do?</p><details><summary>Show a suggested answer</summary><p>The analyst should not compare raw post-treatment gaps as if fit were equal. The design may be unsuitable for that unit. At minimum, report the poor fit, use post-to-pre error ratios and test alternative defensible donor or predictor choices.</p></details></section>
+      <div class="exercise">
+    <h2>Practice</h2>
+    <p>An <a href="../exercises/0012-synthetic-control.html">exercise sheet of 7 questions</a> accompanies this lesson. It takes about thirty minutes and carries worked answers at the end. Attempt it before moving on.</p>
+  </div>
+
+  <section class="quiz" data-quiz data-answer="a" data-correct="Correct. Poor pre-treatment fit weakens the claim that the synthetic path represents the missing untreated outcome." data-incorrect="The synthetic control must reproduce the treated history before it can extend that history after treatment."><fieldset><legend>Which result most weakens the design?</legend><label><input type="radio" name="q" value="a"> Poor pre-treatment outcome trajectory fit</label><label><input type="radio" name="q" value="b"> Non-negative donor weights that sum</label><label><input type="radio" name="q" value="c"> Clearly defined intervention timing used</label></fieldset><button type="button">Check answer</button><p class="feedback" aria-live="polite"></p></section>
+  <section class="summary"><h2>What to remember</h2><ul><li>A synthetic control is a weighted combination of untreated donors.</li><li>The donor pool must avoid treatment and important spillovers.</li><li>Good pre-treatment fit is necessary for a credible counterfactual path.</li><li>Placebo gaps show whether the treated gap is unusual relative to untreated units.</li></ul></section>
+  <p class="citation"><strong>Primary reading.</strong> <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8411384/">Breidenbach and Mitze (2022)</a>; <a href="https://eml.berkeley.edu/~saez/kleven-landais-saezMay12football.pdf">Kleven, Landais and Saez (2013)</a>; and Ruiz de Villa, Section 11.3.</p>
+  <p>If any step is unclear, ask your teaching agent to work through another football example with you.</p>
+  <nav class="lesson-nav"><a href="0011-instrumental-variables-and-late.html">Previous lesson: Interpret an instrumental-variable estimate</a><a href="0013-interrupted-time-series.html">Next lesson: Analyse an interrupted time series</a></nav>
+</main>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

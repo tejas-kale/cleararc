@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 11 · Deep research agents</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+<link rel="stylesheet" href="../assets/quiz.css">
+</head>
+<body>
+<main class="page">
+
+<header class="masthead">
+  <p class="eyebrow">Lesson 11 of 17 · Arc III · Self-improving AI agents</p>
+  <h1>Deep research agents</h1>
+  <p class="standfirst">Retrieval that happens when the reasoning needs it, and a note-taking step between the document and the prompt. Two changes separate a research agent from a RAG pipeline.</p>
+  <p class="meta">About 10 minutes · Lecture 7 · The architecture closest to analysis work</p>
+</header>
+
+<p>A reasoning model with a knowledge gap does something observable, which is that it hedges. The uncertainty surfaces as vocabulary, with words like perhaps, alternatively, and likely scattered through the reasoning chain. Because reasoning is sequential, a guess made early propagates, so every later step inherits it and the final answer carries confidence it has not earned.</p>
+
+<p>That is the problem Search-o1 addresses, and its diagnosis is the useful part.<a href="#s1">¹</a> <strong>The hedging is a signal, and it tells you when to go and look something up.</strong></p>
+
+<h2>Three architectures, in order of goodness</h2>
+
+<div class="scroll-x">
+<table>
+  <thead><tr><th></th><th>Retrieval timing</th><th>What enters the prompt</th><th>Fails when</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Classic RAG</strong></td><td>Once, up front</td><td>The top k documents</td><td>Later steps need information you could not have known to fetch</td></tr>
+    <tr><td><strong>Agentic RAG</strong></td><td>Whenever the model emits a search</td><td>Retrieved documents, whole</td><td>Documents are long and noisy, so the reasoning drowns in them</td></tr>
+    <tr><td><strong>Search-o1</strong></td><td>Whenever the model emits a search</td><td>An extracted summary of each document</td><td>The extraction step drops something that mattered</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>Most people have already made the step from the first row to the second, which is to let the model decide when to retrieve, mid-reasoning, as often as it needs. A single up-front retrieval is fine for asking what the weather was and hopeless for anything where step three's question depends on step two's answer.</p>
+
+<p>Most people have not made the step from the second row to the third, and that is where the gains are.</p>
+
+<h2>Reason in documents, which means take notes rather than paste</h2>
+
+<figure>
+<svg viewBox="0 0 660 220" role="img" aria-label="Comparison: agentic RAG injects whole documents into the reasoning chain, while Search-o1 inserts an extraction step that distils each document into relevant notes first.">
+  <text x="20" y="22" class="dg-label-b">AGENTIC RAG</text>
+  <rect x="20" y="34" width="92" height="34" rx="3" class="dg-box"/>
+  <text x="66" y="55" class="dg-label" text-anchor="middle">reasoning</text>
+  <line x1="112" y1="51" x2="146" y2="51" class="dg-rule" stroke-width="1.4"/>
+  <rect x="148" y="34" width="76" height="34" rx="3" class="dg-box"/>
+  <text x="186" y="55" class="dg-label" text-anchor="middle">search</text>
+  <line x1="224" y1="51" x2="258" y2="51" class="dg-rule" stroke-width="1.4"/>
+  <rect x="260" y="26" width="150" height="50" rx="3" class="dg-box"/>
+  <text x="335" y="46" class="dg-label-b" text-anchor="middle">10 whole documents</text>
+  <text x="335" y="64" class="dg-label" text-anchor="middle">~40,000 tokens of noise</text>
+  <line x1="410" y1="51" x2="444" y2="51" class="dg-rule" stroke-width="1.4"/>
+  <rect x="446" y="34" width="92" height="34" rx="3" class="dg-box"/>
+  <text x="492" y="55" class="dg-label" text-anchor="middle">reasoning</text>
+  <text x="556" y="55" class="dg-label-b dg-bad" text-anchor="start">drowns</text>
+
+  <line x1="20" y1="104" x2="640" y2="104" class="dg-rule" stroke-width="1"/>
+
+  <text x="20" y="134" class="dg-label-b">SEARCH-O1</text>
+  <rect x="20" y="146" width="92" height="34" rx="3" class="dg-box"/>
+  <text x="66" y="167" class="dg-label" text-anchor="middle">reasoning</text>
+  <line x1="112" y1="163" x2="146" y2="163" class="dg-rule" stroke-width="1.4"/>
+  <rect x="148" y="146" width="76" height="34" rx="3" class="dg-box"/>
+  <text x="186" y="167" class="dg-label" text-anchor="middle">search</text>
+  <line x1="224" y1="163" x2="258" y2="163" class="dg-rule" stroke-width="1.4"/>
+  <rect x="260" y="138" width="150" height="50" rx="3" class="dg-box"/>
+  <text x="335" y="158" class="dg-label-b" text-anchor="middle">REASON-IN-DOCS</text>
+  <text x="335" y="176" class="dg-label" text-anchor="middle">extract what's relevant</text>
+  <line x1="410" y1="163" x2="444" y2="163" class="dg-rule" stroke-width="1.4"/>
+  <rect x="446" y="146" width="92" height="34" rx="3" class="dg-box"/>
+  <text x="492" y="167" class="dg-label" text-anchor="middle">reasoning</text>
+  <text x="556" y="167" class="dg-label-b dg-good" text-anchor="start">continues</text>
+  <text x="335" y="206" class="dg-label" text-anchor="middle">a few hundred tokens, on-topic, in the reasoning's own terms</text>
+</svg>
+<figcaption>A sub-routine sits inside the retrieval tool. Given the current query, the reasoning so far, and a retrieved document, it extracts only the relevant content and returns that. What enters the main context is a note rather than a paste. The lecture's comparison is exact, because a researcher reading twenty references does not staple them into the draft, they take notes.</figcaption>
+</figure>
+
+<p>This matters more than it sounds, because long-context reasoning degrades. Dropping ten documents into a reasoning chain assumes the model reasons as well over 40,000 tokens of mixed-relevance text as over a focused prompt, and it does not. Extraction is a <strong>context-quality</strong> intervention, and Lesson 13 explains why that dominates almost everything else in long runs.</p>
+
+<p class="sidenote">A student asked the sharp question, which is whether this is just prompting the model to summarise before continuing. Largely yes, and the lecturer's answer is worth keeping. It is a workaround for a limitation that should disappear as long-context reasoning improves. That is honest and it does not make the technique less useful today. Several patterns in this course are scaffolding around a current weakness, and knowing which weakness a pattern serves tells you when to retire it.</p>
+
+<p>The reported effect is measured in an unusual way. The frequency of uncertainty markers in the reasoning chains drops substantially, because the model stops hedging once it stops guessing.</p>
+
+<div class="quiz" data-answer="c">
+  <span class="label">Check yourself</span>
+  <p class="q">Your research agent retrieves well but produces vague, hedged conclusions. What is the most likely cause?</p>
+  <div class="opts">
+    <button class="opt">Its search queries are too broad, so retrieved documents are only loosely on topic.</button>
+    <button class="opt">It retrieves too rarely, so most reasoning steps proceed without any grounding at all.</button>
+    <button class="opt">Whole documents are entering context, so relevant content is diluted by irrelevant content.</button>
+    <button class="opt">The base model is too weak to synthesise findings across several independent sources.</button>
+  </div>
+  <div class="answer-reveal">
+    <p>Retrieving well and concluding vaguely is the signature of good search feeding a drowning context. All four are real failure modes, and you tell them apart by reading the trace. If the right document was fetched and the right sentence is sitting unused in the context, the problem is dilution and an extraction step fixes it. This is also why logging retrieved content separately from reasoning, as Lesson 7 recommends, pays for itself.</p>
+  </div>
+</div>
+
+<h2>Knowing what you do not know</h2>
+
+<p>The lecture flags the genuinely hard part, which the paper only partly handles. <strong>How does the model know what to look up?</strong> Detecting your own knowledge gap is exactly what models are bad at, because they are systematically overconfident. Aggregate the log-probabilities of an answer and you will find a model 80 percent confident on questions it gets right half the time. Uncertainty markers in a reasoning chain are a usable proxy precisely because the calibrated signal is not available.</p>
+
+<p>The practical answer offered is not clever, and it is better for that. <strong>Decide in advance which parts of a question you will not trust the weights for.</strong> Identify the key entities, dates, figures, and definitions, and fetch those on principle rather than waiting for the model to feel unsure. In your domain you already know which facts must come from the warehouse and which the model may supply from memory, so encode that rather than delegating it to the model's introspection.</p>
+
+<h2>Building one for analysis work</h2>
+
+<ul>
+  <li><strong>Retrieve mid-reasoning, repeatedly.</strong> One up-front fetch caps you at questions you could fully specify before starting, which excludes most of the interesting ones.</li>
+  <li><strong>Put an extraction step inside every retrieval tool</strong> so it returns notes rather than payloads. This applies to query results and file reads as much as to web search, and a tool that returns 5,000 rows should return a characterisation of them.</li>
+  <li><strong>Pin the facts that must be fetched.</strong> A list of entity types the agent must always look up beats hoping it notices its own ignorance.</li>
+  <li><strong>Treat hedging as a metric.</strong> Counting uncertainty markers per run is a crude but useful proxy for grounding, it costs one regular expression, and you can watch it move when you change retrieval.</li>
+</ul>
+
+<p>One habit underlies all four. Do not trust stated confidence, because models are overconfident and will defend wrong answers, and confidence expressed in prose is not evidence.</p>
+
+<p class="sidenote">The lecture also points at Search-R1, which learns the search behaviour with reinforcement learning rather than eliciting it by prompting. It is the same architecture reached by a different route, and a clean illustration of the Lesson 9 rule: prompt-elicited behaviour first, and trained behaviour only once the pattern is stable and the cost justifies it.</p>
+
+<div class="project-hook">
+  <span class="label">Project hook</span>
+  <p class="question">Does the extraction step help on your data, and where does it start dropping things that matter? Run one research workflow twice, once pasting whole tool outputs into context and once passing them through an extraction step, and grade both against the same rubric.</p>
+  <p class="measure"><span>Measure</span> Answer quality, tokens consumed, and the count of uncertainty markers per run. Then read the cases where extraction lost, because those tell you what your extraction prompt is throwing away and that is the transferable finding.</p>
+</div>
+
+<div class="recall">
+  <span class="label">Retrieval practice</span>
+  <p class="prompt">For one analysis task you would delegate to an agent: which facts must never come from the model's weights, and what would the extraction step return instead of the raw tool output?</p>
+  <textarea placeholder="The first list is usually longer than expected."></textarea>
+  <div class="model-answer">
+    <p>Here is a worked example for a competitor pricing analysis. The facts that must be fetched are current prices, product names and SKUs, dates of changes, anything with a number in it, and the definitions of internal metrics, all of which the model will invent plausibly. The things that may come from the weights are what a price elasticity is, how to structure the comparison, and standard caveats about sample size. The extraction step, instead of returning a 200-row result set, returns something like "42 SKUs matched, price range 4.99 to 89.99, 6 changed in the last 30 days and listed below, 3 rows have a null category". That is a characterisation the reasoning can use, with the raw data still available on request. The last clause matters, because extraction should narrow what enters context rather than destroy access to it.</p>
+  </div>
+</div>
+
+<h2>What you can now do</h2>
+<p>You can distinguish classic RAG, agentic RAG, and reason-in-documents, and say what each one fails at. You know that hedging vocabulary is a usable uncertainty proxy where calibrated confidence is not available, that models are overconfident by default, and that the fix for a drowning context is a note-taking step rather than a bigger window.</p>
+<p>Next is <a href="0012-evals-that-change-decisions.html">Lesson 12, evals that change decisions</a>, which begins the arc that tells you whether any of this worked.</p>
+
+<div class="ask">
+  <strong>The extraction prompt is the whole trick here.</strong> Too aggressive and it drops the sentence that mattered, too lenient and you have pasted the document. It is worth tuning against real retrievals rather than in the abstract.
+</div>
+
+<div class="source-box">
+  <span class="label">Read one thing</span>
+  <ol>
+    <li id="s1"><strong>Read this one:</strong> <a href="https://arxiv.org/abs/2501.05366">Li et al., <em>Search-o1: Agentic Search-Enhanced Large Reasoning Models</em></a>. The reason-in-documents module takes up a page of the paper and is the most directly copyable idea in this lesson.</li>
+    <li id="s2"><a href="https://arxiv.org/abs/2503.09516">Jin et al., <em>Search-R1</em></a>, the same behaviour acquired by RL rather than by prompting.</li>
+    <li id="s3"><a href="https://www.youtube.com/watch?v=Uni9dqyuuDM">CS329A Lecture 7, Self-Improvement and Deep Research Agents</a>, final third, the source for this lesson including the discussion of model overconfidence.</li>
+  </ol>
+</div>
+
+<nav class="lesson-nav">
+  <span><a href="0010-the-submission-budget.html">← Lesson 10</a></span>
+  <span><a href="../index.html">Index</a> · <a href="../reference/glossary.html">Glossary</a></span>
+  <span><a href="0012-evals-that-change-decisions.html">Lesson 12: Evals that change decisions →</a></span>
+</nav>
+
+</main>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

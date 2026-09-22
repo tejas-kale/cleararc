@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reference · ICE-ing the Economy cheat sheet</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+<link rel="stylesheet" href="../assets/reference.css">
+</head>
+<body class="reference">
+<main class="page">
+
+<header class="masthead">
+  <p class="eyebrow">Reference · ICE-ing the Economy</p>
+  <h1>One-page cheat sheet</h1>
+  <p class="standfirst">Hernandez (2026) compressed. Print and keep beside the draft.</p>
+  <p class="meta">One page · Pair with the <a href="glossary.html">glossary</a></p>
+</header>
+
+<h2>Rules that always hold for this paper</h2>
+<ol class="rules">
+  <li><strong>Treatment is a metro burst, not a body count.</strong> Three events in 14 days after inauguration, then absorbing.</li>
+  <li><strong>Media measures presence and perception.</strong> Official arrests measure yield and geocode poorly.</li>
+  <li><strong>Two designs, two estimands.</strong> IV: targeted vs not. Distance: closer vs farther inside targeted metros.</li>
+  <li><strong>Keep percents and billions in separate bins.</strong> −2.73% / −6.18% are IV. $3–14bn is a scale-up with a coverage fork.</li>
+  <li><strong>Generality is the claim.</strong> Below-median immigrant cells still fall; workplaces fall more than shops; independents more than chains.</li>
+  <li><strong>Null online is not “consumption vanished.”</strong> It is the merchant’s own digital channel plus falling delivery-app overlap.</li>
+</ol>
+
+<h2>Design card</h2>
+<div class="scroll-x">
+<table>
+  <thead><tr><th></th><th>Design A (main)</th><th>Design B</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Sample</strong></td><td>All 935 metros</td><td>Treated metros only</td></tr>
+    <tr><td><strong>Treatment</strong></td><td>Absorbing onset, instrumented</td><td>Distance bins to running-min raid</td></tr>
+    <tr><td><strong>Instrument</strong></td><td>s<sub>2010</sub> × R<sub>t</sub></td><td>None</td></tr>
+    <tr><td><strong>FE</strong></td><td>POI + state×week</td><td>POI + CBSA×week</td></tr>
+    <tr><td><strong>Cluster</strong></td><td>CBSA</td><td>CBSA</td></tr>
+    <tr><td><strong>Asks</strong></td><td>City pulled into the regime?</td><td>Damage local to epicenters?</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>Headline magnitudes (per POI-week)</h2>
+<div class="scroll-x">
+<table>
+  <thead><tr><th>Outcome</th><th>IV effect</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Visits</td><td>−2.73%</td><td>p &lt; 0.001; ~53 visitors; deepens after week 13</td></tr>
+    <tr><td>Spend</td><td>−6.18%</td><td>p = 0.01; mostly transactions, not ticket size</td></tr>
+    <tr><td>Workplace visits</td><td>−4.87%</td><td>vs −2.50% consumer</td></tr>
+    <tr><td>Independents</td><td>−4.09% visits / −10.85% spend</td><td>chains much smaller</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>Threats to keep attached</h2>
+<ul>
+  <li>Treated metros differ in 2024 trends — that is why OLS is refused.</li>
+  <li>S4: slope tests OK; joint Wald often rejects; spend + state×week is the awkward panel.</li>
+  <li>S13: 1950 shares → weak spend first stage.</li>
+  <li>SafeGraph ~11% of POI-weeks; 20 Oct 2025 non-branded break × 1.5.</li>
+  <li>News coverage can select both treatment and “chilling” quotes.</li>
+</ul>
+
+<nav class="lesson-nav">
+  <span><a href="../index.html">← Course index</a></span>
+  <span><a href="glossary.html">Glossary</a> · <a href="paper-decoded.html">Paper decoded</a></span>
+</nav>
+
+</main>
+</body>
+</html>

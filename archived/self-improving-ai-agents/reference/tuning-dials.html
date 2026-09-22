@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reference · Tuning dials</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+<link rel="stylesheet" href="../assets/reference.css">
+</head>
+<body class="reference">
+<main class="page">
+
+<header class="masthead">
+  <p class="eyebrow">Reference · Self-improving AI agents</p>
+  <h1>Tuning dials</h1>
+  <p class="standfirst">Every lever this course gives you over an agent, what it costs, and the symptom that should make you reach for it. They are ordered roughly by effort.</p>
+  <p class="meta">One printable page · Start at the top and stop when the numbers move</p>
+</header>
+
+<h2>Diagnose first</h2>
+<p>Before turning anything, run the two-number test from Lesson 3. Take 20 to 30 real tasks with known outcomes, run each one 10 times, and record <strong>pass@1</strong>, meaning the first run succeeded, and <strong>coverage</strong>, meaning any run succeeded. Everything below branches on the result.</p>
+
+<ul class="rules">
+  <li><strong>Coverage is much higher than pass@1.</strong> The answer is in there and you are discarding it, so go to <em>Selection</em> and do not buy a bigger model.</li>
+  <li><strong>Coverage is close to pass@1 and both are low.</strong> This is a real capability or context problem, so go to <em>Capability</em>.</li>
+  <li><strong>Coverage is close to pass@1, both are high, and production still feels worse.</strong> Your eval does not resemble production, so go to <em>Measurement</em>.</li>
+  <li><strong>Results vary wildly across runs of the same task.</strong> This is a reliability problem, so measure pass^k and then go to <em>Reliability</em>.</li>
+</ul>
+
+<h2>Selection, which closes the generation-verification gap</h2>
+<div class="scroll-x">
+<table>
+  <thead><tr><th>Dial</th><th>Effort</th><th>Cost at runtime</th><th>Reach for it when</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Generate n, then fuse</strong> (Lesson 6)</td><td>1 hour</td><td>n+1 calls</td><td>Almost always. The default upgrade from a single call.</td></tr>
+    <tr><td><strong>Deterministic checks on the output</strong> (Lesson 7)</td><td>1 hour</td><td>Nearly free</td><td>Any output with a checkable property, such as a schema, a total, or an invariant.</td></tr>
+    <tr><td><strong>Self-generated specification</strong> (Lesson 6)</td><td>1 hour</td><td>2 calls</td><td>No oracle exists. Ask for the properties of a correct answer before generating, then check against them.</td></tr>
+    <tr><td><strong>Rubric judge, binary criteria</strong> (Lesson 5)</td><td>Half a day</td><td>1 call per candidate</td><td>Quality is subjective but breaks down into yes-or-no facts.</td></tr>
+    <tr><td><strong>Weighted verifier ensemble</strong> (Lesson 5)</td><td>1 to 2 days</td><td>m calls per candidate</td><td>Single judges disagree with you too often. It needs 30 to 50 labels.</td></tr>
+    <tr><td><strong>Critic, rank, and fuse stacked</strong> (Lesson 6)</td><td>1 day</td><td>About 2n calls</td><td>Offline, latency-tolerant, high-stakes work.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>Capability, for when the answer genuinely is not there</h2>
+<div class="scroll-x">
+<table>
+  <thead><tr><th>Dial</th><th>Effort</th><th>Cost at runtime</th><th>Reach for it when</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Raise the thinking budget</strong></td><td>Minutes</td><td>Tokens</td><td>First thing to try. Often the whole fix on reasoning models.</td></tr>
+    <tr><td><strong>Better tools / richer failures</strong> (Lesson 7)</td><td>Hours</td><td>Nearly free</td><td>The agent retries blindly after errors. Return expected against actual, plus traces and hints.</td></tr>
+    <tr><td><strong>Sequential revision with real feedback</strong> (Lesson 2)</td><td>Hours</td><td>k calls, serial</td><td>Drafts are structurally right and locally wrong.</td></tr>
+    <tr><td><strong>Parallel sampling</strong> (Lesson 2)</td><td>Hours</td><td>k calls, parallel</td><td>The first approach is usually wrong, rather than just its details.</td></tr>
+    <tr><td><strong>Decompose the task</strong> (Lesson 8)</td><td>1 day</td><td>More calls</td><td>Failures cluster at one identifiable stage of a long task.</td></tr>
+    <tr><td><strong>Stronger model on the hard slice</strong></td><td>Hours</td><td>Higher spend</td><td>Route by difficulty rather than upgrading everything, because the hardest tail genuinely needs it.</td></tr>
+    <tr><td><strong>Fine-tune</strong> (Lesson 9)</td><td>Weeks</td><td>Cheaper per call</td><td>A last resort, and only with a stable task, a real eval, and thousands of verified examples.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>Reliability, for when the same task gives different outcomes</h2>
+<ul class="rules">
+  <li><strong>Measure pass^k rather than pass@k.</strong> Run each task ten times and count how many succeeded every time, because that number predicts what unattended production feels like.</li>
+  <li><strong>Lower the temperature only after checking coverage.</strong> It reduces variance and coverage together, and if your selector is good you want the diversity.</li>
+  <li><strong>Add a gate rather than a retry.</strong> Retrying until checks pass teaches the agent to satisfy checks, so hold some back, as Lesson 7 argues.</li>
+  <li><strong>Bound the horizon.</strong> Shorter runs with checkpoints beat one long run, because error cascading compounds, as Lesson 13 explains.</li>
+  <li><strong>Freeze what varies.</strong> Pin model versions, seeds where available, and prompt templates before concluding a change helped.</li>
+</ul>
+
+<h2>Measurement, the dial that makes every other dial readable</h2>
+<ul class="rules">
+  <li><strong>Twenty real tasks beat two hundred synthetic ones.</strong> Draw them from actual traffic, including the failures that annoyed you.</li>
+  <li><strong>Grade against a decision rather than a score.</strong> Asking whether you would have sent this to a stakeholder beats a rating out of ten that clusters at 7.</li>
+  <li><strong>Keep a held-out set you never iterate against.</strong> Everything you look at, you overfit.</li>
+  <li><strong>Report cost per solved task</strong> rather than accuracy alone. Every dial above spends money, and the frontier you care about is quality per unit of spend.</li>
+  <li><strong>Re-run the two-number test after each change.</strong> If coverage and pass@1 both moved you changed capability, if only pass@1 moved you improved selection, and if neither moved you changed nothing no matter how it feels.</li>
+</ul>
+
+<h2>The order to try things</h2>
+<ul class="rules">
+  <li>Measure, using the two-number test. Nothing below this line means anything without it.</li>
+  <li>Raise the thinking budget. Minutes of work.</li>
+  <li>Fix the tools' failure messages. Hours of work, often the largest single gain.</li>
+  <li>Generate n and fuse. One hour, almost always positive.</li>
+  <li>Add deterministic checks on the output, with some held back.</li>
+  <li>Build a rubric judge with binary criteria, calibrated on 30 to 50 labels.</li>
+  <li>Route by difficulty so the expensive path runs only where it is needed.</li>
+  <li>Stack critic, rank, and fuse layers on offline work.</li>
+  <li>Only now consider a bigger model everywhere, or a fine-tune.</li>
+</ul>
+
+<nav class="lesson-nav">
+  <span><a href="../index.html">← Course index</a></span>
+  <span><a href="glossary.html">Glossary</a> · <a href="eval-playbook.html">Eval playbook</a> · <a href="project-playbook.html">Project playbook</a></span>
+</nav>
+
+</main>
+</body>
+</html>

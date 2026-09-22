@@ -1,7 +1,0 @@
-<svg viewbox="0 0 640 200" role="img" aria-label="Before and after spine cleanup">
-        <text x="40" y="28" font-family="Iowan Old Style, serif" font-size="14" fill="#5c5c5c">matplotlib default</text>
-        <rect x="40" y="44" width="240" height="130" fill="#fff" stroke="#1a1a1a" stroke-width="2" />
-        <text x="360" y="28" font-family="Iowan Old Style, serif" font-size="14" fill="#5c5c5c">after _clean_spines</text>
-        <line x1="360" y1="174" x2="600" y2="174" stroke="#808080" stroke-width="2"></line>
-        <line x1="360" y1="44" x2="360" y2="174" stroke="#808080" stroke-width="2"></line>
-      </svg>

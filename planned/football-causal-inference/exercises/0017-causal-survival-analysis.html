@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Exercise sheet 17: Causal survival analysis</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<header class="topbar"><div><a href="../index.html">Course index</a><span>Exercise sheet 17 of 17</span></div></header>
+<main>
+  <p class="eyebrow">Exercise sheet</p>
+  <h1>Causal survival analysis</h1>
+  <p class="lead">7 questions drawn from <a href="../lessons/0017-causal-survival-analysis.html">Lesson 17</a>. Risk, restricted mean survival time, hazards, censoring and competing events.</p>
+  <div class="lesson-meta"><span>30 minutes</span><span>7 questions</span><span>Answers at the end</span></div>
+
+  <section class="sheet-intro">
+    <h2>How to use this sheet</h2>
+    <p>Work through the questions in order and write your answers down before reading any part of the answer section. Give yourself about thirty minutes in total. If one question runs long, write what you have, mark it and move on, because the answer section explains the reasoning in full.</p>
+    <p>Most questions ask for a short written answer rather than a number. The aim is a defensible statement, so a sentence or two of reasoning is worth more than a single word.</p>
+    <p>The questions are collapsed so that you can take them one at a time. Open one, answer it, then open the next. The answers are held behind a single button at the foot of the page, so nothing is revealed until you choose to reveal it.</p>
+  </section>
+
+  <details class="question">
+    <summary><span class="marks">Question 1</span><span class="q-title">Compute three contrasts</span></summary>
+    <p>By week 20, 12 per cent of control players and 8 per cent of programme players have been injured. Compute the risk difference and the risk ratio, and state each in a sentence a coach would understand. Then, given restricted mean injury-free times of 18.2 weeks under the programme and 17.4 under control, state that contrast and say what it adds.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 2</span><span class="q-title">Explain why a hazard ratio is awkward</span></summary>
+    <p>Explain, using the injury trial, why a hazard ratio is not a risk ratio and why it can be difficult to interpret causally even in a randomised trial. Then say what a hazard ratio that drifts from 0.6 in early weeks to 1.0 later most likely indicates.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 3</span><span class="q-title">Choose the time scale</span></summary>
+    <p>Compare calendar weeks, training hours and match exposures as the time scale for the 11+ Kids trial. Say what question each answers, and identify the danger in using exposure time when the intervention might change exposure.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 4</span><span class="q-title">Deal with censoring</span></summary>
+    <p>A player transfers at week 12 and is lost to follow-up. State the assumption under which simply censoring him is harmless. Then suppose players with early soreness are both more likely to transfer and more likely to be injured later: explain what breaks, and describe the analysis that addresses it and what it requires.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 5</span><span class="q-title">Handle a competing event</span></summary>
+    <p>A player retires from football permanently at week 8 and can never record the study injury. Explain why this is not the same as censoring, describe the two estimands available, and say which you would report for a club deciding whether to fund the programme.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 6</span><span class="q-title">Read a trial report</span></summary>
+    <p>A trial reports "a hazard ratio of 0.52, p = 0.01, from a mixed-effects Cox model with a random intercept for club" and concludes that the programme "halves injuries". List the questions you would ask before accepting the conclusion.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 7</span><span class="q-title">The whole course in six lines</span></summary>
+    <p>Choose one football decision you actually care about and write six lines: the eligible population; two treatment strategies; outcome and horizon; estimand; identification assumptions; estimator with its diagnostics. Then write a seventh line naming the assumption you are least able to defend, and what evidence would change your mind about it.</p>
+  </details>
+
+  <section class="answers">
+    <h2>Answers</h2>
+    <p class="answer-note">Read these only after writing your own answers. Where an answer says "a good answer includes", treat the listed points as the marking scheme rather than as the only wording that works.</p>
+
+    <details class="answer-reveal">
+      <summary>Show all answers</summary>
+      <section class="answer">
+        <span class="marks">Answer 1</span>
+        <h3>Compute three contrasts</h3>
+      <p>Risk difference: 8 minus 12, which is -4 percentage points. Four fewer players per hundred are injured by week 20 under assignment to the programme.</p>
+      <p>Risk ratio: 8 divided by 12, about 0.67. Assignment to the programme cuts the chance of being injured by week 20 to about two-thirds of what it would otherwise be, a relative reduction of a third.</p>
+      <p>Restricted mean difference: 18.2 minus 17.4, which is 0.8 injury-free weeks over a 20-week horizon. It adds timing information the risk contrast discards: it counts not only whether players were injured but how much of the window they spent available, so a programme that delays injuries without preventing them still registers here while showing nothing in the week-20 risk.</p>
+      <p>A good answer notes that all three carry the same horizon, and that quoting any of them without "by week 20" makes them uninterpretable.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 2</span>
+        <h3>Explain why a hazard ratio is awkward</h3>
+      <p>A hazard ratio compares instantaneous injury rates among players who remain uninjured at each time. After the first few weeks, the two risk sets are no longer the randomised populations: the control arm has lost more players to injury, so those remaining in it are disproportionately the robust ones. The comparison at week 15 is therefore between two groups selected on a post-randomisation event, and that selection is itself caused by treatment. Randomisation protects the comparison at time zero, not at every later conditioning point.</p>
+      <p>This is why a hazard ratio is not a risk ratio: it is a ratio of rates within changing, treatment-selected risk sets, whereas a risk ratio compares the original randomised groups over a fixed horizon.</p>
+      <p>A hazard ratio drifting from 0.6 to 1.0 is most likely the depletion of susceptibles rather than a fading treatment effect. The control arm's frail players are injured early, leaving a hardier residual whose rate approaches the treated arm's. The programme may still be preventing injuries throughout, which is precisely what the cumulative risk or restricted mean would show. Reporting a single proportional-hazards number here would misdescribe the trial.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 3</span>
+        <h3>Choose the time scale</h3>
+      <p>Calendar weeks answer the question a club asks about a season: how many players will be unavailable by a given date. Training hours answer a physiological question about risk per unit of load, which is the natural scale for comparing incidence across squads with different schedules. Match exposures isolate the competitive setting, where injury mechanisms differ from training.</p>
+      <p>The danger with exposure time is that it can be a consequence of treatment. If the programme improves conditioning and players consequently train more, then using hours as the denominator divides out part of the treatment's effect, and the rate per hour can look unchanged while calendar-time risk has genuinely fallen. Worse, if the programme reduces injuries, treated players accumulate more exposure simply by staying available, which means the denominators differ for reasons caused by the treatment.</p>
+      <p>The safe practice is to fix calendar time as the primary scale for the causal contrast, since it is not affected by treatment, and to report exposure-based incidence as a secondary descriptive quantity while stating that exposure is post-randomisation. If an exposure-scaled estimand is genuinely wanted, it has to be defined as a mediation or a per-unit-load question, with the corresponding assumptions.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 4</span>
+        <h3>Deal with censoring</h3>
+      <p>Censoring is harmless if, conditional on the recorded history and treatment arm, players who leave have the same later injury distribution as those who stay. Informally, leaving must carry no information about future injury beyond what is already recorded.</p>
+      <p>With soreness driving both, that fails. The players who leave are disproportionately those who would have been injured, so the remaining sample is favourably selected, and observed injury rates understate the truth. Because soreness may be more common in one arm, the bias need not cancel between arms, so the treatment contrast is affected and not merely the absolute level.</p>
+      <p>The fix is inverse-probability-of-censoring weighting: model the probability of remaining uncensored at each time given treatment and the recorded history, including soreness, then upweight the players who remain so that they stand in for the similar players who left. It requires that the causes of both censoring and injury be measured and recorded before the censoring occurs, positivity in the sense that players with every relevant history have some chance of staying, and a correctly specified censoring model. It cannot rescue a study that never recorded soreness.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 5</span>
+        <h3>Handle a competing event</h3>
+      <p>Censoring means the event may still occur but we stop observing it. A competing event means the event of interest can no longer occur at all: a retired player has no later injury time to be hidden. Treating retirement as censoring implicitly imagines a world in which the player continued playing, which is a counterfactual the data do not support and, for permanent retirement, may be incoherent.</p>
+      <p>Two estimands. The first is the real-world cumulative incidence, the probability of being injured by week 20 accounting for the fact that some players retire and therefore cannot be. This is a total effect that includes any effect of treatment on retirement itself. The second is a controlled direct effect, the risk of injury by week 20 in a hypothetical world where retirement is eliminated, which isolates the injury mechanism but describes a world that does not exist.</p>
+      <p>For a club deciding whether to fund the programme, the real-world cumulative incidence is the right choice. The club cares how many players will actually be unavailable, and if the programme keeps players in the game longer, that consequence belongs in the number rather than being assumed away. The controlled direct effect is the appropriate quantity for a physiologist asking about the injury mechanism itself.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 6</span>
+        <h3>Read a trial report</h3>
+      <p>What is the absolute effect? A hazard ratio without a risk difference or restricted mean difference gives no sense of how many injuries are actually prevented, and 0.52 on a small baseline risk may be worth very little.</p>
+      <p>Over what horizon, and does the hazard ratio hold constant across it? A single number presumes proportional hazards; the report should show the survival curves and a check of that assumption, since depletion of susceptibles makes drift likely.</p>
+      <p>Does "halves injuries" mean the risk of a first injury or the total number of injuries? A Cox model of time to first injury says nothing about recurrences, which is what a club's availability actually depends on.</p>
+      <p>What was the time scale, and was exposure affected by the intervention? What was the censoring pattern, how many players were lost, and were the reasons related to injury risk? Were competing events present and how were they handled? Was clustering handled adequately, given that a random intercept for club addresses correlation but the effective sample size is the number of clubs, not players? And was the analysis by assignment or by adherence?</p>
+      <p>The conclusion should read, at best, that assignment to the programme reduced the rate of first injury, with an absolute reduction of a stated size over a stated horizon.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 7</span>
+        <h3>The whole course in six lines</h3>
+      <p>There is no single right answer. Mark your own on the following, which is the checklist the whole course has been building.</p>
+      <ul>
+        <li>Is the population defined by information available at a decision point, with no criterion that uses the future?</li>
+        <li>Are both strategies named, sustained where the decision is repeated, and precise enough that two analysts would classify every unit identically?</li>
+        <li>Does the outcome have a definition and a horizon, and is the horizon attached to every number you would quote?</li>
+        <li>Is the estimand a named contrast for a named population, ATE, ATT, LATE, a local threshold effect or a strategy contrast, rather than "the effect"?</li>
+        <li>Are the identification assumptions stated as claims about the world that could be wrong, not as a list of statistical conditions?</li>
+        <li>Does the estimator come last, and does each diagnostic you name correspond to a specific assumption rather than to model fit?</li>
+        <li>Is the seventh line honest? The assumption you are least able to defend is usually exchangeability or positivity, and if you wrote "consistency" it is worth checking whether you simply have not yet found the confounder.</li>
+      </ul>
+      <p>If you could not write the first five lines without reaching for an estimator, that is the signal to return to Lessons 1 and 4 rather than to press on.</p>
+      </section>
+    </details>
+  </section>
+
+  <p class="citation"><strong>Related reading.</strong> <a href="https://doi.org/10.1007/s40279-017-0834-8">Rossler et al. (2018)</a>; Hernan and Robins, Chapter 17 and Section 21.5.</p>
+  <p>If your answer and the suggested answer disagree and you cannot see why, ask your teaching agent to work through that question with you rather than assuming the sheet is right.</p>
+  <nav class="lesson-nav"><a href="0016-causal-mediation.html">Previous sheet: Causal mediation</a><a href="../index.html">Course index</a></nav>
+</main>
+</body>
+</html>

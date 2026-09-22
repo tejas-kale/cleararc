@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Exercise sheet 3: Causal diagrams and back-door identification</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<header class="topbar"><div><a href="../index.html">Course index</a><span>Exercise sheet 3 of 17</span></div></header>
+<main>
+  <p class="eyebrow">Exercise sheet</p>
+  <h1>Causal diagrams and back-door identification</h1>
+  <p class="lead">7 questions drawn from <a href="../lessons/0003-dags-and-back-door-identification.html">Lesson 3</a>. Reading paths, choosing an adjustment set, and recognising mediators and colliders.</p>
+  <div class="lesson-meta"><span>30 minutes</span><span>7 questions</span><span>Answers at the end</span></div>
+
+  <section class="sheet-intro">
+    <h2>How to use this sheet</h2>
+    <p>Work through the questions in order and write your answers down before reading any part of the answer section. Give yourself about thirty minutes in total. If one question runs long, write what you have, mark it and move on, because the answer section explains the reasoning in full.</p>
+    <p>Most questions ask for a short written answer rather than a number. The aim is a defensible statement, so a sentence or two of reasoning is worth more than a single word.</p>
+    <p>The questions are collapsed so that you can take them one at a time. Open one, answer it, then open the next. The answers are held behind a single button at the foot of the page, so nothing is revealed until you choose to reveal it.</p>
+  </section>
+
+  <details class="question">
+    <summary><span class="marks">Question 1</span><span class="q-title">Sort a control list</span></summary>
+    <p>For the effect of coach dismissal at matchweek 12 on points over the next five matches, classify each variable as a confounder to adjust for, a mediator to leave alone, a collider to avoid, or irrelevant. Give a one-line reason for each.</p>
+    <ol>
+      <li>Pre-season wage bill.</li>
+      <li>Points from matchweeks 8 to 12.</li>
+      <li>The new coach's preferred formation, adopted in matchweek 13.</li>
+      <li>Whether the club appeared in a televised crisis documentary, which is caused both by dismissal rumours and by player unrest.</li>
+      <li>The strictness of the referee appointed to matchweek 15.</li>
+      <li>Number of first-team players injured at matchweek 12.</li>
+    </ol>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 2</span><span class="q-title">Trace the path</span></summary>
+    <p>Write out, arrow by arrow, one back-door path from dismissal to future points that runs through squad strength. Then state which single variable, if adjusted for, blocks it, and explain what "blocks" means here in terms of what the remaining association represents.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 3</span><span class="q-title">Make the diagram wrong on purpose</span></summary>
+    <p>Suppose the true diagram includes an arrow from board impatience to dismissal and an arrow from board impatience to future points, where board impatience is unmeasured. An analyst adjusts correctly for recent form, squad strength and injuries, and reports the result as the causal effect of dismissal. State what is wrong with the claim, and say whether the analyst could detect the problem from the data alone.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 4</span><span class="q-title">Explain a collider concretely</span></summary>
+    <p>An analyst studying formation and goal difference restricts the sample to matches that were selected for live television. Selection for television is caused both by the perceived quality of the two teams and by the expected entertainment value of the tactical matchup. Explain, in terms of the diagram, why this restriction is a form of conditioning on a collider, and describe the association it can manufacture.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 5</span><span class="q-title">Choose between two valid sets</span></summary>
+    <p>Two adjustment sets both satisfy the back-door criterion for the same effect. Set A contains recent form and squad strength. Set B contains recent form, squad strength, stadium capacity, average ticket price, city population and the club's social media following. Give two distinct reasons to prefer Set A, and name one circumstance in which adding a variable that is not needed for identification is nonetheless a good idea.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 6</span><span class="q-title">Diagnose the estimand shift</span></summary>
+    <p>A study reports "the effect of dismissal on points, controlling for recent form, squad strength, and the tactical style adopted after the change." Explain in two or three sentences which quantity the study has actually estimated, and describe a situation in which that quantity would be the right one to report.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 7</span><span class="q-title">Build a diagram from scratch</span></summary>
+    <p>A club wants to know whether giving a player a new long contract causes an improvement in his performance over the following season. Name at least four variables you would put in the diagram, draw the arrows in words, identify one back-door path and one mediator, and state a minimal adjustment set for the total effect.</p>
+  </details>
+
+  <section class="answers">
+    <h2>Answers</h2>
+    <p class="answer-note">Read these only after writing your own answers. Where an answer says "a good answer includes", treat the listed points as the marking scheme rather than as the only wording that works.</p>
+
+    <details class="answer-reveal">
+      <summary>Show all answers</summary>
+      <section class="answer">
+        <span class="marks">Answer 1</span>
+        <h3>Sort a control list</h3>
+      <ol>
+        <li>Confounder. Wage bill proxies squad strength, which affects both the board's decision and future points, and it is fixed before treatment.</li>
+        <li>Confounder, and the most important one. Recent form causes the dismissal and predicts future points directly.</li>
+        <li>Mediator. Formation is chosen after dismissal and carries part of the effect, so adjusting for it removes part of the total effect you are trying to estimate.</li>
+        <li>Collider. It is a common effect of two variables, so conditioning on it can induce an association between dismissal rumours and player unrest that did not exist.</li>
+        <li>Irrelevant, and potentially harmful. Referee strictness in a later match is not a cause of the matchweek-12 decision, so it opens no back-door path; adjusting for it adds noise and, if it is influenced by the club's post-dismissal conduct, becomes a post-treatment variable.</li>
+        <li>Confounder. The injury list affects both the board's decision and the points available in the next five matches, and it is measured before time zero.</li>
+      </ol>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 2</span>
+        <h3>Trace the path</h3>
+      <p>The path is: dismissal, back along the arrow from squad strength to dismissal, then forward along the arrow from squad strength to future points. In the usual notation, dismissal is caused by squad strength, and squad strength causes future points.</p>
+      <p>Adjusting for squad strength blocks it, because the path is a fork with squad strength at the junction and conditioning on the junction of a fork cuts the flow of association through it.</p>
+      <p>Blocking means that within a stratum of squad strength, the remaining association between dismissal and future points no longer contains the part generated by strong clubs being both less likely to dismiss and more likely to earn points. If every back-door path is blocked and no post-treatment variable has been conditioned on, what remains is the causal effect, given the diagram is right.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 3</span>
+        <h3>Make the diagram wrong on purpose</h3>
+      <p>An open back-door path remains through board impatience, so conditional exchangeability fails and the estimate is confounded. Impatient boards may also interfere in transfers, brief against players or change targets, so the arrow to future points is plausible.</p>
+      <p>The data alone cannot detect it. The adjustment set looks complete relative to the analyst's diagram, and the model will fit as well as it would if the diagram were correct. Nothing in the observed distribution flags a missing unmeasured common cause. This is the central limitation of diagram-based identification: the diagram encodes assumptions that the data do not test.</p>
+      <p>What the analyst can do is a sensitivity analysis, stating how strong the impatience-dismissal and impatience-points relationships would need to be to overturn the finding, and seek a proxy or a design that does not rely on measuring it, which is what Lessons 7 to 11 provide.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 4</span>
+        <h3>Explain a collider concretely</h3>
+      <p>Restricting the sample to television matches is conditioning on the variable "selected for television", which sits at the head of two arrows, one from team quality and one from tactical matchup. That makes it a collider on the path between the two causes.</p>
+      <p>Conditioning on a collider induces an association between its causes within the selected sample. Among televised matches, if two ordinary teams appear, it is likely because the tactical matchup was appealing, and if the matchup is unremarkable, it is likely because the teams are strong. So within the sample, team quality and tactical matchup become negatively associated even if they are independent in the full fixture list.</p>
+      <p>Because both quality and matchup relate to formation and to goal difference, the induced association contaminates the formation estimate. Nothing about the restriction looks like adjustment, which is why selection effects of this kind are easy to miss: sample selection is conditioning.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 5</span>
+        <h3>Choose between two valid sets</h3>
+      <p>First, positivity and overlap. Each extra covariate thins the region where both treatment and control observations exist, so a large set can leave few or no comparable untreated clubs for some treated profiles, which forces extrapolation.</p>
+      <p>Second, estimation noise and specification risk. More covariates mean more parameters, more chance of misspecifying a functional form, and wider intervals for no gain in bias reduction. Several of Set B's variables are also plausibly downstream of squad strength, so they risk being partly post-treatment or collider-like rather than merely redundant.</p>
+      <p>The circumstance in which adding an unnecessary variable helps is precision: a variable that strongly predicts the outcome but not the treatment is not needed to block any path, but including it reduces residual variance and narrows the interval. The variable to avoid is the opposite case, one that predicts treatment strongly and the outcome weakly, which worsens overlap and can amplify any remaining bias.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 6</span>
+        <h3>Diagnose the estimand shift</h3>
+      <p>By conditioning on post-treatment tactical style, the study has removed the part of the dismissal effect that runs through changing how the team plays. What remains is closer to a direct effect of dismissal not mediated by tactical change, rather than the total effect, and because tactical style is also affected by other post-treatment factors, the conditioning can additionally open collider paths.</p>
+      <p>It would be the right quantity if the question were specifically about the non-tactical channel, for example whether the psychological jolt of a new voice matters once the playing approach is held fixed. That is a mediation question, and Lesson 16 shows that it needs its own assumptions rather than a control variable.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 7</span>
+        <h3>Build a diagram from scratch</h3>
+      <p>A reasonable set of variables: performance in the season before the offer, the player's age, interest from other clubs, the club's financial position, the new contract itself, minutes played in the following season, and performance in the following season.</p>
+      <p>Arrows: prior performance causes both the contract offer and later performance. Age causes prior performance, the offer and later performance. Outside interest causes the offer and, plausibly, later performance through unsettlement. The club's finances cause the offer. The contract causes minutes played, because a well paid player tends to be selected, and minutes cause later performance.</p>
+      <p>A back-door path: contract, back to prior performance, forward to later performance. A mediator: minutes played.</p>
+      <p>A minimal adjustment set for the total effect is prior performance, age and outside interest, subject to the club's financial position not affecting later performance through any other route. Minutes played must be left out, since adjusting for it would remove the selection channel that is part of the effect.</p>
+      <p class="answer-note">There is no single correct diagram here. Mark your answer on whether every arrow you drew is defensible as a causal claim, whether you avoided conditioning on anything after the contract, and whether you can say aloud what would make your diagram wrong.</p>
+      </section>
+    </details>
+  </section>
+
+  <p class="citation"><strong>Related reading.</strong> Hernan and Robins, <em>What If</em>, Chapters 6 and 7; Ruiz de Villa, <em>Causal Inference for Data Science</em>, Chapters 3 and 7. The dismissal diagram is a constructed teaching example.</p>
+  <p>If your answer and the suggested answer disagree and you cannot see why, ask your teaching agent to work through that question with you rather than assuming the sheet is right.</p>
+  <nav class="lesson-nav"><a href="0002-cluster-randomisation-and-itt.html">Previous sheet: Cluster randomisation and intention to treat</a><a href="0004-emulate-a-target-trial.html">Next sheet: Emulate a target trial</a></nav>
+</main>
+</body>
+</html>

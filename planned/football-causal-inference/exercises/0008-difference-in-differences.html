@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Exercise sheet 8: Difference in differences</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<header class="topbar"><div><a href="../index.html">Course index</a><span>Exercise sheet 8 of 17</span></div></header>
+<main>
+  <p class="eyebrow">Exercise sheet</p>
+  <h1>Difference in differences</h1>
+  <p class="lead">7 questions drawn from <a href="../lessons/0008-difference-in-differences.html">Lesson 8</a>. Forming the contrast, defending parallel trends and spotting concurrent shocks.</p>
+  <div class="lesson-meta"><span>30 minutes</span><span>7 questions</span><span>Answers at the end</span></div>
+
+  <section class="sheet-intro">
+    <h2>How to use this sheet</h2>
+    <p>Work through the questions in order and write your answers down before reading any part of the answer section. Give yourself about thirty minutes in total. If one question runs long, write what you have, mark it and move on, because the answer section explains the reasoning in full.</p>
+    <p>Most questions ask for a short written answer rather than a number. The aim is a defensible statement, so a sentence or two of reasoning is worth more than a single word.</p>
+    <p>The questions are collapsed so that you can take them one at a time. Open one, answer it, then open the next. The answers are held behind a single button at the foot of the page, so nothing is revealed until you choose to reveal it.</p>
+  </section>
+
+  <details class="question">
+    <summary><span class="marks">Question 1</span><span class="q-title">Compute two estimates</span></summary>
+    <p>(a) Home yellow cards fall from 2.4 to 2.0 in treated matches and from 2.2 to 2.1 in comparison matches. Compute the difference-in-differences estimate.</p>
+    <p>(b) Home win probability falls from 0.46 to 0.38 in closed-door leagues and rises from 0.44 to 0.45 in leagues that kept crowds. Compute the estimate and write one sentence interpreting it in the units of the outcome.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 2</span><span class="q-title">State the assumption exactly</span></summary>
+    <p>Write the parallel-trends assumption for the closed-door study as a statement about a potential outcome, not about observed data. Then explain why a table showing that the two groups had similar home-advantage levels before the pandemic is not evidence for it.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 3</span><span class="q-title">Find the concurrent shock</span></summary>
+    <p>Name three changes that could plausibly have affected the closed-door leagues differently from the comparison leagues during the same window. For each, state whether it biases the home-advantage estimate upwards or downwards and why the sign is or is not predictable.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 4</span><span class="q-title">Read a pre-trend plot</span></summary>
+    <p>An analyst reports pre-period differences between treated and comparison groups of -0.02, 0.01, -0.03 and 0.02 across four pre-periods, none individually significant, and concludes that parallel trends holds. Give two reasons this conclusion is too strong, and describe what additional evidence would strengthen the design.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 5</span><span class="q-title">Detect composition change</span></summary>
+    <p>Suppose that during the closed-door period, leagues also rearranged fixtures so that a higher share of matches involved mid-table clubs with nothing to play for. Explain how this threatens the design even if parallel trends holds for any fixed set of matches, and describe how you would check it.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 6</span><span class="q-title">Get the standard errors right</span></summary>
+    <p>The closed-door study uses match-level observations from five countries over ten seasons, with treatment assigned at the league-period level. An analyst clusters standard errors at match level. Explain what is wrong, say what the correct level is, and name the difficulty that arises from that choice.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 7</span><span class="q-title">Design one yourself</span></summary>
+    <p>In 2023 one national league introduced a mandatory winter break of two weeks while neighbouring leagues did not. You want the effect on player injuries in the second half of the season. Specify the treated and comparison groups, the pre and post periods, the outcome, the main threat to parallel trends, and one placebo test.</p>
+  </details>
+
+  <section class="answers">
+    <h2>Answers</h2>
+    <p class="answer-note">Read these only after writing your own answers. Where an answer says "a good answer includes", treat the listed points as the marking scheme rather than as the only wording that works.</p>
+
+    <details class="answer-reveal">
+      <summary>Show all answers</summary>
+      <section class="answer">
+        <span class="marks">Answer 1</span>
+        <h3>Compute two estimates</h3>
+      <p>(a) The treated change is -0.4. The comparison change is -0.1. The estimate is -0.4 minus -0.1, which is -0.3 yellow cards per home team.</p>
+      <p>(b) The treated change is -0.08. The comparison change is +0.01. The estimate is -0.08 minus 0.01, which is -0.09. Playing behind closed doors reduced the home team's probability of winning by about nine percentage points relative to what the comparison leagues' contemporaneous change implies it would otherwise have been.</p>
+      <p>The phrase "relative to the comparison group's change" is doing real work in that sentence and should not be dropped.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 2</span>
+        <h3>State the assumption exactly</h3>
+      <p>The assumption is that, had the closed-door leagues not been treated, the average change in their untreated potential outcome from the pre-period to the post-period would have equalled the average change actually observed in the comparison leagues. It is a claim about the treated group's counterfactual path, which nobody observes.</p>
+      <p>Similar levels before treatment are neither necessary nor sufficient. Difference in differences explicitly permits the two groups to sit at different levels; that is what taking differences removes. What it does not permit is different trends. Two groups can be at identical levels for years and then diverge, and two groups at very different levels can move perfectly in parallel. The relevant table shows changes over several pre-periods, not a single level comparison.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 3</span>
+        <h3>Find the concurrent shock</h3>
+      <p>First, a change in the permitted number of substitutions adopted by some leagues and not others. More substitutions favour deeper squads and change late-match fatigue; the sign for home advantage is not predictable without knowing whether home or away teams benefit more, so this one is genuinely ambiguous.</p>
+      <p>Second, fixture congestion from compressed restarts, which differed by league. Congestion plausibly hurts the team with less squad depth and shortens preparation. Because travel burdens fall mainly on away teams, congestion could partly offset the loss of crowd advantage, biasing the estimated closed-door effect towards zero.</p>
+      <p>Third, differences in whether matches moved to neutral venues. A neutral venue removes home advantage entirely, so if treated leagues used more neutral venues, the estimate overstates the effect of crowd absence specifically, since it bundles venue change with crowd removal.</p>
+      <p>The general point is that the sign is predictable only when the mechanism is understood well enough to say which side of the fixture it acts on. Simply naming a shock without a direction argument is not a complete answer.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 4</span>
+        <h3>Read a pre-trend plot</h3>
+      <p>First, the test may simply lack power. Four noisy pre-period differences with wide intervals can be consistent with a substantial trend difference as well as with none, and failing to reject a null is not evidence for it. The relevant question is what magnitude of pre-trend the data could have detected.</p>
+      <p>Second, parallel pre-trends do not imply parallel counterfactual post-trends. The threat is a shock that arrives at the same time as treatment, and by construction no pre-period can reveal it. A pandemic that closes stadiums also changes travel, health and scheduling, and none of that is visible before it happens.</p>
+      <p>Stronger evidence: a subject-matter argument that the treated and comparison leagues faced comparable non-crowd changes; a triple difference using an outcome that should not respond to crowds; multiple comparison groups with results that agree; a placebo outcome; and, where treatment varied in timing across leagues, an event-study path that shows the effect turning on precisely when crowds went.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 5</span>
+        <h3>Detect composition change</h3>
+      <p>Difference in differences compares group averages across periods, and an average can move because the units changed rather than because the outcome changed. If the mix of matches shifts towards fixtures with lower stakes, and stakes affect home advantage, the treated group's post-period average reflects a different population from its pre-period average. Parallel trends can hold for every individual match type while the aggregate comparison is still wrong.</p>
+      <p>To check it, tabulate the observable composition of matches by period and group: distribution of home and away league positions, stakes measures such as distance from relegation or European places, share of derbies, share of midweek fixtures, and share of matches involving each club. If the composition shifts, reweight the post-period to the pre-period composition, or move to a within-fixture design that compares the same pairing across seasons, or add match-level covariates and report both adjusted and unadjusted estimates.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 6</span>
+        <h3>Get the standard errors right</h3>
+      <p>Clustering at match level treats every match as an independent draw, but treatment does not vary across matches within a league-period. Matches within a league share the same policy, the same schedule and the same shocks, so their errors are correlated, and the reported standard error will be far too small.</p>
+      <p>The correct level is the level of treatment assignment, which is the league, or league-season depending on how treatment is defined. Serial correlation across periods within a league is a further reason to cluster on the league rather than on the league-period.</p>
+      <p>The difficulty is that this leaves five clusters. Cluster-robust standard errors are unreliable with so few, and the usual asymptotic approximation fails. Responses include wild cluster bootstrap with the appropriate small-sample corrections, randomisation inference over the possible assignments, or aggregating the data to league-period means and being explicit that inference rests on five units. What is not acceptable is choosing match-level clustering because it gives a narrow interval.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 7</span>
+        <h3>Design one yourself</h3>
+      <p>Treated group: clubs in the league that introduced the break. Comparison group: clubs in neighbouring leagues of similar standard that did not, ideally chosen for similar calendars, climates and squad sizes. Pre-period: several seasons before 2023, using more than one so a trend is visible. Post-period: the seasons from 2023 onwards, with the outcome measured over the second half of each season only, since that is the window the break should affect.</p>
+      <p>Outcome: time-loss injuries per 1,000 player-hours of exposure in the second half of the season, which normalises for differences in minutes played.</p>
+      <p>Main threat: a league that adopts a winter break is likely to have done so in response to something, such as a rise in injuries or a change in fixture congestion, which makes the adoption endogenous and means the treated league's trend was already diverging. A related threat is that the break shifts fixtures elsewhere in the calendar, so congestion changes in the treated league for reasons other than rest.</p>
+      <p>Placebo test: run the same design on an outcome that the break should not affect, such as disciplinary cards or attendance, or run it on the first half of the season, which precedes the break each year. A significant estimate there indicates that the design is picking up general league differences rather than the break.</p>
+      </section>
+    </details>
+  </section>
+
+  <p class="citation"><strong>Related reading.</strong> <a href="https://doi.org/10.1016/j.joep.2020.102344">Scoppa (2021)</a>; Angrist and Pischke, <em>Mastering Metrics</em>, Chapter 5; Hayashi, Chapter 18.</p>
+  <p>If your answer and the suggested answer disagree and you cannot see why, ask your teaching agent to work through that question with you rather than assuming the sheet is right.</p>
+  <nav class="lesson-nav"><a href="0007-fixed-effects-and-the-ashenfelter-dip.html">Previous sheet: Fixed effects and the Ashenfelter dip</a><a href="0009-event-studies-and-staggered-timing.html">Next sheet: Event studies and staggered timing</a></nav>
+</main>
+</body>
+</html>

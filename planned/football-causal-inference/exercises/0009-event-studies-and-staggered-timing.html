@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Exercise sheet 9: Event studies and staggered timing</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<header class="topbar"><div><a href="../index.html">Course index</a><span>Exercise sheet 9 of 17</span></div></header>
+<main>
+  <p class="eyebrow">Exercise sheet</p>
+  <h1>Event studies and staggered timing</h1>
+  <p class="lead">7 questions drawn from <a href="../lessons/0009-event-studies-and-staggered-timing.html">Lesson 9</a>. Reading leads and lags, and why already-treated units make poor controls.</p>
+  <div class="lesson-meta"><span>30 minutes</span><span>7 questions</span><span>Answers at the end</span></div>
+
+  <section class="sheet-intro">
+    <h2>How to use this sheet</h2>
+    <p>Work through the questions in order and write your answers down before reading any part of the answer section. Give yourself about thirty minutes in total. If one question runs long, write what you have, mark it and move on, because the answer section explains the reasoning in full.</p>
+    <p>Most questions ask for a short written answer rather than a number. The aim is a defensible statement, so a sentence or two of reasoning is worth more than a single word.</p>
+    <p>The questions are collapsed so that you can take them one at a time. Open one, answer it, then open the next. The answers are held behind a single button at the foot of the page, so nothing is revealed until you choose to reveal it.</p>
+  </section>
+
+  <details class="question">
+    <summary><span class="marks">Question 1</span><span class="q-title">Read a coefficient path</span></summary>
+    <p>With week -1 as the reference, an event study reports: week -4, 0.02; week -3, 0.01; week -2, 0.03; week 0, 0.11; week +1, 0.26; week +2, 0.09; week +3, 0.02. Describe what this path says about the effect of hosting, state what the reference period means for how every number should be read, and name the one feature you would want an interval around before believing it.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 2</span><span class="q-title">Diagnose a drifting lead</span></summary>
+    <p>Leads rise steadily: -0.01 at week -4, 0.04 at week -3, 0.09 at week -2, with week -1 omitted, and lags continue rising after treatment. Explain the two distinct problems this pattern could indicate, say why the post-treatment coefficients cannot be trusted, and give one design response to each problem.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 3</span><span class="q-title">Rule out a control</span></summary>
+    <p>District A hosts in week 4, District B hosts in week 8, and the effect of hosting lasts about six weeks. State whether A can serve as a comparison unit for B in week 7, and in week 12. Explain the general rule, and explain why the contamination biases the estimate in a particular direction when effects are positive and persistent.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 4</span><span class="q-title">Explain the negative weights</span></summary>
+    <p>In two or three sentences, explain why a conventional two-way fixed-effects regression can return an aggregate coefficient that lies outside the range of every cohort-specific effect, and name what an analyst should report instead.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 5</span><span class="q-title">Choose an aggregation</span></summary>
+    <p>Cohort-specific effects at event time +1 are: cohort A, 0.30, based on 20 districts; cohort B, 0.10, based on 15 districts; cohort C, -0.05, based on 6 districts. Compute a sample-size-weighted average. Then give one reason a reader might prefer to see the three numbers rather than the average, and one situation in which the average is genuinely the quantity of interest.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 6</span><span class="q-title">Handle a never-treated group</span></summary>
+    <p>Twelve districts never hosted a match at any point. Explain the advantage of using them as the comparison group and the risk. Then say what you would check before relying on them.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 7</span><span class="q-title">Specify a study</span></summary>
+    <p>Twenty clubs installed a new pitch surface, at different dates over four seasons, and you want the effect on muscle injuries. Specify the event-time window you would estimate, the reference period, the comparison group, and one anticipation concern specific to this setting.</p>
+  </details>
+
+  <section class="answers">
+    <h2>Answers</h2>
+    <p class="answer-note">Read these only after writing your own answers. Where an answer says "a good answer includes", treat the listed points as the marking scheme rather than as the only wording that works.</p>
+
+    <details class="answer-reveal">
+      <summary>Show all answers</summary>
+      <section class="answer">
+        <span class="marks">Answer 1</span>
+        <h3>Read a coefficient path</h3>
+      <p>The leads are small and show no drift, which is compatible with the treated and comparison districts moving together before hosting. The effect appears in the hosting week, peaks one week later at 0.26, and decays to near nothing by week +3. That timing is biologically plausible for an infection outcome, which strengthens the reading.</p>
+      <p>Every coefficient is a difference relative to week -1, not an absolute level. If week -1 happened to be unusual, the whole path shifts. This is why the choice of reference period is a substantive decision and why some analysts prefer to average several pre-periods as the baseline.</p>
+      <p>The feature to see an interval around is the week +1 peak. A single large coefficient in a path of small ones is exactly the pattern that noise produces, and the persuasiveness of the whole path depends on whether that peak is estimated precisely enough to be distinguished from the neighbouring weeks.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 2</span>
+        <h3>Diagnose a drifting lead</h3>
+      <p>The first possibility is anticipation: units changed behaviour before treatment because they knew it was coming. Districts expecting to host matches may have relaxed restrictions or seen movement increase in advance. The second is a pre-existing differential trend, meaning the treated and comparison groups were already separating for reasons unrelated to treatment, so the design's core assumption fails.</p>
+      <p>Either way, the post-treatment coefficients cannot be trusted, because they are measured relative to week -1 and would have continued rising even with no treatment. The lags extrapolate the pre-existing slope, and there is no way to tell from the path itself how much of the post-treatment rise is treatment.</p>
+      <p>For anticipation, move time zero earlier to the point at which units first learn treatment is coming, so the anticipation window sits inside the post-period rather than contaminating the leads. For a differential trend, the response is a better comparison group, matched on pre-treatment trajectory, or a design that does not rely on the parallel path, such as a discontinuity or an instrument. Fitting unit-specific linear trends is a third option, but it is fragile, since it can absorb a genuine treatment effect that ramps up.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 3</span>
+        <h3>Rule out a control</h3>
+      <p>In week 7, no. A is three weeks past its own treatment and, with a six-week effect, is still affected, so it is not an untreated comparison. In week 12, A is eight weeks past treatment and the effect has expired, so it is admissible again, provided nothing else has changed and the effect really does end.</p>
+      <p>The general rule is that a valid comparison unit must be untreated at the moment it is used, which in practice means not yet treated, or never treated.</p>
+      <p>When effects are positive and persistent, the already-treated comparison has an elevated outcome. Subtracting an elevated comparison from the treated unit's outcome makes the estimated effect for the later cohort too small, and if the contamination is severe enough the aggregate coefficient can fall below every underlying cohort effect. This is the mechanism behind the negative weighting problem in two-way fixed effects.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 4</span>
+        <h3>Explain the negative weights</h3>
+      <p>The two-way fixed-effects coefficient is a weighted average over many two-by-two comparisons, and some of those comparisons use early-treated units as controls for late-treated ones. When treatment effects change over time, those comparisons subtract a treated outcome rather than an untreated one, so they enter the average with negative weights, and a negatively weighted average can lie outside the range of the quantities being averaged.</p>
+      <p>The analyst should estimate effects separately for each treatment cohort at each calendar period, using only not-yet-treated or never-treated units as controls, and then aggregate them with stated, transparent weights, reporting both the aggregate and the cohort paths so the reader can see what is being averaged.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 5</span>
+        <h3>Choose an aggregation</h3>
+      <p>The weighted average is (20 x 0.30 + 15 x 0.10 + 6 x -0.05) divided by 41, which is (6.0 + 1.5 - 0.3)/41 = 7.2/41, about 0.176.</p>
+      <p>A reader might prefer the three numbers because they are not estimating the same thing. Cohorts treated at different calendar times faced different conditions, and the spread from 0.30 to -0.05 suggests the effect depends on when hosting occurred, perhaps on the prevailing infection level. An average conceals that dependence and invites the reader to apply 0.176 to a period where it never held.</p>
+      <p>The average is the right quantity when the question is about the total burden actually produced across the whole treated population, for example when calculating how many additional cases hosting caused in aggregate. Then the sample-size weighting matches the policy question, and the heterogeneity, while worth reporting, is not what is being asked.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 6</span>
+        <h3>Handle a never-treated group</h3>
+      <p>The advantage is clean identification: never-treated districts are untreated at every calendar period, so every comparison is between a treated unit and a genuinely untreated one, and the negative weighting problem disappears. They also make the event-time path easy to interpret, because the same comparison group supports every lag.</p>
+      <p>The risk is selection. Districts that never hosted a professional match are systematically different: smaller, more rural, without a professional club, and quite likely different in population density and mobility, which are direct causes of the outcome. Their trend need not be the treated districts' counterfactual trend.</p>
+      <p>Before relying on them I would compare pre-treatment levels and, more importantly, pre-treatment trajectories against the treated districts; check whether they are comparable on the covariates that plausibly drive the outcome; and run the analysis both ways, once with never-treated and once with not-yet-treated controls. If the two agree, confidence rises. If they disagree, the disagreement is the finding, and it should be reported rather than resolved by choosing the more convenient one.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 7</span>
+        <h3>Specify a study</h3>
+      <p>Window: I would estimate roughly four to six periods either side, with periods defined in months or half-seasons rather than matches, so that a slow-developing injury outcome has room to appear. A wide enough post-window matters because surface effects may accumulate; a wide enough pre-window is needed to see a trend rather than a point.</p>
+      <p>Reference period: the period immediately before installation, or better, an average of two or three pre-periods, since a single reference period on a noisy injury count is unstable. State the choice explicitly.</p>
+      <p>Comparison group: clubs not yet resurfaced at each calendar period, plus any that never resurfaced during the window, with cohort-specific estimates aggregated transparently rather than a single two-way fixed-effects coefficient.</p>
+      <p>Anticipation concern: clubs usually decide to resurface because the existing pitch has deteriorated, and a deteriorating pitch plausibly raises injuries in the months before installation. That produces rising leads which are not anticipation in the behavioural sense but reverse causation from the outcome to the treatment date, and it is the single most serious threat here. A design response is to define time zero at the decision or contract date rather than at installation, and to report the leads prominently.</p>
+      </section>
+    </details>
+  </section>
+
+  <p class="citation"><strong>Related reading.</strong> <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8411384/">Breidenbach and Mitze (2022)</a>; Wooldridge, Chapters 13 and 14; Hayashi, Chapters 17 and 18.</p>
+  <p>If your answer and the suggested answer disagree and you cannot see why, ask your teaching agent to work through that question with you rather than assuming the sheet is right.</p>
+  <nav class="lesson-nav"><a href="0008-difference-in-differences.html">Previous sheet: Difference in differences</a><a href="0010-regression-discontinuity.html">Next sheet: Regression discontinuity</a></nav>
+</main>
+</body>
+</html>

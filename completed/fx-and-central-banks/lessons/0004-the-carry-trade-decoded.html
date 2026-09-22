@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 4 · The Carry Trade, Decoded</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+<link rel="stylesheet" href="../assets/quiz.css">
+</head>
+<body>
+<main class="page">
+
+<header class="masthead">
+  <p class="eyebrow">Lesson 4 of 4 · FX &amp; Central Banks</p>
+  <h1>The carry trade, and why buying yen unwinds it</h1>
+  <p class="standfirst">The name for the shape you built in Lesson 3, the reason rising rates threaten it, and the two-step mechanism by which an intervention quietly shrinks it.</p>
+  <p class="meta">≈8 minutes · Capstone. Then read <a href="../reference/article-decoded.html">the annotated article</a>.</p>
+</header>
+
+<h2>The trade</h2>
+
+<p>A <em class="term">carry trade</em> borrows in a currency where money is cheap — the <strong>funding currency</strong> — and holds assets in a currency where it earns more. Your profit is the interest gap, called the <em class="term">carry</em>, plus or minus whatever the exchange rate does to you in the meantime. The yen has been the world's favourite funding currency for decades for the obvious reason: Japanese rates sat at or near zero for a generation.<a href="#s1">¹</a></p>
+
+<p>Theory says this should not work. <em class="term">Uncovered interest parity</em> holds that if yen deposits pay 0% and dollar deposits pay 4%, the dollar must be expected to fall about 4% against the yen — otherwise everyone would pile in, and nobody would hold yen at all. The interest gain and the currency loss should cancel exactly.</p>
+
+<p class="sidenote">Empirically UIP fails, and has failed for so long and so consistently that its failure is one of the standard puzzles of international finance. That failure <em>is</em> the carry trade's return. Reasonable people disagree about whether the return is compensation for a real risk — carry trades lose badly and all at once when funding currencies snap back — or a genuine anomaly.<a href="#s2">²</a></p>
+
+<p>The risk lives in that second term. Carry positions earn a thin, steady interest gain and occasionally suffer a violent currency loss. A funding currency that strengthens sharply can erase a year of carry in days. Hence the article's word: <strong>dangerous</strong>.</p>
+
+<h2>The world's biggest carry trader is a government</h2>
+
+<p>Now put Lesson 3's consolidated balance sheet next to that definition. Japan's state borrows yen short-term at near zero and holds unhedged foreign assets worth over half of GDP, yielding far more. That is not <em>like</em> a carry trade. It <strong>is</strong> one — and, on Chien, Cole and Lustig's reckoning, the largest on earth.<a href="#s3">³</a></p>
+
+<blockquote class="article">
+  <p>The BoJ has been no less successful a carry trader for being an accidental one. The aim of its currency interventions over the past 25 years has not been to make money. It has instead sought to stabilise the yen and undo the exchange rate's wildest misalignments.</p>
+</blockquote>
+
+<p>"Accidental" is the important word, and it ties the arc together. Each individual decision was defensible on its own terms — Lesson 1's politics of a too-strong yen, executed through Lesson 2's interventions, financed through Lesson 3's balance sheet. Nobody set out to build the world's largest leveraged currency position. It accreted, one reasonable policy at a time.</p>
+
+<h2>Why it was safe, and why it stopped being safe</h2>
+
+<p>A carry trade is safe when you are confident the funding rate stays low. For thirty years Japan fought deflation, so everyone knew the BoJ would keep rates at zero. The trade was, in effect, self-guaranteed by the very condition that made it necessary.</p>
+
+<p>Then Japan got what it had spent three decades asking for. Underlying inflation is now near the BoJ's 2% target, several rate-setters fear an overshoot, and forecasters expect <strong>three rate rises by July 2027</strong>. For the world's largest carry trader, its own tightening is the threat.</p>
+
+<div class="callout">
+  <span class="label">The number that matters</span>
+  <p>Rate rises would raise the Japanese public sector's borrowing costs by about <strong>0.75% of GDP</strong>, per Lustig's figures — quickly, "with more to come when longer-term liabilities are rolled over." Lesson 3 explains both halves. The <em>quick</em> part is the floating leg: bank reserves reprice overnight. The <em>more to come</em> is the fixed leg maturing and being reissued at the new rate.</p>
+</div>
+
+<div class="quiz" data-answer="d">
+  <span class="label">Check yourself</span>
+  <p class="q">Why do BoJ rate rises hurt the Japanese state more than they would hurt a comparable state?</p>
+  <div class="opts">
+    <button class="opt">Its debt is owed to foreign creditors who can demand repayment in dollars.</button>
+    <button class="opt">Its debt is owed at long maturities that were fixed when rates were low.</button>
+    <button class="opt">Its assets are held in yen, so a stronger yen reduces what they are worth.</button>
+    <button class="opt">Its debt is owed at overnight rates, so the cost reprices almost immediately.</button>
+  </div>
+  <div class="answer-reveal">
+    <p>Consolidation is what makes this true. Because the central bank absorbed so many long-dated JGBs and paid for them with reserves, the state's effective funding is overnight and floating — so a policy-rate rise hits the public finances at once rather than over years. Option B describes the situation the state <em>appears</em> to be in before you consolidate, which is exactly the illusion Lesson 3 dismantles.</p>
+  </div>
+</div>
+
+<h2>The mechanics of a sterilised intervention</h2>
+
+<p>Now the article's most technical passage. Follow it in two steps, tracking bank reserves — the yen the state owes to commercial banks.</p>
+
+<figure>
+<svg viewBox="0 0 640 300" role="img" aria-label="Two-step diagram: selling dollars drains bank reserves, then buying finance ministry bills restores them.">
+  <text x="20" y="22" class="dg-label-b">STEP 1 · the intervention</text>
+  <rect x="20" y="34" width="150" height="62" class="dg-box"/>
+  <text x="95" y="58" class="dg-label-b" text-anchor="middle">Japanese state</text>
+  <text x="95" y="76" class="dg-label" text-anchor="middle">sells $95bn</text>
+  <rect x="330" y="34" width="150" height="62" class="dg-box"/>
+  <text x="405" y="58" class="dg-label-b" text-anchor="middle">Commercial banks</text>
+  <text x="405" y="76" class="dg-label" text-anchor="middle">pay ¥15.2trn</text>
+  <line x1="172" y1="55" x2="326" y2="55" class="dg-stroke" stroke-width="1.3"/>
+  <path d="M 320 50 L 330 55 L 320 60 Z" class="dg-ink"/>
+  <text x="249" y="46" class="dg-label" text-anchor="middle">dollars →</text>
+  <line x1="326" y1="80" x2="174" y2="80" class="dg-stroke" stroke-width="1.3"/>
+  <path d="M 180 75 L 170 80 L 180 85 Z" class="dg-ink"/>
+  <text x="249" y="97" class="dg-label" text-anchor="middle">← yen, drawn from their BoJ accounts</text>
+  <text x="500" y="58" class="dg-label-b" fill="#8c2f16">reserves</text>
+  <text x="500" y="76" class="dg-label-b" fill="#8c2f16">FALL ▼</text>
+
+  <line x1="20" y1="126" x2="620" y2="126" class="dg-rule" stroke-width="1" stroke-dasharray="3 3"/>
+
+  <text x="20" y="160" class="dg-label-b">STEP 2 · the sterilisation</text>
+  <rect x="20" y="172" width="150" height="62" class="dg-box"/>
+  <text x="95" y="196" class="dg-label-b" text-anchor="middle">Bank of Japan</text>
+  <text x="95" y="214" class="dg-label" text-anchor="middle">buys the bills back</text>
+  <rect x="330" y="172" width="150" height="62" class="dg-box"/>
+  <text x="405" y="196" class="dg-label-b" text-anchor="middle">Commercial banks</text>
+  <text x="405" y="214" class="dg-label" text-anchor="middle">hand over MoF bills</text>
+  <line x1="326" y1="193" x2="174" y2="193" class="dg-stroke" stroke-width="1.3"/>
+  <path d="M 180 188 L 170 193 L 180 198 Z" class="dg-ink"/>
+  <text x="249" y="184" class="dg-label" text-anchor="middle">← government bills</text>
+  <line x1="172" y1="218" x2="326" y2="218" class="dg-stroke" stroke-width="1.3"/>
+  <path d="M 320 213 L 330 218 L 320 223 Z" class="dg-ink"/>
+  <text x="249" y="235" class="dg-label" text-anchor="middle">yen credited back to their accounts →</text>
+  <text x="500" y="196" class="dg-label-b" fill="#2f6b40">reserves</text>
+  <text x="500" y="214" class="dg-label-b" fill="#2f6b40">RESTORED ▲</text>
+
+  <text x="320" y="272" class="dg-label-b" text-anchor="middle">Net: the money supply is untouched — but ¥15.2trn of government bills</text>
+  <text x="320" y="288" class="dg-label-b" text-anchor="middle">is no longer held outside the state, and $95bn of assets is gone.</text>
+</svg>
+<figcaption>Step 1 is the currency trade. Step 2 exists only to undo step 1's accidental side-effect on the money supply. Left alone, selling dollars would drain yen out of the banking system and tighten monetary policy — which is not what anyone intended, and might contradict the interest rate the BoJ has publicly set.</figcaption>
+</figure>
+
+<p>That is what <em class="term">sterilised</em> means, and it is the general principle, not a Japanese quirk: <strong>an intervention is sterilised when the central bank offsets its monetary side-effect with a matching open-market operation, leaving only the currency trade behind.</strong><a href="#s4">⁴</a> The point is to separate two levers that would otherwise be welded together — the exchange rate and the domestic interest rate.</p>
+
+<h2>Where the liabilities actually go</h2>
+
+<p>Now the article's punchline, which is easy to misread. Sterilisation puts the banks' yen back. So has nothing happened? Track the <em>consolidated</em> state instead of the BoJ alone:</p>
+
+<div class="scroll-x">
+<table>
+  <thead><tr><th></th><th>Consolidated assets</th><th>Consolidated yen liabilities</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Step 1</strong><br>sell dollars</td><td class="num">−$95bn of FX reserves</td><td class="num">−¥15.2trn of bank reserves</td></tr>
+    <tr><td><strong>Step 2</strong><br>sterilise</td><td>unchanged</td><td class="num">+¥15.2trn reserves<br>−¥15.2trn bills held outside</td></tr>
+    <tr><td><strong>Net</strong></td><td class="num">−$95bn</td><td class="num">−¥15.2trn</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>Step 2 does not <em>cancel</em> step 1 — it <strong>swaps which liability</strong> the state owes. The reserves come back, but an equal quantity of finance-ministry bills leaves private hands and returns to the state, where it cancels. What survives across both steps is exactly the article's claim: fewer yen liabilities, fewer foreign assets. The carry trade got smaller at both ends.</p>
+
+<blockquote class="article">
+  <p>By selling dollars and purchasing yen, it is, in effect, buying back some of the IOUs it has issued. And because Japan's currency has yet to rally decisively, the BoJ can extinguish lots of yen liabilities for every dollar sold.</p>
+</blockquote>
+
+<p>That second sentence is the elegant bit, and Lesson 1 makes it obvious. At ¥160 to the dollar, each dollar you sell retires ¥160 of debt. At ¥100 it would retire only ¥100. <strong>A weak yen makes your dollars efficient at killing yen debt.</strong> So a government that expects to shrink this position anyway should do it while its own currency is cheap — which is why the article frames July's intervention as opportunistic pruning dressed as a currency defence. Both descriptions are true at once.</p>
+
+<div class="callout">
+  <span class="label">Keep the scale honest</span>
+  <p>$95bn would extinguish <strong>less than 1%</strong> of the public sector's interest-bearing liabilities. The article says so itself. This is a well-timed nibble, not a solution — and noticing that a writer has supplied the number that undercuts their own drama is a good sign you are reading a serious one.</p>
+</div>
+
+<div class="recall">
+  <span class="label">Retrieval practice · the whole arc</span>
+  <p class="prompt">The final exam, from memory. In five sentences: why is Japan's government a carry trader, why is that now risky, and how does buying yen at ¥160 help?</p>
+  <textarea placeholder="Everything from four lessons, in your own words. No scrolling."></textarea>
+  <div class="model-answer">
+    <p>Consolidating the treasury and the central bank, Japan's state owes yen at overnight floating rates — mostly bank reserves created to buy JGBs — while owning over half of GDP in unhedged, higher-yielding foreign assets. Borrow cheap in one currency, hold higher-yielding assets in another, unhedged: that is a carry trade, and it is the world's largest. It was safe while deflation guaranteed zero rates, but inflation has reached target and rate rises are expected, which would raise funding costs by roughly 0.75% of GDP almost immediately because the debt is floating. Selling dollars to buy yen shrinks both sides at once: foreign assets fall, and yen liabilities are extinguished. Doing it while the yen is weak retires the most yen debt per dollar spent — and crystallises a profit on dollars bought decades ago at half the price.</p>
+  </div>
+</div>
+
+<h2>Where to go next</h2>
+<p>You have the whole mechanism. Now use it: read <a href="../reference/article-decoded.html">the annotated article</a>, which walks the original sentence by sentence, and keep the <a href="../reference/cheatsheet.html">cheat sheet</a> and <a href="../reference/glossary.html">glossary</a> to hand for the next piece of macro journalism you open. The real test is not this article — it is the next one, unaided.</p>
+
+<div class="ask">
+  <strong>Ask your teacher.</strong> The open question this arc deliberately left alone: if sterilised intervention leaves both the money supply and interest rates unchanged, why should it move the exchange rate at all? There are two respectable answers — signalling and portfolio balance — and economists have argued about them since the 1960s. Say the word and that is the next lesson.
+</div>
+
+<div class="source-box">
+  <span class="label">Read one thing</span>
+  <ol>
+    <li id="s1"><a href="https://www.bis.org/publ/qtrpdf/r_qt2409y.htm">BIS Quarterly Review — <em>Sizing up carry trades in BIS statistics</em></a>, on how large yen-funded positions actually are and what the data can and cannot see.</li>
+    <li id="s2"><a href="https://www.frbsf.org/research-and-insights/publications/economic-letter/2006/11/interest-rates-carry-trades-and-exchange-rate-movements/">San Francisco Fed — <em>Interest Rates, Carry Trades, and Exchange Rate Movements</em></a>. <strong>Read this one</strong> if you read only one: four pages on uncovered interest parity, why it fails, and why that failure is the whole business.</li>
+    <li id="s3"><a href="https://www.nber.org/papers/w31850">Chien, Cole &amp; Lustig — <em>What About Japan?</em> (NBER WP 31850)</a>.</li>
+    <li id="s4"><a href="https://www.newyorkfed.org/aboutthefed/fedpoint/fed44.html">Federal Reserve Bank of New York — <em>U.S. Foreign Exchange Intervention</em></a>, on sterilisation as standard practice.</li>
+  </ol>
+</div>
+
+<nav class="lesson-nav">
+  <span><a href="0003-bonds-and-the-consolidated-state.html">← Lesson 3</a></span>
+  <span><a href="../index.html">Course index</a> · <a href="../reference/glossary.html">Glossary</a></span>
+  <span><a href="../reference/article-decoded.html">The annotated article →</a></span>
+</nav>
+
+</main>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

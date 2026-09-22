@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 8 · Planning and multi-step reasoning</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+<link rel="stylesheet" href="../assets/quiz.css">
+</head>
+<body>
+<main class="page">
+
+<header class="masthead">
+  <p class="eyebrow">Lesson 8 of 17 · Arc III · Self-improving AI agents</p>
+  <h1>Planning and multi-step reasoning</h1>
+  <p class="standfirst">Search over actions instead of over answers, plus the observation that most of a model's reasoning did not need to be sequential in the first place.</p>
+  <p class="meta">About 10 minutes · Lecture 5 · Where sampling becomes search</p>
+</header>
+
+<p>Everything so far treated a task as one shot, where you generate candidates and pick one. Real agent work is a trajectory, meaning a sequence of actions where each one changes what is possible next. Sampling k complete trajectories wastes an enormous amount, because they share prefixes and you get no way to abandon a bad path early.</p>
+
+<p>The move is to search the tree of actions rather than the set of answers.</p>
+
+<h2>LATS, which is Monte Carlo tree search with a language model</h2>
+
+<p>Language Agent Tree Search imports MCTS into agent work.<a href="#s1">¹</a> It cycles through six stages: <strong>selection, expansion, evaluation, simulation, backpropagation, and reflection</strong>.</p>
+
+<figure>
+<svg viewBox="0 0 660 260" role="img" aria-label="Tree search diagram: a root state expands into three candidate actions, each scored, the best expanded further, with value backpropagated up the tree.">
+  <circle cx="70" cy="130" r="18" class="dg-box"/>
+  <text x="70" y="135" class="dg-label-b" text-anchor="middle">s₀</text>
+
+  <g class="dg-rule" stroke-width="1.3" fill="none">
+    <path d="M 88 130 C 130 130 130 52 168 52"/>
+    <path d="M 88 130 C 130 130 130 130 168 130"/>
+    <path d="M 88 130 C 130 130 130 208 168 208"/>
+  </g>
+  <circle cx="186" cy="52" r="18" class="dg-box"/>
+  <circle cx="186" cy="130" r="18" class="dg-box"/>
+  <circle cx="186" cy="208" r="18" class="dg-box"/>
+  <text x="186" y="57" class="dg-label-b" text-anchor="middle">A</text>
+  <text x="186" y="135" class="dg-label-b" text-anchor="middle">B</text>
+  <text x="186" y="213" class="dg-label-b" text-anchor="middle">C</text>
+  <text x="186" y="26" class="dg-label" text-anchor="middle">0.8</text>
+  <text x="186" y="163" class="dg-label" text-anchor="middle">0.3</text>
+  <text x="186" y="241" class="dg-label" text-anchor="middle">0.2</text>
+
+  <g class="dg-rule" stroke-width="1.3" fill="none">
+    <path d="M 204 52 C 240 52 240 28 276 28"/>
+    <path d="M 204 52 C 240 52 240 78 276 78"/>
+  </g>
+  <circle cx="294" cy="28" r="16" class="dg-box"/>
+  <circle cx="294" cy="78" r="16" class="dg-box"/>
+
+  <line x1="310" y1="28" x2="360" y2="28" class="dg-rule" stroke-width="1.3"/>
+  <text x="370" y="33" class="dg-label-b dg-good" text-anchor="start" >✓ goal</text>
+  <line x1="310" y1="78" x2="360" y2="78" class="dg-rule" stroke-width="1.3"/>
+  <text x="370" y="83" class="dg-label-b dg-bad" text-anchor="start" >✕ dead end</text>
+
+  <path d="M 366 46 C 300 120 240 120 196 116" class="dg-stroke" stroke-width="1.6" fill="none" stroke-dasharray="5 4"/>
+  <polygon points="202,110 192,116 202,122" class="dg-ink"/>
+  <text x="300" y="152" class="dg-label-b" text-anchor="middle">backpropagate the outcome</text>
+  <text x="300" y="168" class="dg-label" text-anchor="middle">— every ancestor's value updates —</text>
+
+  <text x="470" y="128" class="dg-label-b" text-anchor="start">node value =</text>
+  <text x="470" y="146" class="dg-label" text-anchor="start">LLM judge score</text>
+  <text x="470" y="162" class="dg-label" text-anchor="start">+ self-consistency</text>
+  <text x="470" y="178" class="dg-label" text-anchor="start">(how often sampled)</text>
+  <text x="470" y="202" class="dg-label-b" text-anchor="start">selection = UCT</text>
+  <text x="470" y="218" class="dg-label" text-anchor="start">value + exploration bonus</text>
+  <text x="470" y="234" class="dg-label" text-anchor="start">for under-visited nodes</text>
+</svg>
+<figcaption>Each node is a state and each edge is an action actually executed in the environment, with its observation appended to context. Two details are worth stealing. The node value combines an LLM judge score with a self-consistency score, meaning how often that action was sampled. And after a trajectory ends, the model writes a reflection on why it succeeded or failed, which is carried into later expansions and contributes a large share of the gains.</figcaption>
+</figure>
+
+<p>The distinction from earlier verifier-guided search matters. A PRM from Lesson 4 scores reasoning steps, and LATS scores the outcomes of actions taken in the world. Selection uses UCT, which is the node's value plus a bonus for nodes visited rarely relative to their parent, and that is the standard machinery for balancing exploitation against exploration.</p>
+
+<p>Results were strong on multi-hop question answering and on web shopping, with no fine-tuning. Two limitations decide whether you can use it, and the lecture names both.</p>
+
+<ul>
+  <li><strong>Cost.</strong> Expansion, simulation, and backpropagation multiply the number of calls, and the paper does not analyse the cost against the benefit at all.</li>
+  <li><strong>Irreversibility.</strong> Tree search assumes you can back up. If an action sends an email, charges a card, or drops a table, there is no backing up, so search is only available where the environment is resettable or read-only.</li>
+</ul>
+
+<p class="sidenote">The second constraint decides where you can use this. Read-only analysis over a warehouse is searchable and cheap, because you can branch freely and nothing is harmed. A pipeline that writes to production is not searchable unless you can run it against a sandbox or inside a transaction you can roll back. Building that sandbox is usually the enabling investment, rather than the search algorithm.</p>
+
+<div class="quiz" data-answer="b">
+  <span class="label">Check yourself</span>
+  <p class="q">Which agent workflow is the best candidate for tree search over actions?</p>
+  <div class="opts">
+    <button class="opt">An agent that sends follow-up emails to customers after a support ticket is closed.</button>
+    <button class="opt">An agent that explores a data warehouse to answer an open-ended analytical question.</button>
+    <button class="opt">An agent that applies schema migrations to a production database on a nightly schedule.</button>
+    <button class="opt">An agent that reconciles two ledgers and posts the adjusting entries it discovers.</button>
+  </div>
+  <div class="answer-reveal">
+    <p>Read-only exploration has many plausible paths and a cheap undo, because abandoning a query costs a few seconds. The other three take irreversible actions in the world, so searching them means actually sending, migrating, or posting down every branch you explore. The general test is whether you can abandon a branch at no cost. If you cannot, you need a sandbox before you need a search algorithm.</p>
+  </div>
+</div>
+
+<h2>Spring, and how much of that reasoning was not sequential</h2>
+
+<p>Reasoning models think for longer on harder problems, and longer thinking correlates with higher accuracy, which you can see in DeepSeek-R1's training curves where response length rises alongside benchmark scores. The cost is latency and money, because you wait and pay for every sequential token.</p>
+
+<p>Spring starts from a sharp observation.<a href="#s2">²</a> If you inspect a long reasoning trace as a dependency graph, <strong>large parts of it are independent</strong>. The model tries alternatives, decomposes into sub-tasks, and checks separate conditions, and it generates all of that in a strict line because a strict line is the only thing autoregression permits.</p>
+
+<p>The method is a good example of manufacturing training data with models. Take reasoning traces from a strong model, use a second model to segment each trace into steps, tag each step as planning or execution, and annotate the dependencies between steps. That gives you a directed graph, which you can repack so that independent steps sit in parallel groups. Fine-tune on the repacked traces and the model learns to emit plans and their parallel executions explicitly, which the harness can then dispatch concurrently.</p>
+
+<div class="callout">
+  <span class="label">The result that was not the goal</span>
+  <p>The project set out to cut sequential tokens and achieved roughly a 40 percent reduction on maths. It also <strong>raised accuracy</strong> by about 3.5 points over the base distilled model, and the gains transferred to tasks it was never trained on. Being made to state a plan before executing it appears to help the model think, independently of any parallelism it wins. Structure is not only a scheduling convenience.</p>
+</div>
+
+<p>A second observation applies without any fine-tuning at all. <strong>Parallelism is high early and low late.</strong> Early on the model explores many independent directions, and towards the end it converges on one line and drives it home. That is the exploration-then-exploitation shape you should be designing your own workflows to have.</p>
+
+<h2>Translating this into workflow design</h2>
+
+<p>You are not going to run MCTS or fine-tune a parallel planner. Take these four things instead.</p>
+
+<ul>
+  <li><strong>Make the plan an artefact.</strong> Have the agent emit an explicit plan before acting. It improves quality on its own, it lets you intervene at the cheapest possible moment, and it makes failures classifiable as a bad plan or a bad execution.</li>
+  <li><strong>Fan out the independent parts.</strong> Once a plan exists, its independent branches can run as separate agent calls, which costs less latency and gives each branch a clean context window, as Lesson 13 explains.</li>
+  <li><strong>Explore early and converge late.</strong> Sample several approaches at the start, when a branch costs little, and commit to one before the expensive execution.</li>
+  <li><strong>Keep the reflection.</strong> After a failed trajectory, have the agent write down why it failed and carry that note into the retry. It is the cheapest component of LATS and reportedly a large part of its benefit.</li>
+</ul>
+
+<p>None of those work without cheap undo, so the prerequisite is a sandbox. A dry-run mode or a scratch schema is what unlocks everything in this lesson, and it is usually a day of work rather than a project.</p>
+
+<div class="project-hook">
+  <span class="label">Project hook</span>
+  <p class="question">Does making the plan explicit help even when nothing runs in parallel? Run one workflow in two conditions, one where the agent acts directly and one where it must emit a plan first and then execute it, with the same model and the same token budget.</p>
+  <p class="measure"><span>Measure</span> Success rate, plus the share of failures attributable to the plan rather than to execution. Spring predicts the planning condition wins on quality alone, and testing that on a non-maths workload is a genuine contribution.</p>
+</div>
+
+<div class="recall">
+  <span class="label">Retrieval practice</span>
+  <p class="prompt">Take a multi-step workflow you run and draw its dependency graph. Which steps genuinely need the previous step's output, and which only look sequential because you wrote them in a line?</p>
+  <textarea placeholder="Most workflows are more parallel than they look."></textarea>
+  <div class="model-answer">
+    <p>A typical finding for an analysis pipeline is that pulling three data sources, computing four metrics, and checking two data-quality conditions are all independent, and only the synthesis at the end depends on everything. Written as one prompt, the agent does them in a line and accumulates everything in one context. Written as a plan plus a fan-out, they run concurrently in fresh contexts and the synthesis step sees only clean summaries. That is a latency win and a context-hygiene win from one change, which is why it is usually the highest-value restructuring available.</p>
+  </div>
+</div>
+
+<h2>What you can now do</h2>
+<p>You can recognise when a task is searchable, meaning it has cheap undo, many paths, and checkable outcomes, and when it is not. You know why explicit planning helps even when nothing runs in parallel, and you have the exploration-early and convergence-late shape to design toward.</p>
+<p>Next is <a href="0009-buy-or-tune.html">Lesson 9, buy or tune</a>, the one lesson on training, reduced to the decision you might actually face.</p>
+
+<div class="ask">
+  <strong>Bring a workflow's dependency graph.</strong> Deciding what can fan out, and what must stay serial because of shared state, is exactly the kind of design question worth arguing about with someone who can see the whole picture.
+</div>
+
+<div class="source-box">
+  <span class="label">Read one thing</span>
+  <ol>
+    <li id="s1"><a href="https://arxiv.org/abs/2310.04406">Zhou et al., <em>Language Agent Tree Search Unifies Reasoning, Acting, and Planning</em></a> (ICML 2024). Read section 3 for the six stages and the value function.</li>
+    <li id="s2"><strong>Primary source:</strong> <a href="https://www.youtube.com/watch?v=Ml_fp9XkB8Y">CS329A Lecture 5, Planning and Multi-Step Reasoning</a> (Mirhoseini), presenting LATS, <em>Spring</em> (NeurIPS 2025), and SWiRL. The Spring dependency-graph slides are the ones to look at.</li>
+    <li id="s3"><a href="https://arxiv.org/abs/2305.10601">Yao et al., <em>Tree of Thoughts</em></a>, the simpler ancestor. Read it first if tree search over model states is new to you.</li>
+  </ol>
+</div>
+
+<nav class="lesson-nav">
+  <span><a href="0007-tools-as-ground-truth.html">← Lesson 7</a></span>
+  <span><a href="../index.html">Index</a> · <a href="../reference/glossary.html">Glossary</a></span>
+  <span><a href="0009-buy-or-tune.html">Lesson 9: Buy or tune →</a></span>
+</nav>
+
+</main>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Exercise sheet 6: Weighting, standardisation and AIPW</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<header class="topbar"><div><a href="../index.html">Course index</a><span>Exercise sheet 6 of 17</span></div></header>
+<main>
+  <p class="eyebrow">Exercise sheet</p>
+  <h1>Weighting, standardisation and AIPW</h1>
+  <p class="lead">7 questions drawn from <a href="../lessons/0006-weighting-standardisation-and-aipw.html">Lesson 6</a>. Three routes from the same identification assumptions, and what double robustness does not buy.</p>
+  <div class="lesson-meta"><span>30 minutes</span><span>7 questions</span><span>Answers at the end</span></div>
+
+  <section class="sheet-intro">
+    <h2>How to use this sheet</h2>
+    <p>Work through the questions in order and write your answers down before reading any part of the answer section. Give yourself about thirty minutes in total. If one question runs long, write what you have, mark it and move on, because the answer section explains the reasoning in full.</p>
+    <p>Most questions ask for a short written answer rather than a number. The aim is a defensible statement, so a sentence or two of reasoning is worth more than a single word.</p>
+    <p>The questions are collapsed so that you can take them one at a time. Open one, answer it, then open the next. The answers are held behind a single button at the foot of the page, so nothing is revealed until you choose to reveal it.</p>
+  </section>
+
+  <details class="question">
+    <summary><span class="marks">Question 1</span><span class="q-title">Compute the weights</span></summary>
+    <p>Four clubs have estimated dismissal probabilities and observed decisions: club A, e = 0.80, dismissed; club B, e = 0.80, retained; club C, e = 0.30, dismissed; club D, e = 0.30, retained. Compute each club's inverse-probability weight for an ATE analysis. Say which club receives the largest weight and explain in plain terms what that club is being asked to represent.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 2</span><span class="q-title">Describe the pseudo-population</span></summary>
+    <p>Explain in your own words what the weighted sample represents, and why the weighted association between dismissal and points can be read causally when the unweighted one cannot. Then state which identification assumption the weighting operationalises and which one it does not touch.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 3</span><span class="q-title">Contrast the two routes</span></summary>
+    <p>Weighting and standardisation target the same estimand under the same assumptions. Describe the different thing each one models, and name one situation where you would prefer each.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 4</span><span class="q-title">Interpret an extreme weight</span></summary>
+    <p>An untreated club receives a weight of 18. Say what that implies about its estimated propensity score, explain the effect on the variance of the estimate, and give two responses, noting the cost of each.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 5</span><span class="q-title">State double robustness precisely</span></summary>
+    <p>Write a precise one-sentence statement of what double robustness guarantees for AIPW. Then mark each of these claims true or false, with a reason: (a) AIPW is consistent if both nuisance models are wrong; (b) AIPW removes the need to choose an adjustment set; (c) AIPW still requires positivity; (d) AIPW gives a valid answer under unmeasured confounding if the outcome model fits well.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 6</span><span class="q-title">Read the estimating expression</span></summary>
+    <p>The AIPW expression is the mean of m1(X) - m0(X) + A(Y - m1(X))/e(X) - (1-A)(Y - m0(X))/(1-e(X)). Identify which part is the standardisation estimator, and explain in words what the two remaining terms do when the outcome model is a good one and when it is a poor one.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 7</span><span class="q-title">Rewrite an overclaim</span></summary>
+    <p>A colleague writes: "We used entropy balancing, so the treated and control clubs are equivalent and the estimate is causal." Rewrite the sentence so that it is defensible, and list the additional evidence you would want in the paper before believing the number.</p>
+  </details>
+
+  <section class="answers">
+    <h2>Answers</h2>
+    <p class="answer-note">Read these only after writing your own answers. Where an answer says "a good answer includes", treat the listed points as the marking scheme rather than as the only wording that works.</p>
+
+    <details class="answer-reveal">
+      <summary>Show all answers</summary>
+      <section class="answer">
+        <span class="marks">Answer 1</span>
+        <h3>Compute the weights</h3>
+      <p>Treated clubs receive 1/e and untreated clubs receive 1/(1-e).</p>
+      <p>Club A: 1/0.80 = 1.25. Club B: 1/0.20 = 5. Club C: 1/0.30 = 3.33. Club D: 1/0.70 = 1.43.</p>
+      <p>Club B receives the largest weight. It is a club that, on its measured characteristics, was very likely to dismiss and did not. In the pseudo-population it is standing in for all the similar high-risk clubs that dismissed, supplying the retention outcome that none of them can supply. That is a lot of representational load for one observation, which is why a weight of 5 already deserves attention and a weight of 18 deserves alarm.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 2</span>
+        <h3>Describe the pseudo-population</h3>
+      <p>Weighting constructs a hypothetical population in which each covariate profile appears with its original frequency, but within every profile the treated and untreated are represented in the same proportions as if treatment had been assigned by a coin flip. Upweighting the unusual choices repairs the imbalance that selection created.</p>
+      <p>In that constructed population, treatment is unrelated to the measured covariates by construction, so the association between treatment and outcome no longer contains the part driven by those covariates. Given the diagram, what remains is the causal effect.</p>
+      <p>The weighting operationalises conditional exchangeability, turning it into a reweighted comparison, and it depends on positivity, which is visible in the weights: an estimated probability near zero or one produces an enormous weight, which is what a positivity violation looks like numerically. It does not touch consistency at all, and it does nothing whatsoever about unmeasured confounding, since a variable absent from the model cannot be balanced by weights derived from that model.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 3</span>
+        <h3>Contrast the two routes</h3>
+      <p>Weighting models the treatment: it estimates the probability of dismissal given covariates and uses that to reweight observed outcomes. Standardisation models the outcome: it fits points as a function of treatment and covariates, predicts each club twice, once under dismissal and once under retention, and averages the two sets of predictions over the target population.</p>
+      <p>Prefer weighting when the treatment process is well understood and easy to model but the outcome is complicated. Board dismissal decisions follow a fairly legible logic in league position and recent form, whereas points over five matches depend on many things, so a misspecified outcome model is the greater risk.</p>
+      <p>Prefer standardisation when overlap is weak or the treatment model produces extreme weights, and when the outcome relationship is smooth and well captured. Standardisation is also the natural route when the target population differs from the sample, since you can average the predictions over whatever population you want, which makes it the standard way of transporting an effect.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 4</span>
+        <h3>Interpret an extreme weight</h3>
+      <p>A weight of 18 for an untreated club means 1/(1-e) = 18, so e is about 0.944. The model believes this club had a 94 per cent chance of dismissal and it retained.</p>
+      <p>One observation carrying that much weight dominates the estimate in its region of covariate space. The variance rises sharply, the interval widens, and the point estimate becomes sensitive to that single club's outcome, so any idiosyncrasy in it propagates into the headline number.</p>
+      <p>Response one is to trim or truncate: cap weights at a stated percentile, and report results with and without the cap. The cost is bias, since truncation deliberately misrepresents the pseudo-population, and the amount is unknown. Response two is to redefine the target population, restricting to a range of propensity scores where both arms are populated. The cost is that the estimand changes and no longer describes high-risk clubs. In either case, reporting the whole weight distribution is not optional, and a diagnosis of the model specification comes first, since extreme scores are sometimes an artefact of a badly specified model rather than genuine non-overlap.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 5</span>
+        <h3>State double robustness precisely</h3>
+      <p>Statement: given identification, that is conditional exchangeability, positivity and consistency, the AIPW estimator remains consistent for the target contrast if at least one of the propensity model and the outcome model is correctly specified, even if the other is not.</p>
+      <ul>
+        <li>(a) False. The guarantee requires one of the two to be correct. With both wrong there is no protection, and in practice both are usually somewhat wrong, which is why double robustness is better understood as an improvement in the rate of convergence and a reduction in sensitivity than as a licence.</li>
+        <li>(b) False. Identification comes first and is entirely a matter of causal reasoning. Double robustness concerns the specification of two nuisance models after the adjustment set has been justified.</li>
+        <li>(c) True. Positivity is an identification condition, and it is also a practical one, since the weighted correction terms contain the propensity score in the denominator and blow up as it approaches zero or one.</li>
+        <li>(d) False. No estimator recovers an effect that the data do not identify. A well fitting outcome model fits the observed outcomes; it has nothing to say about a confounder it never saw.</li>
+      </ul>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 6</span>
+        <h3>Read the estimating expression</h3>
+      <p>The standardisation estimator is the first part, the mean of m1(X) - m0(X), the average difference between the two predicted potential outcomes.</p>
+      <p>The other two are weighted residual corrections, one for the treated and one for the untreated. Each takes the part of the observed outcome that the outcome model failed to predict, the residual, and adds it back in with an inverse-probability weight.</p>
+      <p>When the outcome model is good, the residuals are small and close to mean zero within covariate strata, so the corrections contribute little and the estimator behaves much like standardisation. When the outcome model is poor, the residuals are large and systematic, and the weighting is what carries the estimate: reweighting the residuals correctly compensates for the model's failure, provided the propensity model is right. That is the mechanism behind double robustness, and it also explains why the correction terms are the source of instability when the propensity score is near zero or one.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 7</span>
+        <h3>Rewrite an overclaim</h3>
+      <p>A defensible rewriting: "We used entropy balancing to equalise the means and variances of the measured pre-departure covariates between departure and non-departure observations. Under the assumptions that these covariates include all important common causes of departure and subsequent performance, that comparable non-departure observations exist for every departure profile, and that the departure category represents a sufficiently uniform intervention, the balanced comparison estimates the causal effect."</p>
+      <p>Evidence I would want: the balance achieved, before and after, on every covariate and not only on the moments targeted; the distribution of the weights, including the maximum; the effective sample size after weighting; the covariate list with a causal justification rather than a predictive one; a description of the population that survived any trimming; a sensitivity analysis for unmeasured confounding; and a statement of how the version-of-treatment problem was handled, since coach departures include resignations, sackings and mutual agreements.</p>
+      </section>
+    </details>
+  </section>
+
+  <p class="citation"><strong>Related reading.</strong> <a href="https://doi.org/10.1111/sjpe.12369">Bryson et al. (2024)</a>; Hernan and Robins, <em>What If</em>, Chapters 12, 13, 15 and 18; Ruiz de Villa, Chapter 8. The AIPW discussion is a constructed extension.</p>
+  <p>If your answer and the suggested answer disagree and you cannot see why, ask your teaching agent to work through that question with you rather than assuming the sheet is right.</p>
+  <nav class="lesson-nav"><a href="0005-matching-and-propensity-scores.html">Previous sheet: Matching and propensity scores</a><a href="0007-fixed-effects-and-the-ashenfelter-dip.html">Next sheet: Fixed effects and the Ashenfelter dip</a></nav>
+</main>
+</body>
+</html>

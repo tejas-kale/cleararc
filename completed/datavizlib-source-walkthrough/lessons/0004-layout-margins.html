@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Source 0004 · Margins reserve room for words</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <article class="page">
+    <header class="lesson-head">
+      <p class="kicker"><a href="../index.html">Lessons</a> · Source 0004 of 0010 · _configure_layout</p>
+      <h1>Margins reserve room for words</h1>
+      <p class="lede">Before any data is drawn, <code>subplots_adjust</code> carves a hole in the figure for the plot, and leaves strips for title, subtitle, x-label, and footnote.</p>
+    </header>
+
+    <p><code>_configure_layout</code> runs from the constructor. It does not look at the data. It only looks at whether <code>subtitle</code> is set and whether <code>x_label</code> is a non-blank string.</p>
+
+    <pre>self.fig.subplots_adjust(
+    left=0.0,
+    right=1.0,
+    top=top_margin,      # 0.80 with subtitle, else 0.88
+    bottom=bottom_margin # 0.15 with x_label, else 0.10
+)</pre>
+
+    <p>Matplotlib’s <code>subplots_adjust</code> fractions are in <strong>figure coordinates</strong>: <code>0</code> is the bottom or left of the whole figure, <code>1</code> is the top or right. <code>top=0.80</code> means the Axes only go up to 80% of the figure height — the top 20% is empty on purpose, so <code>_add_title</code> can write at <code>y=0.91</code> or <code>0.94</code> without sitting on the data.</p>
+
+    <div class="diagram">
+      <svg viewBox="0 0 640 300" role="img" aria-label="Figure with title band and plot hole">
+        <rect x="40" y="20" width="560" height="260" fill="#fff" stroke="#00005f" stroke-width="2"/>
+        <text x="56" y="48" font-family="Iowan Old Style, serif" font-size="16" fill="#00005f">Title (figure y ≈ 0.91–0.94)</text>
+        <text x="56" y="72" font-family="Iowan Old Style, serif" font-size="13" fill="#808080">Subtitle (figure y = 0.86) — only if set</text>
+        <rect x="40" y="92" width="560" height="148" fill="#f3f0e8" stroke="#808080"/>
+        <text x="56" y="168" font-family="IBM Plex Mono, monospace" font-size="13" fill="#5c5c5c">Axes: left=0, right=1, top=0.80 or 0.88</text>
+        <text x="56" y="268" font-family="Iowan Old Style, serif" font-size="13" fill="#808080">Footnote at figure y = 0.00</text>
+      </svg>
+      <p class="caption">The grey rectangle is the Axes. Words live in the white bands. <code>left=0</code> and <code>right=1</code> give the plot the full width — which is why wide y-tick labels can clip. You already noted this in exercise 2.2.</p>
+    </div>
+
+    <div class="example">
+      <p><strong>Example.</strong> Same constructor, two subtitle choices:</p>
+      <pre>BaseChart("Revenue", "Month", "EUR", "Source")           # top=0.88
+BaseChart("Revenue", "Month", "EUR", "Source", "Actual") # top=0.80</pre>
+      <p>The second chart’s plot is shorter so the subtitle at <code>y=0.86</code> has a gap above the Axes.</p>
+    </div>
+
+    <div class="quiz" data-answer="0"
+         data-ok="Yes. A subtitle lowers top from 0.88 to 0.80."
+         data-no="Read _configure_layout: subtitle shrinks the Axes from the top.">
+      <p class="quiz-q">What does a non-empty subtitle change?</p>
+      <button data-choice="0">Lowers the Axes top edge</button>
+      <button data-choice="1">Raises the Axes top edge</button>
+      <button data-choice="2">Widens the Axes left edge</button>
+    </div>
+
+    <p class="primary-source"><strong>Primary source:</strong> <code>_configure_layout</code> in <a href="https://github.com/phmelzer/datavizlib/blob/api-exploration-tejas/src/datavizlib/charts/base.py">base.py</a>. Matplotlib: <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.subplots_adjust.html"><code>Figure.subplots_adjust</code></a>.</p>
+
+    <div class="ask">Ask if you want to walk through a proposed non-zero <code>left</code>/<code>right</code> without breaking title alignment in the next lessons.</div>
+
+    <nav class="lesson-nav">
+      <a href="0003-add-data-render-build.html">← Collect / draw / dress</a>
+      <a href="0005-declutter-spines-and-type.html">Next: spines and type →</a>
+    </nav>
+  </article>
+  <script src="../assets/quiz.js"></script>
+</body>
+</html>

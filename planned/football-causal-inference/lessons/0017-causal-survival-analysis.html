@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Choose a causal time-to-event estimand</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<header class="topbar"><div><a href="../README.md">Course index</a><span>Lesson 17 of 17</span></div></header>
+<main>
+  <p class="eyebrow">Survival analysis</p>
+  <h1>Choose a causal time-to-event estimand</h1>
+  <p class="lead">Time-to-event outcomes need a treatment contrast, a time horizon and a clear approach to censoring. Risks and restricted mean survival times are often easier to interpret than hazard ratios.</p>
+  <div class="lesson-meta"><span>About 25 minutes</span><span>Includes guided exercises</span><span><a href="../exercises/0017-causal-survival-analysis.html">Exercise sheet</a></span></div>
+  <section class="objective"><h2>What you will be able to do</h2><p>You will be able to compare risk, restricted mean survival time and hazard-ratio estimands, and explain when censoring threatens causal interpretation.</p></section>
+  <section class="scenario"><h2>The 11+ Kids trial</h2><p>Rossler and colleagues randomised clubs to the 11+ Kids injury-prevention programme and observed injuries over football exposure time. They used mixed-effects Cox models for time to injury. Randomisation supports a causal assignment effect, while clustering, censoring and the choice of time scale still affect the analysis.</p></section>
+      <h2>Choose an estimand that answers the football question</h2><div class="grid"><div class="card"><strong>Risk by a fixed time</strong><p>The probability of injury by week 20 under the programme compared with control. A risk difference gives an absolute change in injured players.</p></div><div class="card"><strong>Restricted mean injury-free time</strong><p>The expected injury-free time up to a fixed horizon. The contrast is expressed in days or weeks without injury.</p></div><div class="card"><strong>Hazard ratio</strong><p>The ratio of instantaneous event rates among players who remain injury-free at each time. The compared risk sets change over follow-up.</p></div></div><p>A hazard ratio is not a risk ratio. Even in a randomised trial, conditioning on remaining event-free can make later risk sets differ because earlier treatment affects who remains. Proportional hazards also requires the hazard ratio to stay constant over time if one number is reported.</p>
+      <section class="worked"><h2>Worked calculation</h2><p>By week 20, 12 per cent of control players and 8 per cent of programme players have been injured. The risk difference is 8 minus 12, which equals -4 percentage points. The risk ratio is 8 divided by 12, which is about 0.67. The result means 4 fewer injured players per 100 by week 20 under assignment to the programme, subject to the trial assumptions.</p><p>If the restricted mean injury-free time is 18.2 weeks under the programme and 17.4 weeks under control, the difference is 0.8 injury-free weeks through week 20.</p></section>
+      <h2>Censoring hides later event times</h2><p>A player who transfers at week 12 has an unknown later injury time in the study. Treating this censoring as harmless assumes that, conditional on the included history, transferred and retained players would have the same later injury distribution under each treatment.</p><p>Inverse-probability-of-censoring weighting models the chance of remaining observed at each time and gives more weight to similar players who remain. The method requires measured causes of censoring and injury, positivity for remaining observed and a suitable censoring model.</p>
+      <h2>Define time and competing events</h2><p>Calendar weeks, training hours and match exposures answer different questions. Exposure time can be useful for injury incidence, but treatment may itself change exposure. The analyst should avoid conditioning away a pathway without defining the estimand.</p><p>A competing event prevents the injury of interest from occurring as defined. A player who leaves football permanently cannot later record the study injury. The analysis must define whether the target is a real-world cumulative incidence with competing events or a hypothetical effect that removes them.</p>
+      <section class="exercise"><h2>Exercise 1. Interpret a risk difference</h2><p>The 12-week injury risks are 0.18 under control and 0.13 under treatment. State the risk difference in plain language.</p><details><summary>Show a suggested answer</summary><p>The treatment reduces 12-week injury risk by 5 percentage points. This corresponds to 5 fewer injured players per 100 over 12 weeks if the estimate is causal and applies to the target population.</p></details></section>
+      <section class="exercise"><h2>Exercise 2. Diagnose informative censoring</h2><p>Players with early soreness are more likely to leave the study and more likely to be injured later. What should the analyst record and model?</p><details><summary>Show a suggested answer</summary><p>The analyst should record soreness before dropout and include it, with relevant history, in a censoring model. An inverse-probability-of-censoring analysis can then adjust for measured informative censoring, subject to exchangeability and positivity.</p></details></section>
+      <div class="exercise">
+    <h2>Practice</h2>
+    <p>An <a href="../exercises/0017-causal-survival-analysis.html">exercise sheet of 7 questions</a> accompanies this lesson. It takes about thirty minutes and carries worked answers at the end. Attempt it before moving on.</p>
+  </div>
+
+  <section class="quiz" data-quiz data-answer="c" data-correct="Correct. Restricted mean injury-free time gives an absolute difference in expected injury-free time through a fixed horizon." data-incorrect="Choose the estimand that is expressed directly in weeks or days without injury."><fieldset><legend>Which estimand is easiest to express in weeks?</legend><label><input type="radio" name="q" value="a"> An estimated baseline hazard intercept</label><label><input type="radio" name="q" value="b"> An estimated proportional-hazards model coefficient</label><label><input type="radio" name="q" value="c"> Restricted mean injury-free survival time</label></fieldset><button type="button">Check answer</button><p class="feedback" aria-live="polite"></p></section>
+      <section class="exercise"><h2>Final course application</h2><p>Choose one football decision and write six lines: the eligible population, two treatment strategies, outcome and horizon, estimand, identification assumptions, and estimator with diagnostics. If you cannot write the first five lines, return to the earlier design lessons before choosing the estimator.</p></section>
+  <section class="summary"><h2>What to remember</h2><ul><li>Time-to-event questions still need a target population, treatment contrast and horizon.</li><li>Risk and restricted mean survival time are absolute, interpretable estimands.</li><li>A hazard ratio compares changing risk sets and needs careful interpretation.</li><li>Informative censoring requires assumptions and measured history.</li></ul></section>
+  <p class="citation"><strong>Primary reading.</strong> <a href="https://doi.org/10.1007/s40279-017-0834-8">Rossler et al. (2018)</a>; Hernan and Robins, Chapter 17 and Section 21.5.</p>
+  <p>If any step is unclear, ask your teaching agent to work through another football example with you.</p>
+  <nav class="lesson-nav"><a href="0016-causal-mediation.html">Previous lesson: Separate direct and indirect effects</a><a href="../README.md">Return to the course index</a></nav>
+</main>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

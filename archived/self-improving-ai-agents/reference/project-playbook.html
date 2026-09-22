@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reference · Project playbook</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+<link rel="stylesheet" href="../assets/reference.css">
+</head>
+<body class="reference">
+<main class="page">
+
+<header class="masthead">
+  <p class="eyebrow">Reference · Self-improving AI agents</p>
+  <h1>Project playbook</h1>
+  <p class="standfirst">Arc V compressed to one page. The scope test, the pre-registration template, the experimental checklist, and the writeup skeleton.</p>
+  <p class="meta">Prints to two pages · Companion to Lessons 15, 16 and 17</p>
+</header>
+
+<h2>Is the question the right size?</h2>
+<p>Test every candidate question against all four. Failing even one will consume the month.</p>
+<ul class="rules">
+  <li><strong>Falsifiable.</strong> You can state now what result would prove you wrong.</li>
+  <li><strong>Measurable today.</strong> The metric exists, or you can build it in a day.</li>
+  <li><strong>Controlled.</strong> There is an obvious A and B differing in exactly one thing.</li>
+  <li><strong>Cheap to run.</strong> One full pass costs under an hour, because you will run it wrong twice before it works.</li>
+</ul>
+
+<p>A well-sized question fits in one sentence containing three things: the population, the comparison, and the metric. If you cannot write that sentence, cut the question down until you can.</p>
+
+<h2>Pre-registration template</h2>
+<p>Half a page, written before any data is collected. Keep it next to the results.</p>
+
+<div class="scroll-x">
+<table>
+  <thead><tr><th>Field</th><th>What goes in it</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Question</strong></td><td>One sentence, with the population, the comparison, and the metric</td></tr>
+    <tr><td><strong>Prediction</strong></td><td>A direction and a rough size, such as "wins by 5 to 15 points"</td></tr>
+    <tr><td><strong>Falsifier</strong></td><td>The result that would make you abandon the hypothesis, with a threshold</td></tr>
+    <tr><td><strong>Stopping rule</strong></td><td>How many tasks, how many runs each, and when you stop collecting</td></tr>
+    <tr><td><strong>Noise floor</strong></td><td>Filled in after the null experiment, before the real run</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>Hold these constant between conditions</h2>
+<ul class="rules">
+  <li><strong>The task set,</strong> identical in both conditions and never extended after you have seen results.</li>
+  <li><strong>The model and its settings,</strong> including the exact model string, temperature, and thinking budget, recorded with every run.</li>
+  <li><strong>The grader,</strong> applied the same way to both conditions and ideally blind to which is which.</li>
+  <li><strong>The token budget,</strong> wherever your intervention could change it as a side effect.</li>
+</ul>
+
+<p>The last one catches the most experiments. Comparing one sample against five-and-pick-the-best tests whether five is more than one. To test your selector, compare it against a random pick from the same five candidates.</p>
+
+<h2>Experimental checklist</h2>
+<ol class="steps">
+  <li><strong>Build the harness on three tasks</strong> before scaling, so bugs cost minutes.</li>
+  <li><strong>Log one row per run,</strong> with task id, condition, model string, timestamp, full output, grade, and token counts.</li>
+  <li><strong>Run the null experiment.</strong> Condition A against condition A, nothing changed. The spread you see is your noise floor.</li>
+  <li><strong>Run the real experiment</strong> to the stopping rule, without checking aggregates as they arrive.</li>
+  <li><strong>Read ten runs from each condition by hand</strong> before looking at any summary statistic.</li>
+</ol>
+
+<h2>How a small experiment lies</h2>
+<div class="scroll-x">
+<table>
+  <thead><tr><th>The lie</th><th>The defence</th></tr></thead>
+  <tbody>
+    <tr><td>Noise looks like signal</td><td>The null experiment, plus reporting spread rather than a bare mean</td></tr>
+    <tr><td>The grader prefers your treatment's style</td><td>Grade blind, and check the judge against your own labels on a sample</td></tr>
+    <tr><td>The task set moved</td><td>Fix it in the pre-registration and never touch it</td></tr>
+    <tr><td>You stopped at a favourable moment</td><td>The stopping rule, decided in advance and honoured</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p><strong>Use paired comparison.</strong> Run both conditions on the same tasks and compare per task rather than comparing two averages. Task difficulty is usually the largest source of variance and pairing removes it, which routinely turns an ambiguous result into a clear one at no extra cost.</p>
+
+<p><strong>A note on size.</strong> With 30 tasks and a success rate near 50 percent, the standard error is around 9 points, so a 5-point difference is inside the noise. Use more tasks, run each task several times, or pick an intervention whose effect is large enough to see.</p>
+
+<h2>Writeup skeleton</h2>
+<ol class="steps">
+  <li><strong>Question and prediction,</strong> copied verbatim from the pre-registration.</li>
+  <li><strong>Setup,</strong> in enough detail to repeat it: task set and size, model string, conditions, grader, number of runs.</li>
+  <li><strong>Result,</strong> as a number with its spread, next to the noise floor.</li>
+  <li><strong>What surprised you,</strong> including anything found while reading raw runs. Usually the most valuable paragraph.</li>
+  <li><strong>What you now believe,</strong> written as a claim with its scope attached, plus what you would do next.</li>
+</ol>
+
+<p>A finding needs its boundary in the same sentence. Not "richer error messages help", but "richer error messages cut turns-to-fix by about a third on SQL tasks that failed on a schema mismatch, with no measurable effect on tasks that failed for logical reasons". A well-scoped finding should visibly stop applying somewhere.</p>
+
+<h2>Where the project questions come from</h2>
+<ul class="rules">
+  <li><strong>A published result you can replicate on your data.</strong> The paper did the design work and you are testing whether it survives your domain.</li>
+  <li><strong>A number nobody has measured about your system,</strong> such as your generation-verification gap, your verifier's turnover point, or your reliability gap in human minutes.</li>
+  <li><strong>A claim in this course you doubt.</strong> Disagreement is a hypothesis with a control already built in.</li>
+  <li><strong>A cheap version of a frontier bottleneck,</strong> meaning model-family diversity, meta-verification of your judge, or eval curation toward the band that sometimes passes.</li>
+</ul>
+
+<p>Every lesson carries a project hook, and there are seventeen of them. The hook you keep returning to is usually the right one, because a question you actually want answered survives week three.</p>
+
+<h2>After the writeup</h2>
+<ul class="rules">
+  <li>Save the page in <code>projects/</code>, named with the date and the question.</li>
+  <li>Write a learning record capturing what the result changes about how you work, which is a different document from the writeup.</li>
+  <li>Show it to someone who runs agents, because a result gets sharper when someone with different workflows asks why you think it generalises.</li>
+</ul>
+
+<nav class="lesson-nav">
+  <span><a href="../index.html">← Course index</a></span>
+  <span><a href="glossary.html">Glossary</a> · <a href="tuning-dials.html">Tuning dials</a> · <a href="eval-playbook.html">Eval playbook</a></span>
+</nav>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 16 · Running the experiment</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+<link rel="stylesheet" href="../assets/quiz.css">
+</head>
+<body>
+<main class="page">
+
+<header class="masthead">
+  <p class="eyebrow">Lesson 16 of 17 · Arc V · Self-improving AI agents</p>
+  <h1>Running the experiment</h1>
+  <p class="standfirst">The control condition is the whole experiment. Here is how to build one, and the four ways a small agent experiment quietly lies to you.</p>
+  <p class="meta">About 11 minutes · Produces a result you can defend</p>
+</header>
+
+<p>You have a question, a prediction, and a falsifier. This lesson is about the part where you collect evidence without fooling yourself, which is harder with agents than with most systems because the thing you are measuring is stochastic, expensive, and eager to please.</p>
+
+<h2>The control is the experiment</h2>
+
+<p>An agent experiment without a control produces a number that means nothing, because you have no idea what the number would have been anyway. The control is the same everything, minus the one thing you are testing.</p>
+
+<p>Getting that "same everything" right is most of the work. Four things must be held constant between your A and B conditions, and each one has bitten someone.</p>
+
+<ul>
+  <li><strong>The task set.</strong> The identical tasks in both conditions, in the same order, with no additions after you have seen early results.</li>
+  <li><strong>The model and its settings.</strong> The same model version, temperature, and thinking budget. A provider silently updating a model mid-experiment is a real hazard, so record the exact model string with every run.</li>
+  <li><strong>The grader.</strong> The same grading procedure applied to both conditions, ideally without knowing which condition it is grading.</li>
+  <li><strong>The token budget,</strong> where the intervention could plausibly change it. If your treatment gets more compute as a side effect, you have measured compute rather than your idea.</li>
+</ul>
+
+<p class="sidenote">That last point catches more experiments than the others combined. Comparing "one sample" against "five samples and pick the best" is not a test of your selection method, it is a test of whether five is more than one. If you want to know whether your selector is any good, compare it against a random pick from the same five candidates. Lesson 6's chart is built exactly this way, which is why it is convincing.</p>
+
+<h2>Four ways a small experiment lies</h2>
+
+<div class="scroll-x">
+<table>
+  <thead><tr><th>The lie</th><th>How it happens</th><th>The defence</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Noise looks like signal</strong></td><td>30 tasks, a 4-point difference, and a rerun would move it more than that</td><td>Run each condition several times and report the spread, not just the mean</td></tr>
+    <tr><td><strong>The grader has an opinion</strong></td><td>An LLM judge prefers the longer, more confident output that your treatment happens to produce</td><td>Grade blind, and check the judge against your own labels on a sample</td></tr>
+    <tr><td><strong>The tasks were chosen after the fact</strong></td><td>You added three tasks because the first set "was not representative"</td><td>Fix the task set in the pre-registration and never touch it again</td></tr>
+    <tr><td><strong>You stopped when it looked good</strong></td><td>Checking results as they arrive and stopping at the favourable moment</td><td>The stopping rule from Lesson 15, decided in advance and honoured</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>The first one deserves a number. With 30 tasks and a success rate near 50 percent, the standard error on your estimate is around 9 percentage points, so a 5-point difference between conditions is well inside the noise. You have three ways out, and they are all cheap: use more tasks, run each task several times so you are averaging over sampling noise as well, or pick an intervention large enough that the effect exceeds the noise. The third is why the tool-error hook from Lesson 7 is a good first project, because the effect is usually large.</p>
+
+<div class="callout">
+  <span class="label">Paired comparison, which you should almost always use</span>
+  <p>Run both conditions on <strong>the same tasks</strong> and compare per task, rather than comparing two averages. Task difficulty varies enormously and it is the largest source of variance in your measurement. Pairing removes it, because you are asking how often B beats A on the same problem rather than whether B's mean is higher. This routinely turns an ambiguous result into a clear one at no extra cost.</p>
+</div>
+
+<h2>The run itself</h2>
+
+<ol class="steps">
+  <li><strong>Build the harness on three tasks first.</strong> Get one end-to-end pass working on a tiny slice before you scale, because every bug you find here costs minutes rather than a full run.</li>
+  <li><strong>Log everything, in a form you can re-analyse.</strong> One row per run, with the task id, condition, model string, timestamp, the full output, the grade, and the token counts. You will want to ask a question you did not anticipate, and only the log can answer it.</li>
+  <li><strong>Run a null experiment.</strong> Run condition A against condition A, with nothing changed. Any difference you see is your noise floor, and any real effect has to beat it. This costs one extra run and is the single most convincing thing in a small writeup.</li>
+  <li><strong>Then run the real thing,</strong> to the stopping rule you wrote down, without looking at aggregate results until you are finished.</li>
+</ol>
+
+<p>The null experiment in step three is worth insisting on. It is the closest thing to a free lunch in experimental design, it takes one afternoon, and it converts "B scored 4 points higher" into either "and the noise floor is 9 points, so this is nothing" or "and the noise floor is 1 point, so this is real". Almost nobody does it.</p>
+
+<div class="quiz" data-answer="b">
+  <span class="label">Check yourself</span>
+  <p class="q">Your treatment beats the control by 6 points on 40 tasks. What is the most useful next step?</p>
+  <div class="opts">
+    <button class="opt">Write it up, since a 6-point improvement on 40 real tasks is a substantial practical gain.</button>
+    <button class="opt">Run both conditions again unchanged, to find out whether 6 points exceeds the noise floor.</button>
+    <button class="opt">Extend the task set to 200 tasks, so the estimate becomes considerably more precise.</button>
+    <button class="opt">Try a stronger variant of the treatment, since the direction of the effect is now established.</button>
+  </div>
+  <div class="answer-reveal">
+    <p>You do not yet know whether 6 points is anything. A repeat run costs the same as the original and answers the only question that matters. The third answer is not wrong but it is five times the cost for the same information, and the fourth builds on a foundation you have not tested. Note that a repeat run also catches the ugliest failure, which is a bug that made your two conditions differ in some way you did not intend.</p>
+  </div>
+</div>
+
+<h2>When the result is null</h2>
+
+<p>Most first experiments produce no effect, and this is normal rather than a failure. What separates a useful null from a wasted month is whether you can tell the difference between three cases.</p>
+
+<ul>
+  <li><strong>The intervention does nothing here.</strong> This is a real finding, it is worth writing down, and it stops you and your colleagues from repeating the attempt.</li>
+  <li><strong>The experiment could not have detected it.</strong> Your noise floor was larger than any plausible effect. That is a design problem rather than a finding, and the null experiment tells you which one you are in.</li>
+  <li><strong>Something was broken.</strong> The treatment did not actually apply, the grader was miscalibrated, or the conditions differed in an unintended way. Read ten runs from each condition by hand before concluding anything, every time.</li>
+</ul>
+
+<p class="sidenote">Reading raw runs by hand is not optional and it is where most real findings come from. The aggregate tells you whether something moved, and only the transcripts tell you why. Budget an hour for it before you look at any summary statistic, and expect to find at least one thing that changes how you read the numbers.</p>
+
+<div class="project-hook">
+  <span class="label">Do this now</span>
+  <p class="question">Build your harness on three tasks, then run the null experiment before the real one. Record your noise floor as a number in the pre-registration file, next to the prediction you made in Lesson 15.</p>
+  <p class="measure"><span>Measure</span> The spread of condition A against itself. If your predicted effect size from Lesson 15 is smaller than this number, stop and redesign now, because the experiment as planned cannot answer your question.</p>
+</div>
+
+<div class="recall">
+  <span class="label">Retrieval practice</span>
+  <p class="prompt">Write down your control condition in one sentence, then list what is held constant between it and the treatment. Then name the most likely way your two conditions differ that you did not intend.</p>
+  <textarea placeholder="The third part is the one that saves the experiment."></textarea>
+  <div class="model-answer">
+    <p>A worked example for the tool-error project: the control is the same agent, model, temperature, task set, and grader, with the bare error string that the tool returns today, and the treatment changes only that string. What differs unintentionally is that richer errors are longer, so the treatment condition uses more context and possibly more turns, which means you may be measuring context length rather than error quality. The fix is to report token counts alongside success, and ideally to add a third condition with an error message that is equally long but uninformative, such as padded with irrelevant schema. That third condition turns a suggestive result into a convincing one.</p>
+  </div>
+</div>
+
+<h2>What you can now do</h2>
+<p>You can build a controlled comparison, hold the four things constant that matter, measure your own noise floor before trusting any difference, and tell an uninformative null apart from an informative one. That is the whole of small-scale experimental practice, and it is most of what separates a result from an anecdote.</p>
+<p>Next is <a href="0017-writing-up.html">Lesson 17, writing up what you found</a>, which is shorter than this one and matters more than it sounds.</p>
+
+<div class="ask">
+  <strong>Send the log, not the summary.</strong> When results come in, the interesting conversation is about the individual runs where the conditions disagreed. Those are where the mechanism shows itself, and they are much easier to read with two people.
+</div>
+
+<div class="source-box">
+  <span class="label">Read one thing</span>
+  <ol>
+    <li id="s1"><strong>Read this one:</strong> <a href="https://arxiv.org/abs/2407.21787">Brown et al., <em>Large Language Monkeys</em></a>, read this time for its experimental design rather than its finding. Note how carefully it separates coverage from selection, which is the paired-comparison discipline in practice.</li>
+    <li id="s2"><a href="https://arxiv.org/abs/2408.03314">Snell et al., <em>Scaling LLM Test-Time Compute</em></a>, a model of matched-budget comparison. The difficulty binning is what makes its claims survive scrutiny.</li>
+    <li id="s3"><a href="../reference/eval-playbook.html">The eval playbook</a> in this workspace, whose metric definitions and failure taxonomy you will need while grading.</li>
+  </ol>
+</div>
+
+<nav class="lesson-nav">
+  <span><a href="0015-choosing-a-question.html">← Lesson 15</a></span>
+  <span><a href="../index.html">Index</a> · <a href="../reference/project-playbook.html">Project playbook</a></span>
+  <span><a href="0017-writing-up.html">Lesson 17: Writing up →</a></span>
+</nav>
+
+</main>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

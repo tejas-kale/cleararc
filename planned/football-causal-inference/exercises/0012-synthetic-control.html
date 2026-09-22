@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Exercise sheet 12: Synthetic control</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<header class="topbar"><div><a href="../index.html">Course index</a><span>Exercise sheet 12 of 17</span></div></header>
+<main>
+  <p class="eyebrow">Exercise sheet</p>
+  <h1>Synthetic control</h1>
+  <p class="lead">7 questions drawn from <a href="../lessons/0012-synthetic-control.html">Lesson 12</a>. Donor pools, weights, pre-treatment fit and placebo inference.</p>
+  <div class="lesson-meta"><span>30 minutes</span><span>7 questions</span><span>Answers at the end</span></div>
+
+  <section class="sheet-intro">
+    <h2>How to use this sheet</h2>
+    <p>Work through the questions in order and write your answers down before reading any part of the answer section. Give yourself about thirty minutes in total. If one question runs long, write what you have, mark it and move on, because the answer section explains the reasoning in full.</p>
+    <p>Most questions ask for a short written answer rather than a number. The aim is a defensible statement, so a sentence or two of reasoning is worth more than a single word.</p>
+    <p>The questions are collapsed so that you can take them one at a time. Open one, answer it, then open the next. The answers are held behind a single button at the foot of the page, so nothing is revealed until you choose to reveal it.</p>
+  </section>
+
+  <details class="question">
+    <summary><span class="marks">Question 1</span><span class="q-title">Compute a gap</span></summary>
+    <p>A treated district's synthetic control uses donors with weights 0.50, 0.30 and 0.20 and weekly infection rates of 10, 14 and 8 per 100,000. Compute the synthetic rate. The treated district's rate is 15. State the gap. Then state the one piece of information you would need before interpreting that gap as an effect.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 2</span><span class="q-title">Screen the donor pool</span></summary>
+    <p>You are building a synthetic control for a district that hosted matches. Decide whether each candidate donor belongs in the pool and why: a neighbouring district whose residents attended the matches; a district that hosted matches six weeks later; a district in a different country with a comparable population; a district with no professional club and a very different age profile.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 3</span><span class="q-title">Interpret the weights</span></summary>
+    <p>A synthetic control assigns weight 0.82 to a single donor and small weights to two others. Say what this tells you about the donor pool, name the diagnostic you would run, and describe what result would make you abandon the estimate.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 4</span><span class="q-title">Run placebo inference</span></summary>
+    <p>Explain how a placebo-in-space analysis produces something like a p-value without a sampling model. Then explain why the raw post-treatment gaps of the placebo units must not be compared directly with the treated unit's gap, and state the standard correction.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 5</span><span class="q-title">Read a placebo-in-time result</span></summary>
+    <p>An analyst moves the intervention date back by ten weeks, to a period when nothing happened, refits, and finds a gap about 60 per cent as large as the real one. Say what this implies, and describe two possible causes.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 6</span><span class="q-title">Compare with difference in differences</span></summary>
+    <p>Give two respects in which synthetic control is more flexible than difference in differences, and one respect in which it is more demanding. Then name a football setting where you would choose synthetic control over difference in differences and say why.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 7</span><span class="q-title">Judge a reported result</span></summary>
+    <p>A paper reports a treated-minus-synthetic gap of 3.8, a pre-treatment RMSPE of 3.1, a post-treatment RMSPE of 4.0, and states that the treated unit's gap is larger than 34 of 40 placebo units. Write your verdict in no more than five sentences.</p>
+  </details>
+
+  <section class="answers">
+    <h2>Answers</h2>
+    <p class="answer-note">Read these only after writing your own answers. Where an answer says "a good answer includes", treat the listed points as the marking scheme rather than as the only wording that works.</p>
+
+    <details class="answer-reveal">
+      <summary>Show all answers</summary>
+      <section class="answer">
+        <span class="marks">Answer 1</span>
+        <h3>Compute a gap</h3>
+      <p>The synthetic rate is 0.50 x 10 + 0.30 x 14 + 0.20 x 8 = 5 + 4.2 + 1.6 = 10.8 per 100,000. The gap is 15 minus 10.8, which is 4.2 per 100,000.</p>
+      <p>The information needed is the pre-treatment fit: how closely this weighted combination tracked the treated district's actual infection rate in the weeks before hosting resumed. If the synthetic control was already two or three units away from the treated district before treatment, a post-treatment gap of 4.2 means very little, since the construction never reproduced the unit in the first place. The gap is interpretable only relative to the size of the pre-treatment discrepancy.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 2</span>
+        <h3>Screen the donor pool</h3>
+      <ol>
+        <li>The neighbouring district whose residents attended: exclude, or model explicitly. It is indirectly treated through spillover, so its outcome is not an untreated trajectory. Including it drags the synthetic control towards the treated path and biases the gap towards zero.</li>
+        <li>The district that hosted six weeks later: it may be used for the first six weeks but must be dropped or censored once it is treated. Many implementations simply exclude later-treated units to keep the counterfactual clean over the whole window.</li>
+        <li>The district in another country: usually exclude. Even with a similar population, it faces different national policy, testing regimes and reporting definitions, so its outcome series is not comparable. If included, one must argue that the outcome is measured the same way.</li>
+        <li>The district with no professional club and a different age profile: include it in the pool. Having no club is not disqualifying, since we need untreated units, and the method itself will assign it a low weight if it does not help reproduce the treated pre-treatment path. Screening donors on outcomes is a mistake; screening them on treatment exposure is not.</li>
+      </ol>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 3</span>
+        <h3>Interpret the weights</h3>
+      <p>It tells you that one donor does almost all the work, so the estimate is close to a two-unit comparison rather than a genuinely synthetic one. The pool may lack units resembling the treated district, or the treated district may be extreme on the predictors, either of which undermines the premise that a convex combination of donors can reproduce it.</p>
+      <p>The diagnostic is a leave-one-out analysis: rebuild the synthetic control with the dominant donor excluded and see whether the estimated gap survives in size and sign. Reporting the whole family of leave-one-out paths is standard.</p>
+      <p>I would abandon the estimate if removing that donor collapses the pre-treatment fit or reverses the gap, since that means the result is a statement about one particular district rather than about the treatment. I would also be wary if the dominant donor is one with a known idiosyncratic shock in the post-period, since the gap would then measure that shock rather than the intervention.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 4</span>
+        <h3>Run placebo inference</h3>
+      <p>The procedure reassigns treatment in turn to each untreated donor, builds a synthetic control for it from the remaining units, and records its post-treatment gap. This produces a distribution of gaps under no treatment. The treated unit's gap is then placed in that distribution, and its rank gives an inference statement of the form: if the treatment had no effect, a gap this large would occur in this fraction of units. That is a randomisation-style argument, resting on the exchangeability of units rather than on an assumed error distribution.</p>
+      <p>Raw gaps are not comparable because units differ in how well they could be fitted before treatment. A donor that no combination reproduces will show a large gap in every period, including the post-period, for reasons having nothing to do with treatment. Comparing the treated unit's gap with that unit's gap is comparing an effect with a fitting failure.</p>
+      <p>The standard correction is the ratio of post-treatment to pre-treatment root mean squared prediction error. Ranking units on that ratio rewards a unit whose path was reproduced well before treatment and diverged after it, which is the pattern that actually signals an effect. An alternative is to exclude placebo units whose pre-treatment error exceeds some multiple of the treated unit's, stated in advance.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 5</span>
+        <h3>Read a placebo-in-time result</h3>
+      <p>It implies the design manufactures gaps without treatment, so the real gap cannot be attributed to the intervention with any confidence. A credible placebo-in-time test returns a gap near zero.</p>
+      <p>One possible cause is overfitting on a short pre-treatment window. If the weights are chosen using only a few periods, they can fit noise rather than structure, and the fitted combination then drifts away from the treated unit as soon as the fitting window ends, whether or not treatment occurred. Lengthening the pre-period and holding out part of it for validation addresses this.</p>
+      <p>The other is that the treated unit was already on a diverging path, so the gap reflects a trend rather than an intervention. If the treated district's infection dynamics differed structurally from every donor's, the gap grows steadily regardless of the assumed date. Here the remedy is a better donor pool or a different design, not a technical adjustment.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 6</span>
+        <h3>Compare with difference in differences</h3>
+      <p>First, it does not impose parallel trends across all untreated units; it constructs a weighted combination chosen to match the treated unit's pre-treatment path, which permits time-varying unobserved factors to have unit-specific loadings. Second, it makes the comparison group explicit and quantified, since the weights are reported and can be inspected and argued with, whereas difference in differences implicitly weights all controls equally.</p>
+      <p>It is more demanding in data: it requires a long, clean pre-treatment outcome series for the treated unit and every donor, and it works with one treated unit or a few rather than many.</p>
+      <p>I would choose it for a single-club or single-league intervention with a long history, such as the effect of a stadium move on attendance for one club, or the effect of a national tax reform on player migration to one country as in Kleven, Landais and Saez. There is exactly one treated unit, no natural set of parallel-trending comparators, and years of pre-treatment data, which is precisely the configuration difference in differences handles badly and synthetic control handles well.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 7</span>
+        <h3>Judge a reported result</h3>
+      <p>The pre-treatment fit is poor: an RMSPE of 3.1 is close to the reported gap of 3.8, so the synthetic control never reproduced the treated unit and the post-treatment divergence is barely distinguishable from the fitting error. The ratio of post to pre RMSPE is about 1.3, which is very modest, and it is that ratio, not the raw gap, on which the placebo ranking should have been based. Ranking above 34 of 40 placebos gives a nominal figure of roughly 0.15 even taken at face value, which is not strong, and it is likely overstated if the ranking used raw gaps. My verdict is that the paper has not demonstrated an effect. The right presentation would report the full path, the fit measure prominently, and the ratio-based placebo ranking, and would state that the design is uninformative for this unit.</p>
+      </section>
+    </details>
+  </section>
+
+  <p class="citation"><strong>Related reading.</strong> <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8411384/">Breidenbach and Mitze (2022)</a>; <a href="https://eml.berkeley.edu/~saez/kleven-landais-saezMay12football.pdf">Kleven, Landais and Saez (2013)</a>; Ruiz de Villa, Section 11.3.</p>
+  <p>If your answer and the suggested answer disagree and you cannot see why, ask your teaching agent to work through that question with you rather than assuming the sheet is right.</p>
+  <nav class="lesson-nav"><a href="0011-instrumental-variables-and-late.html">Previous sheet: Instrumental variables and the LATE</a><a href="0013-interrupted-time-series.html">Next sheet: Interrupted time series</a></nav>
+</main>
+</body>
+</html>

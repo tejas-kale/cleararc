@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Source 0005 · Spines, ticks, and uppercase labels</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <article class="page">
+    <header class="lesson-head">
+      <p class="kicker"><a href="../index.html">Lessons</a> · Source 0005 of 0010 · build() clothing</p>
+      <h1>Spines, ticks, and uppercase labels</h1>
+      <p class="lede"><code>build()</code> first removes chart chrome, then styles the words that remain. Data is already on the Axes when this runs (from <code>render()</code>).</p>
+    </header>
+
+    <p>The order inside <code>build()</code> is deliberate:</p>
+    <pre>self._clean_spines()
+self._add_axis_labels()
+self.ax.tick_params(..., colors=self.background_color, ...)
+self.fig.canvas.draw()          # so bounding boxes exist
+# align labels if they were drawn
+self.fig.canvas.draw()          # again after moving labels
+self._add_title()
+self._add_subtitle()
+self._add_footnote()</pre>
+
+    <h2>What “clean” means here</h2>
+    <p><code>_clean_spines</code> hides the top and right spines. Left and bottom stay, but their color is the grey <code>background_color</code>, not black. Tick labels use the same grey. That matches this repo’s “remove redundant structure” pattern: keep the two spines you need as a faint frame, not a box.</p>
+
+    <div class="diagram">
+      <svg viewBox="0 0 640 200" role="img" aria-label="Before and after spine cleanup">
+        <text x="40" y="28" font-family="Iowan Old Style, serif" font-size="14" fill="#5c5c5c">matplotlib default</text>
+        <rect x="40" y="44" width="240" height="130" fill="#fff" stroke="#1a1a1a" stroke-width="2"/>
+        <text x="360" y="28" font-family="Iowan Old Style, serif" font-size="14" fill="#5c5c5c">after _clean_spines</text>
+        <line x1="360" y1="174" x2="600" y2="174" stroke="#808080" stroke-width="2"/>
+        <line x1="360" y1="44" x2="360" y2="174" stroke="#808080" stroke-width="2"/>
+      </svg>
+      <p class="caption">Top and right vanish. Left and bottom stay, in grey.</p>
+    </div>
+
+    <h2>Axis labels are optional and loud</h2>
+    <p>If an axis label is non-blank, <code>_add_axis_labels</code> sets it with <code>.upper()</code>, left-aligned, grey, 10pt. Horizontal alignment <code>ha="left"</code> plus later <code>set_label_coords</code> is how the y-label’s <em>top</em> can sit at the top of the axis instead of centering on the spine.</p>
+    <p>Empty labels skip <code>set_xlabel</code> / <code>set_ylabel</code> entirely so matplotlib does not reserve space for a ghost title.</p>
+
+    <div class="example">
+      <p><strong>Example.</strong> You type <code>y_label="Meals served"</code>. The figure shows <code>MEALS SERVED</code>. That is not pandas. It is this one <code>.upper()</code> call.</p>
+    </div>
+
+    <div class="quiz" data-answer="1"
+         data-ok="Right: top and right are hidden; left and bottom are greyed."
+         data-no="_clean_spines hides top/right and recolors left/bottom.">
+      <p class="quiz-q">What happens to the four spines?</p>
+      <button data-choice="0">All four spines become hidden</button>
+      <button data-choice="1">Top-right hide; others grey</button>
+      <button data-choice="2">All four spines become black</button>
+    </div>
+
+    <p class="primary-source"><strong>Primary source:</strong> <code>build</code>, <code>_clean_spines</code>, <code>_add_axis_labels</code> in <a href="https://github.com/phmelzer/datavizlib/blob/api-exploration-tejas/src/datavizlib/charts/base.py">base.py</a>. Why: <a href="https://github.com/phmelzer/datavizlib/blob/api-exploration-tejas/docs/patterns/remove-redundant-structure.md">Remove redundant structure</a> and <a href="https://github.com/phmelzer/datavizlib/blob/api-exploration-tejas/docs/principles/reduce-cognitive-load.md">Reduce cognitive load</a>.</p>
+
+    <div class="ask">If a hatch needs a visible top spine or mixed-case labels, ask before forking <code>build()</code> — that method is shared by every chart type.</div>
+
+    <nav class="lesson-nav">
+      <a href="0004-layout-margins.html">← Margins</a>
+      <a href="0006-measure-then-shift.html">Next: measure then shift →</a>
+    </nav>
+  </article>
+  <script src="../assets/quiz.js"></script>
+</body>
+</html>

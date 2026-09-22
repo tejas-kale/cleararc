@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 3 · Two designs, not one robustness table</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+<link rel="stylesheet" href="../assets/quiz.css">
+</head>
+<body>
+<main class="page">
+
+<header class="masthead">
+  <p class="eyebrow">Lesson 3 of 5 · ICE-ing the Economy</p>
+  <h1>Two designs, not one robustness table</h1>
+  <p class="standfirst">OLS on treated metros is confounded. The paper’s answer is not “add more controls.” It is a shift-share instrument for metro onset, and a completely different within-metro distance design that does not use the instrument at all.</p>
+  <p class="meta">≈9 minutes · Unlocks supplement “Shift-Share Estimation” and “Spatial Intensity Estimation”</p>
+</header>
+
+<blockquote class="article">
+  <p>The identification logic is that places with historically higher shares of immigrants are more likely to be targeted when a national surge in enforcement is enacted, but the timing of targeting any given metro is exogenous to economic conditions affecting POIs in that metro.</p>
+  <cite>Hernandez (2026), Data and Methods</cite>
+</blockquote>
+
+<h2>Why the treated dummy is endogenous</h2>
+
+<p>In 2024, eventually-treated metros had ~1.8 million people vs 153 thousand; foreign-born share 0.147 vs 0.056; Harris vote share 0.524 vs 0.349; higher weekly spend; <em>rising</em> spend trends and <em>weaker</em> visit trends. Hernandez notes that even OLS with those covariates still leaves endogenous pre-trends. You cannot difference that away by staring at the coefficient.</p>
+
+<h2>Design A — shift-share 2SLS</h2>
+
+<p>Instrument for metro <em>m</em> in week <em>t</em>:</p>
+
+<p><code>Z<sub>m,t</sub> = s<sub>m,2010</sub> × R<sub>t</sub></code></p>
+
+<p><code>s<sub>m,2010</sub></code> is the foreign-born share from the 2006–2010 ACS — frozen more than a decade before treatment. <code>R<sub>t</sub></code> is the <em>national</em> weekly count of the 5,388 events (about 12/week pre-inauguration, 86/week after, peak 355). First stage: onset on <code>Z</code>, with the same fixed effects as the second stage.</p>
+
+<p>Second stage (IHS visits or IHS spend): IHS(y<sub>it</sub>) on instrumented Treated<sub>m(i),t</sub>, plus POI FE and state×week FE.</p>
+
+<ul>
+  <li><strong>POI FE</strong>: brand, location, industry, baseline mix — anything time-invariant about the store.</li>
+  <li><strong>State × week FE</strong>: weather, holidays, state policy, statewide news, macro week effects that hit every metro in the state equally.</li>
+  <li><strong>Cluster:</strong> CBSA. The treatment is assigned at metro level; clustering anywhere finer is theatre.</li>
+</ul>
+
+<p>Reported Kleibergen-Paap first-stage \(F\) is ~30 to &gt;100. Table S13 swaps in <strong>1950</strong> foreign-born shares: visits still work; spend’s first stage is too weak for a precise second stage. That is a useful tell — the instrument is not infinitely robust to “any historical share.”</p>
+
+<p class="sidenote">Goldsmith-Pinkham, Sorkin and Swift (2020) emphasise share exogeneity. Borusyak, Hull and Jaravel (2022) emphasise shock exogeneity. Hernandez cites both and narrates a <em>mix</em>: old shares × a national policy surge. A journal-club fight over which story is load-bearing is legitimate; the draft does not run a full BHJ exposure-weighted shock design as a separate paper.</p>
+
+<h2>Pre-trends as a share test</h2>
+
+<p>Figure S4 is a reduced-form event study: outcomes on event-time bins × the share component, from 20 two-week bins before onset down to −2. The linear-slope tests fail to reject zero. Joint Wald tests often reject — Hernandez attributes that to N ≈ 500 million, where tiny wiggles are “significant.” Spending with state×week FE is the panel where even he flags a joint-test rejection. Remember that sentence when someone waves “we passed pre-trends.”</p>
+
+<div class="quiz" data-answer="d">
+  <span class="label">Check yourself</span>
+  <p class="q">What variation identifies \(\beta\) in the main 2SLS?</p>
+  <div class="opts">
+    <button class="opt">Comparing two stores on the same street, the week a raid hits the nearer one.</button>
+    <button class="opt">National week dummies, because \(R_t\) is national.</button>
+    <button class="opt">Cross-sectional differences in 2024 income between treated and untreated metros.</button>
+    <button class="opt">Within-POI changes in onset, with onset instrumented by 2010 immigrant share × national raid volume, after state-week shocks are absorbed.</button>
+  </div>
+  <div class="answer-reveal">
+    <p>POI FE kill store levels. State×week FE kill anything common to a state that week. What remains is differential onset across metros in the same state, with the differential predicted by historical nativity interacting with the national surge — not the raw treated dummy.</p>
+  </div>
+</div>
+
+<h2>Design B — spatial intensity, instrument off</h2>
+
+<p>Restrict to treated metros. For each POI-week, take great-circle distance to the <em>nearest raid so far</em> (running minimum). Bin: 0–0.5, 0.5–1, 1–2, 2–5, 5–10, 10+ miles, plus a “none yet” omitted group. IHS outcomes on those bin dummies, plus POI FE and CBSA×week FE.</p>
+
+<p>The new fixed effect is <strong>CBSA × week</strong>, not state × week. Anything that hits the whole metro that week — including the metro-average treatment effect, the local protest, the sports calendar, the entire national enforcement intensity as it lands on Chicago that week — is absorbed. Identification is a <em>dose</em>: stores closer to the accumulating epicenter versus farther stores in the same city-week.</p>
+
+<p>Predicted pattern under local chilling: coefficients most negative near 0–0.5 miles, fading toward the periphery (linear trend p = 0.005 visits, p &lt; 0.001 spend). A flat gradient would be a problem for the mechanism even if Design A looked pretty.</p>
+
+<p>Hernandez is explicit that this design is <em>too saturated</em> for demographic and industry interactions. Those interactions go back to Design A.</p>
+
+<div class="callout">
+  <span class="label">Do not collapse the two designs</span>
+  <p>Design A answers “what happens to POIs in targeted metros versus not, using predicted targeting.” Design B answers “conditional on the metro already being targeted, is the damage local to raid sites?” Agreement is a joint test of a chilling story. It is not two prints of the same IV.</p>
+</div>
+
+<div class="recall">
+  <span class="label">Retrieval practice</span>
+  <p class="prompt">A colleague says: “CBSA×week FE in Design B already absorb confounding, so we can throw away the shift-share.” What do you lose if you do?</p>
+  <textarea placeholder="Write before revealing."></textarea>
+  <div class="model-answer">
+    <p>You lose the contrast between targeted and never-targeted metros — the extensive-margin, citywide chill. Design B can only see a gradient inside treated cities. If enforcement makes the whole metro quieter by the same percent, Design B’s distance coefficients can be near zero while Design A’s β is large. You need both sentences.</p>
+  </div>
+</div>
+
+<h2>What you can now read</h2>
+<p>You can read “I use a shift-share, and also distance” as two estimands. Next, the numbers: <a href="0004-what-the-estimates-say.html">Lesson 4</a>.</p>
+
+<div class="ask">
+  <strong>The fork worth arguing.</strong> Are you happier with share exogeneity (2010 nativity uncorrelated with 2025 metro-week residual demand after FE) or with shock exogeneity (national weekly raid volume as-if random relative to any one metro)? Say which, then read GSS and BHJ with that question marked.
+</div>
+
+<div class="source-box">
+  <span class="label">Read one thing</span>
+  <ol>
+    <li>Goldsmith-Pinkham, Sorkin and Swift, <em>AER</em> 2020, introduction plus the “when are shares exogenous?” discussion — then Hernandez’s S4 pre-trend write-up.</li>
+  </ol>
+</div>
+
+<nav class="lesson-nav">
+  <span><a href="0002-what-was-actually-measured.html">← Lesson 2</a></span>
+  <span><a href="../reference/cheatsheet.html">Cheat sheet</a></span>
+  <span><a href="0004-what-the-estimates-say.html">Lesson 4: Estimates →</a></span>
+</nav>
+
+</main>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

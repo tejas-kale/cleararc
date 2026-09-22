@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reference · Eval playbook</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+<link rel="stylesheet" href="../assets/reference.css">
+</head>
+<body class="reference">
+<main class="page">
+
+<header class="masthead">
+  <p class="eyebrow">Reference · Self-improving AI agents</p>
+  <h1>Eval playbook</h1>
+  <p class="standfirst">How to build an evaluation for one real agent workflow, what each metric means, and the failure taxonomy to classify runs against.</p>
+  <p class="meta">Two printable pages · Companion to Lessons 12 and 13, and to Arc V</p>
+</header>
+
+<h2>Build it in five steps</h2>
+<ul class="rules">
+  <li><strong>Choose one workflow and one decision.</strong> Not "evaluate our agents", but "should we switch the monthly-report agent to the fusion architecture?" An eval that cannot change a decision will not be maintained.</li>
+  <li><strong>Collect 20 to 50 real tasks</strong> from actual traffic, deliberately over-weighting the cases that went wrong. Synthetic tasks measure a distribution nobody uses.</li>
+  <li><strong>Define success as a judgement you would defend.</strong> Make it binary where possible, by asking whether you would have sent this and whether the number matched the source. Break anything subjective into yes-or-no criteria before scoring it.</li>
+  <li><strong>Grade a baseline by hand.</strong> It is painful and it happens once, and it calibrates every automated judge you build afterwards. Thirty items is enough.</li>
+  <li><strong>Keep the held-out set separate from the iteration set.</strong> You overfit everything you look at repeatedly, and you do it as much as the agent does.</li>
+</ul>
+
+<h2>Which metric answers which question</h2>
+<div class="scroll-x">
+<table>
+  <thead><tr><th>Metric</th><th>Definition</th><th>Answers</th><th>Misleads when</th></tr></thead>
+  <tbody>
+    <tr><td><strong>pass@1</strong></td><td>Succeeds on one attempt</td><td>What a user sees today</td><td>You quietly retry in production</td></tr>
+    <tr><td><strong>pass@k / coverage</strong></td><td>Succeeds at least once in k attempts</td><td>Is the capability there at all?</td><td>Reported as if it were product performance</td></tr>
+    <tr><td><strong>pass^k</strong></td><td>Succeeds on <em>all</em> k attempts</td><td>Can this run unattended?</td><td>Rarely, because this is the honest one, and it will look bad</td></tr>
+    <tr><td><strong>Cost per solved task</strong></td><td>Total spend divided by successes</td><td>Is the extra compute worth it?</td><td>You ignore the cost of a wrong answer reaching someone</td></tr>
+    <tr><td><strong>Steps to completion</strong></td><td>Tool calls or turns used</td><td>Is it thrashing?</td><td>It is used as a target, and shorter is not better if it fails</td></tr>
+    <tr><td><strong>Recovery rate</strong></td><td>Runs that hit an error and still finished correctly</td><td>How brittle is it?</td><td>Errors are silently swallowed by tools</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p><strong>Report pass@1 and pass^k together.</strong> The first is optimistic and the second is pessimistic, and the distance between them states your reliability problem as a number. A workflow at 85 percent pass@1 and 40 percent pass^5 is not an 85 percent workflow.</p>
+
+<h2>Failure taxonomy, for classifying every bad run</h2>
+<p>Do not record that a run failed. Record which of these it was, because each one has a different fix.</p>
+<div class="scroll-x">
+<table>
+  <thead><tr><th>Class</th><th>Looks like</th><th>Fix in</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Bad plan</strong></td><td>Sensible steps and a wrong decomposition, so it solves an adjacent problem</td><td>Lesson 8</td></tr>
+    <tr><td><strong>Missing capability</strong></td><td>No sampled attempt gets close, and coverage and pass@1 are both near zero</td><td>Lessons 2 and 9</td></tr>
+    <tr><td><strong>Bad selection</strong></td><td>A good attempt existed and was discarded</td><td>Lessons 4 to 6</td></tr>
+    <tr><td><strong>Tool failure</strong></td><td>Wrong observation, silent empty result, unhelpful error</td><td>Lesson 7</td></tr>
+    <tr><td><strong>Error cascade</strong></td><td>One early mistake propagates and the agent never goes back to check it</td><td>Lesson 13</td></tr>
+    <tr><td><strong>Context rot</strong></td><td>Quality degrades late in long runs and earlier constraints are forgotten</td><td>Lesson 13</td></tr>
+    <tr><td><strong>Spec gaming</strong></td><td>Passes every check, satisfies nobody</td><td>Lesson 7, using held-out checks</td></tr>
+    <tr><td><strong>Right for wrong reasons</strong></td><td>Correct output reached by an incoherent path, which recurs unpredictably</td><td>Lesson 4, using process checks</td></tr>
+  </tbody>
+</table>
+</div>
+<p>Twenty classified failures tell you more than two hundred unclassified ones, because the distribution is your roadmap.</p>
+
+<h2>Traps</h2>
+<ul class="rules">
+  <li><strong>The judge is also your selector.</strong> If one component both picks outputs and grades them, your eval is measuring its own preferences, so keep them separate.</li>
+  <li><strong>Benchmark contamination.</strong> Public benchmarks leak into training sets. Use them for orientation, never as evidence about your workload.</li>
+  <li><strong>Averaging away the tail.</strong> A mean hides the hard slice where all the value and all the risk sit, so report results per difficulty bin.</li>
+  <li><strong>One run per task.</strong> Agents are stochastic and a single run is a sample of size one, so use at least five.</li>
+  <li><strong>Unpinned versions.</strong> A model updated underneath you invalidates every comparison, so pin versions and re-baseline deliberately.</li>
+  <li><strong>Grading only the output.</strong> The trace tells you why and the output only tells you whether, so log thought, action, and observation separately.</li>
+  <li><strong>No cost column.</strong> Accuracy without cost can neither justify nor refuse an architecture change.</li>
+</ul>
+
+<h2>The weekly loop</h2>
+<ul class="rules">
+  <li>Sample ten real runs and classify each against the taxonomy, which takes fifteen minutes.</li>
+  <li>Pick the largest class and apply the matching dial from <a href="tuning-dials.html">Tuning dials</a>.</li>
+  <li>Re-run the eval set. Report pass@1, pass^k and cost per solved task.</li>
+  <li>Touch the held-out set only when deciding to ship, and never more than monthly.</li>
+</ul>
+
+<nav class="lesson-nav">
+  <span><a href="../index.html">← Course index</a></span>
+  <span><a href="glossary.html">Glossary</a> · <a href="tuning-dials.html">Tuning dials</a> · <a href="project-playbook.html">Project playbook</a></span>
+</nav>
+
+</main>
+</body>
+</html>

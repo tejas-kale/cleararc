@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Source 0008 · LineChart collects then plots</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <article class="page">
+    <header class="lesson-head">
+      <p class="kicker"><a href="../index.html">Lessons</a> · Source 0008 of 0010 · line.py</p>
+      <h1>LineChart collects series, then plots them</h1>
+      <p class="lede">The whole file is a list of dicts plus one loop over <code>ax.plot</code>. Color is chosen at collect time, not at draw time.</p>
+    </header>
+
+    <p><code>LineChart.__init__</code> calls <code>super().__init__(…)</code> then sets <code>self._lines = []</code>. That list is the entire extra state.</p>
+
+    <h2>add_data validates, then appends</h2>
+    <p>It requires a pandas DataFrame and column names that exist. If <code>color is None</code>, it assigns <code>self._get_next_color(len(self._lines))</code> <em>before</em> appending, so the first line is palette[0], the second is palette[1], even if you never call <code>render</code> in between.</p>
+
+    <div class="example">
+      <p><strong>Example.</strong> Actual vs forecast on the same months:</p>
+      <pre>chart = LineChart(
+    title="Monthly revenue",
+    x_label="Month",
+    y_label="EUR",
+    footnote="Source: finance extract",
+    subtitle="Actual vs forecast",
+)
+chart.add_data(df, x="month", y="actual", linestyle="solid", label="Actual")
+chart.add_data(df, x="month", y="forecast", linestyle="dotted", label="Forecast")
+fig, ax = chart.render()</pre>
+      <p>Two dicts in <code>_lines</code>. Two <code>ax.plot</code> calls. Because any dict has a <code>label</code>, <code>render</code> adds a legend with <code>frameon=False</code>.</p>
+    </div>
+
+    <h2>render is a thin loop</h2>
+    <p>No data → <code>ValueError("No data added. Call add_data() first.")</code>. Otherwise, for each stored dict, it passes matplotlib’s own names through: <code>linestyle</code>, <code>linewidth</code>, <code>marker</code>, <code>markersize</code>, <code>alpha</code>, <code>label</code>. Then <code>return self.build()</code>.</p>
+    <p>There is no grouping logic and no shared-category check. Lines may have different x values; matplotlib will just plot what you give it.</p>
+
+    <div class="diagram">
+      <svg viewBox="0 0 640 160" role="img" aria-label="Two series in a list then two plot calls">
+        <rect x="16" y="20" width="200" height="120" fill="#f3f0e8" stroke="#00005f"/>
+        <text x="28" y="48" font-family="IBM Plex Mono, monospace" font-size="13" fill="#00005f">_lines[0]</text>
+        <text x="28" y="72" font-family="Iowan Old Style, serif" font-size="13" fill="#5c5c5c">solid, navy, Actual</text>
+        <text x="28" y="96" font-family="IBM Plex Mono, monospace" font-size="13" fill="#00005f">_lines[1]</text>
+        <text x="28" y="120" font-family="Iowan Old Style, serif" font-size="13" fill="#5c5c5c">dotted, orange, Forecast</text>
+        <text x="232" y="88" font-size="22" fill="#ff7800">→</text>
+        <rect x="268" y="20" width="352" height="120" fill="#fff" stroke="#808080"/>
+        <polyline points="290,110 360,70 430,85 500,50 560,60" fill="none" stroke="#00005f" stroke-width="3"/>
+        <polyline points="290,120 360,90 430,95 500,80 560,88" fill="none" stroke="#ff7800" stroke-width="2" stroke-dasharray="6 4"/>
+      </svg>
+    </div>
+
+    <div class="quiz" data-answer="1"
+         data-ok="Yes. Color is frozen in the dict when you add_data, using len(_lines)."
+         data-no="Look at add_data: color = self._get_next_color(len(self._lines)) before append.">
+      <p class="quiz-q">When is an automatic line color chosen?</p>
+      <button data-choice="0">During BaseChart.build ticks</button>
+      <button data-choice="1">During LineChart.add_data call</button>
+      <button data-choice="2">During LineChart.render loop</button>
+    </div>
+
+    <p class="primary-source"><strong>Primary source:</strong> <a href="https://github.com/phmelzer/datavizlib/blob/api-exploration-tejas/src/datavizlib/charts/line.py">line.py</a> and matplotlib <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.plot.html"><code>Axes.plot</code></a>. Tests: <a href="https://github.com/phmelzer/datavizlib/blob/api-exploration-tejas/tests/test_line.py">test_line.py</a>.</p>
+
+    <div class="ask">Want a second y-scale or a direct-label instead of a legend? Ask before stuffing it into <code>render()</code> — that method is currently one loop on purpose.</div>
+
+    <nav class="lesson-nav">
+      <a href="0007-title-and-footnote-anchors.html">← Titles</a>
+      <a href="0009-barchart.html">Next: BarChart →</a>
+    </nav>
+  </article>
+  <script src="../assets/quiz.js"></script>
+</body>
+</html>

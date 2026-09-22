@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Separate direct and indirect effects</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<header class="topbar"><div><a href="../README.md">Course index</a><span>Lesson 16 of 17</span></div></header>
+<main>
+  <p class="eyebrow">Causal mediation</p>
+  <h1>Separate direct and indirect effects</h1>
+  <p class="lead">Mediation analysis asks how an intervention produces an outcome. Randomising the intervention identifies its total effect, but it does not automatically identify the effect that passes through a measured mediator.</p>
+  <div class="lesson-meta"><span>About 25 minutes</span><span>Includes guided exercises</span><span><a href="../exercises/0016-causal-mediation.html">Exercise sheet</a></span></div>
+  <section class="objective"><h2>What you will be able to do</h2><p>You will be able to distinguish total, direct and indirect effects and explain the extra assumptions needed for mediator-outcome comparisons.</p></section>
+  <section class="scenario"><h2>The EuroFIT supporter programme</h2><p>Roynesdal and colleagues studied mediation in the EuroFIT programme, which was delivered through 15 professional football clubs to 1,113 male supporters. The football clubs provided a setting for a health programme. The units were supporters, not players or matches. The mediated effects changed under sensitivity checks, so the study is also a useful example of cautious interpretation.</p></section>
+      <h2>Define the three effects</h2><div class="grid"><div class="card"><strong>Total effect</strong><p>The outcome difference under the programme compared with control, allowing every causal path to operate.</p></div><div class="card"><strong>Indirect effect</strong><p>The part of the effect that operates through a specified mediator, such as autonomous motivation.</p></div><div class="card"><strong>Direct effect</strong><p>The part that does not operate through that mediator under the chosen definition.</p></div></div><p>The total effect is not automatically the sum of simple regression coefficients. Natural direct and indirect effects use nested counterfactuals, such as the outcome under treatment with the mediator set to the value it would have taken under control. These definitions require strong assumptions.</p>
+      <h2>Treatment randomisation does not randomise the mediator</h2><p>Random assignment protects the programme comparison at baseline. Motivation is measured after assignment and is affected by the programme. Supporters with greater motivation may also differ in health, available time or social support. Those causes can affect the outcome. The mediator-outcome association can therefore remain confounded.</p><p>A treatment-induced mediator-outcome confounder creates another problem. Suppose the programme changes physical ability, and ability affects both motivation and activity. Adjusting for ability blocks part of treatment's effect, while ignoring it leaves mediator-outcome confounding.</p>
+      <section class="worked"><h2>Worked causal paths</h2><p>Consider three paths: programme to motivation to physical activity; programme to knowledge to physical activity; and baseline health to motivation and physical activity. The first path is the indirect path through the chosen mediator. The second contributes to the direct effect relative to motivation, even though knowledge is another mediator. Baseline health confounds the mediator-outcome relation and should be handled if measured before treatment.</p></section>
+      <h2>Choose the effect definition for the decision</h2><p>Natural effects can be difficult to interpret when the mediator cannot be set independently. Interventional indirect effects instead compare mediator distributions generated under different treatments. They may require assumptions that fit practical interventions better. The analyst should state which definition is used and what hypothetical action it represents.</p>
+      <h2>Use sensitivity analysis</h2><p>Mediation estimates depend on assumptions that cannot be fully tested. Report how results change under plausible unmeasured mediator-outcome confounding, alternative mediator measurements and timing choices. A weak or unstable mediated effect should be described as such.</p>
+      <section class="exercise"><h2>Exercise 1. Identify the mediator</h2><p>A warm-up programme reduces injury partly by improving landing technique. Name treatment, mediator and outcome.</p><details><summary>Show a suggested answer</summary><p>The assigned warm-up programme is treatment, landing technique measured after training is the mediator, and subsequent injury is the outcome. Baseline athletic ability may confound technique and injury.</p></details></section>
+      <section class="exercise"><h2>Exercise 2. Explain the extra assumption</h2><p>Why is random assignment of the warm-up programme not enough to identify the indirect effect through landing technique?</p><details><summary>Show a suggested answer</summary><p>Landing technique was not randomised. Variables such as baseline coordination, effort or prior injury can affect both technique and later injury. The mediation analysis needs assumptions or measurements that address that mediator-outcome confounding.</p></details></section>
+      <div class="exercise">
+    <h2>Practice</h2>
+    <p>An <a href="../exercises/0016-causal-mediation.html">exercise sheet of 7 questions</a> accompanies this lesson. It takes about thirty minutes and carries worked answers at the end. Attempt it before moving on.</p>
+  </div>
+
+  <section class="quiz" data-quiz data-answer="b" data-correct="Correct. The mediator is a post-treatment variable and was not randomised by the original treatment assignment." data-incorrect="Randomising treatment balances baseline groups, but it does not randomise the mediator value that follows treatment."><fieldset><legend>Why can mediator-outcome confounding remain?</legend><label><input type="radio" name="q" value="a"> The programme uses professional club branding</label><label><input type="radio" name="q" value="b"> The mediator itself was not randomised</label><label><input type="radio" name="q" value="c"> The trial includes several football clubs</label></fieldset><button type="button">Check answer</button><p class="feedback" aria-live="polite"></p></section>
+  <section class="summary"><h2>What to remember</h2><ul><li>The total effect includes every causal path from treatment to outcome.</li><li>Direct and indirect effects depend on a specific mediator and counterfactual definition.</li><li>Random treatment assignment does not remove mediator-outcome confounding.</li><li>Mediation conclusions need clear timing and sensitivity analysis.</li></ul></section>
+  <p class="citation"><strong>Primary reading.</strong> <a href="https://doi.org/10.1080/08870446.2026.2677081">Roynesdal et al. (2026)</a>; Hernan and Robins, Chapters 4 to 8 for counterfactual identification; and Ruiz de Villa, Chapter 6.</p>
+  <p>If any step is unclear, ask your teaching agent to work through another football example with you.</p>
+  <nav class="lesson-nav"><a href="0015-double-machine-learning.html">Previous lesson: Use double machine learning for a causal effect</a><a href="0017-causal-survival-analysis.html">Next lesson: Choose a causal time-to-event estimand</a></nav>
+</main>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

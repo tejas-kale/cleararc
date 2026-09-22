@@ -1,0 +1,67 @@
+/* quiz.css — interactive components shared by all lessons.
+   Requires quiz.js. Works with lesson.css variables. */
+
+.quiz {
+  margin: 2.2rem 0; padding: 1.2rem 1.3rem 1.1rem;
+  border: 1px solid var(--rule); background: var(--paper-warm);
+}
+.quiz > .label {
+  font-family: var(--sans); font-size: 0.66rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-faint); display: block; margin-bottom: 0.55rem;
+}
+.quiz .q { font-size: 1rem; margin: 0 0 0.9rem; }
+.quiz .opts { display: grid; gap: 0.4rem; }
+.quiz button.opt {
+  font-family: var(--serif); font-size: 0.94rem; line-height: 1.45;
+  text-align: left; padding: 0.6rem 0.8rem; cursor: pointer;
+  background: var(--paper); color: var(--ink);
+  border: 1px solid var(--rule); border-radius: 2px;
+  transition: border-color .12s, background .12s;
+}
+.quiz button.opt:hover:not(:disabled) { border-color: var(--ink-faint); }
+.quiz button.opt:disabled { cursor: default; }
+.quiz button.opt.is-right { border-color: var(--good); background: color-mix(in srgb, var(--good) 12%, var(--paper)); }
+.quiz button.opt.is-wrong { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 12%, var(--paper)); }
+.quiz button.opt .mark { font-family: var(--sans); font-weight: 700; margin-right: 0.45rem; }
+.quiz button.opt.is-right .mark::after { content: " ✓"; color: var(--good); }
+.quiz button.opt.is-wrong .mark::after { content: " ✕"; color: var(--bad); }
+
+.quiz .answer-reveal {
+  display: none; margin-top: 0.9rem; padding-top: 0.8rem;
+  border-top: 1px solid var(--rule); font-size: 0.9rem; color: var(--ink-muted);
+}
+.quiz.is-answered .answer-reveal { display: block; }
+.quiz .answer-reveal p:last-child { margin-bottom: 0; }
+
+/* Free-recall: force retrieval before showing the model answer. */
+.recall {
+  margin: 2.2rem 0; padding: 1.2rem 1.3rem;
+  border-left: 3px solid var(--accent-alt); background: var(--paper-warm);
+}
+.recall > .label {
+  font-family: var(--sans); font-size: 0.66rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--accent-alt); display: block; margin-bottom: 0.5rem;
+}
+.recall .prompt { font-size: 1rem; margin: 0 0 0.8rem; }
+.recall textarea {
+  width: 100%; min-height: 5.2rem; padding: 0.6rem 0.7rem; resize: vertical;
+  font-family: var(--serif); font-size: 0.94rem; line-height: 1.5;
+  color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 2px;
+}
+.recall .reveal-btn {
+  margin-top: 0.6rem; font-family: var(--sans); font-size: 0.78rem;
+  padding: 0.45rem 0.9rem; cursor: pointer; border-radius: 2px;
+  background: var(--paper); color: var(--ink-muted); border: 1px solid var(--rule);
+}
+.recall .reveal-btn:hover { border-color: var(--ink-faint); color: var(--ink); }
+.recall .model-answer {
+  display: none; margin-top: 0.9rem; padding-top: 0.8rem;
+  border-top: 1px solid var(--rule); font-size: 0.9rem; color: var(--ink-muted);
+}
+.recall.is-revealed .model-answer { display: block; }
+.recall.is-revealed .reveal-btn { display: none; }
+
+@media print {
+  .recall textarea { min-height: 4rem; }
+  .recall .model-answer { display: block !important; }
+}

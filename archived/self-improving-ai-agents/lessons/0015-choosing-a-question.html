@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 15 · Choosing a question you can finish</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+<link rel="stylesheet" href="../assets/quiz.css">
+</head>
+<body>
+<main class="page">
+
+<header class="masthead">
+  <p class="eyebrow">Lesson 15 of 17 · Arc V · Self-improving AI agents</p>
+  <h1>Choosing a question you can finish</h1>
+  <p class="standfirst">The failure mode of a first project is not running the experiment badly. It is picking a question too big to answer, and finding out in week three.</p>
+  <p class="meta">About 10 minutes · Grounded in how CS329A assesses its own course projects · Produces one written question</p>
+</header>
+
+<p>Fourteen lessons have handed you fourteen project hooks. This lesson turns one of them into something you can finish in two to four weeks of part-time work, alone, with no GPU budget and no co-author.</p>
+
+<p>It is worth being clear about the target, because it is a specific one. CS329A asks its students for a hypothesis, an experiment, and a result, and explicitly rejects two things: a survey of what other people found, and an app that does something without asking a question. As the lecturers put it, they want "here is the hypothesis, here is the question we wanted to answer, here is the type of improvement we wanted to see", and not a piece of web coding. You are aiming at that shape, scaled down from a team of four across a quarter to one person across a month.</p>
+
+<h2>What makes a question finishable</h2>
+
+<p>A question you can finish has four properties. Test any candidate against all four before you commit, because a question that fails even one will consume the whole month.</p>
+
+<div class="scroll-x">
+<table>
+  <thead><tr><th>Property</th><th>The test</th><th>What failing it looks like</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Falsifiable</strong></td><td>You can state now what result would prove you wrong</td><td>"I want to explore whether agents can help with X"</td></tr>
+    <tr><td><strong>Measurable today</strong></td><td>The metric exists, or you can build it in one day</td><td>The metric needs a labelled set you do not have</td></tr>
+    <tr><td><strong>Controlled</strong></td><td>There is an obvious A and B, differing in one thing</td><td>The comparison needs three things to change at once</td></tr>
+    <tr><td><strong>Cheap to run</strong></td><td>One full experimental pass costs under an hour and under your API budget</td><td>A single pass takes overnight, so you get five attempts total</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p class="sidenote">The fourth property matters more than it looks. You will run the experiment wrong the first two times, discover a bug in your grader on the third, and only then start collecting real data. A question whose experimental loop takes ten minutes gives you room for that, and a question whose loop takes eight hours does not. Optimise the loop before you optimise the design.</p>
+
+<h2>Cutting a hook down to size</h2>
+
+<p>Most of the hooks in this course are still too big as written. Here is the same question at three scales, so you can see what shrinking actually does.</p>
+
+<div class="scroll-x">
+<table>
+  <thead><tr><th>Scale</th><th>The question</th><th>Time</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Too big</strong></td><td>Does verifier ensembling improve agent reliability?</td><td>Never finishes. No population, no metric, no control.</td></tr>
+    <tr><td><strong>Still too big</strong></td><td>Does a three-verifier ensemble beat a single judge across my workflows?</td><td>Two months. "My workflows" hides five different task types.</td></tr>
+    <tr><td><strong>Right size</strong></td><td>On 40 labelled outputs from my weekly analysis workflow, does a three-verifier ensemble with learned weights select correct outputs more often than the single strongest verifier alone?</td><td>Three weeks, part-time</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>Three things happened in that last cut. The population became specific and countable, at 40 outputs from one workflow. The comparison became a pair, at ensemble against best-single. And the metric became one number, which is selection accuracy. You should be able to describe your own question in one sentence with those three parts in it.</p>
+
+<div class="callout">
+  <span class="label">The honest scope rule</span>
+  <p>Estimate how long your project will take, then ask what you would cut if you had <strong>one week</strong> rather than four. Do the one-week version first. If it produces a result, you have three weeks to extend it, and if it does not, you have learned that in week one rather than week four. Most project failures are scope failures discovered too late to recover.</p>
+</div>
+
+<h2>Where good questions come from</h2>
+
+<p>Lesson 14 gave you the field's own list of open problems, and each has a practitioner-scale version that nobody has published because nobody publishes results about one company's workflows. That is not a weakness of your project. It is the reason your result is worth having, since it is about the system you actually run.</p>
+
+<p>Four sources are worth mining, in rough order of how likely they are to produce something finishable.</p>
+
+<ul>
+  <li><strong>A published result you can replicate on your data.</strong> The paper did the design work. You are testing whether the finding survives contact with your domain, which is a real contribution and a bounded one. The difficulty rule from Lesson 2 and the fusion result from Lesson 6 are both good candidates.</li>
+  <li><strong>A number nobody has measured about your own system.</strong> The generation-verification gap on your tasks, your verifier's turnover point, your reliability gap in human minutes. These are guaranteed to produce a result because measurement always does.</li>
+  <li><strong>A claim in this course you doubt.</strong> Disagreement is a research question wearing casual clothes. If you think fusion will lose on your task type, that is a hypothesis with a control built in.</li>
+  <li><strong>A cheap version of a frontier bottleneck</strong>, meaning diversity across model families, meta-verification of your judge, or eval curation toward the mixed band.</li>
+</ul>
+
+<div class="quiz" data-answer="c">
+  <span class="label">Check yourself</span>
+  <p class="q">Which of these is the best-scoped first project?</p>
+  <div class="opts">
+    <button class="opt">Build an agent that writes our weekly reports and evaluate whether it saves the team time.</button>
+    <button class="opt">Investigate whether multi-agent debate improves the quality of analytical reasoning overall.</button>
+    <button class="opt">Test whether error messages with expected and actual values cut turns-to-fix on 30 tasks.</button>
+    <button class="opt">Compare every technique in this course on one workflow and report which helped the most.</button>
+  </div>
+  <div class="answer-reveal">
+    <p>The third one names the population, the intervention, and the metric, and one experimental pass costs minutes. The first is an engineering project with an evaluation bolted on, and time saved is confounded by everything. The second has no population and no control. The fourth is six projects, and it will produce six underpowered comparisons rather than one solid result. Notice the third is also the least ambitious-sounding, which is normally the sign of a project that finishes.</p>
+  </div>
+</div>
+
+<h2>Write the pre-registration</h2>
+
+<p>Before running anything, write half a page. This is the single highest-value habit in Arc V, because it stops you from finding a result after the fact and believing you predicted it.</p>
+
+<ol class="steps">
+  <li><strong>The question,</strong> in one sentence, with the population, the comparison, and the metric in it.</li>
+  <li><strong>The prediction,</strong> with a direction and a rough size. "The ensemble wins by 5 to 15 points" is a real prediction, and "the ensemble will be better" is not.</li>
+  <li><strong>What would falsify it.</strong> Write the result that would make you abandon the hypothesis, so you cannot quietly move the goalposts later.</li>
+  <li><strong>The stopping rule.</strong> How many tasks, how many runs each, and when you stop collecting. Decide before you see any data, because deciding afterwards is how noise becomes a finding.</li>
+</ol>
+
+<p>Keep it in the workspace as a file. When you write up in Lesson 17, the difference between what you predicted and what you found is the most interesting paragraph you will write, and you can only have it if you wrote the prediction down.</p>
+
+<div class="project-hook">
+  <span class="label">Do this now</span>
+  <p class="question">Pick the hook you have most wanted to run, then cut it twice using the three-scale table above. Write the one-sentence version, then write the four-part pre-registration underneath it.</p>
+  <p class="measure"><span>Measure</span> If you cannot state what result would prove you wrong, the question is not ready and no amount of experimental care will rescue it. Go back and cut again.</p>
+</div>
+
+<div class="recall">
+  <span class="label">Retrieval practice</span>
+  <p class="prompt">Write your question in one sentence, containing the population, the comparison, and the metric. Then write the sentence describing the result that would falsify it.</p>
+  <textarea placeholder="Two sentences. They are the foundation of everything in Lessons 16 and 17."></textarea>
+  <div class="model-answer">
+    <p>Here is a worked pair. "On 30 tasks from my SQL-generation workflow, does replacing the bare error string with a message containing the failing query, the database error, and the table schema reduce the mean number of turns to a passing result?" And the falsifier: "If mean turns-to-fix differs by less than half a turn, or if the rich-error condition is worse, the hypothesis is wrong and error richness does not matter at this task difficulty." Notice the falsifier names a threshold. Without one you will find a 0.2-turn improvement and be tempted to call it a result.</p>
+  </div>
+</div>
+
+<h2>What you can now do</h2>
+<p>You have one written question, scoped to something you can finish, with a prediction and a falsifier attached. That is the deliverable of this lesson, and it is worth more than the experiment itself, because a well-chosen question makes the experiment straightforward and a badly chosen one makes it impossible.</p>
+<p>Next is <a href="0016-running-the-experiment.html">Lesson 16, running the experiment</a>, which covers the control condition and the ways a small experiment lies to you.</p>
+
+<div class="ask">
+  <strong>Bring the question here before you build anything.</strong> Scoping is the step where a second opinion is worth the most, and it is much cheaper to cut a question in conversation than to discover in week three that it was two questions. Paste your pre-registration in and we will attack it.
+</div>
+
+<div class="source-box">
+  <span class="label">Read one thing</span>
+  <ol>
+    <li id="s1"><strong>Primary source:</strong> <a href="https://www.youtube.com/watch?v=6YnLB0XbTnI">CS329A Lecture 1, Course Overview</a>, the final third on course logistics. The lecturers describe what they will and will not accept as a project, which is where this lesson's target comes from.</li>
+    <li id="s2"><a href="https://cs329a.stanford.edu/">The CS329A course site</a> publishes previous years' successful student projects, which are the closest thing available to a worked example at this scale.</li>
+    <li id="s3"><a href="../reference/project-playbook.html">The project playbook</a> in this workspace compresses Arc V into one page, including the pre-registration template.</li>
+  </ol>
+</div>
+
+<nav class="lesson-nav">
+  <span><a href="0014-the-frontier.html">← Lesson 14</a></span>
+  <span><a href="../index.html">Index</a> · <a href="../reference/project-playbook.html">Project playbook</a></span>
+  <span><a href="0016-running-the-experiment.html">Lesson 16: Running the experiment →</a></span>
+</nav>
+
+</main>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

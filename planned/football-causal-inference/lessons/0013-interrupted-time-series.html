@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Analyse an interrupted time series</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<header class="topbar"><div><a href="../README.md">Course index</a><span>Lesson 13 of 17</span></div></header>
+<main>
+  <p class="eyebrow">Time-series designs</p>
+  <h1>Analyse an interrupted time series</h1>
+  <p class="lead">Interrupted time series compares the observed post-interruption path with a continuation of the pre-interruption path. The design must separate an immediate level change from a change in trend.</p>
+  <div class="lesson-meta"><span>About 20 minutes</span><span>Includes guided exercises</span><span><a href="../exercises/0013-interrupted-time-series.html">Exercise sheet</a></span></div>
+  <section class="objective"><h2>What you will be able to do</h2><p>You will be able to specify a segmented model, interpret level and slope changes, and assess autocorrelation and concurrent events.</p></section>
+  <section class="scenario"><h2>Injuries before and after competition resumed</h2><p>Duque-Arias and colleagues followed muscular injuries among 94 Colombian professional players before and during the COVID-19 return to competition. The interruption creates a clear date, but many conditions changed at the same time. Training, fixture congestion, player fitness and injury surveillance may all differ.</p></section>
+      <h2>Model the pre-period and the change</h2><p>A segmented regression includes elapsed time, an indicator for the post-interruption period and time since the interruption. The post indicator estimates an immediate level change. Time since interruption estimates the change in slope.</p><p class="formula">Y_t = beta0 + beta1 time_t + beta2 post_t + beta3 time_after_t + error_t</p><p>The counterfactual continues the pre-interruption trend into the post-period. That continuation is an assumption, not an observed comparison.</p>
+      <section class="worked"><h2>Worked interpretation</h2><p>Suppose the injury rate was increasing by 0.02 per week before competition stopped. At return, the fitted rate jumps by 0.30, and the post-return slope is 0.01 lower than before. The immediate level effect is +0.30. The new slope is +0.01 per week because +0.02 plus -0.01 equals +0.01.</p><p>After ten weeks, the modelled difference from the old trend is +0.30 plus ten times -0.01, which equals +0.20. The immediate jump has partly declined but has not disappeared.</p></section>
+      <h2>Account for repeated time points</h2><p>Measurements close in time often share shocks. This serial correlation can make ordinary regression standard errors too small. Inspect residual plots and autocorrelation, and use a suitable time-series error model or inference that accounts for serial correlation.</p><p>Seasonality also matters. Injury risk may change with preseason, winter congestion and cumulative load. Exposure hours should enter the outcome definition or model, because a count of injuries can rise when players simply spend more time training and playing.</p>
+      <h2>Concurrent changes limit causal attribution</h2><p>The design is weakest when several events occur at the same date. A control series that did not receive the interruption can help, as can multiple treated and untreated leagues or a known effect pattern. The researcher should list co-interventions and explain why they cannot account for the result.</p>
+      <section class="exercise"><h2>Exercise 1. Interpret coefficients</h2><p>A model estimates beta2 = -0.4 and beta3 = +0.05. Explain both coefficients.</p><details><summary>Show a suggested answer</summary><p>The outcome falls immediately by 0.4 units at the interruption relative to the continued old trend. After the interruption, the slope increases by 0.05 units per period compared with the old slope.</p></details></section>
+      <section class="exercise"><h2>Exercise 2. List concurrent causes</h2><p>Name two changes at football's pandemic restart that could affect muscular injuries apart from the restart itself.</p><details><summary>Show a suggested answer</summary><p>A compressed fixture schedule could increase load, while longer substitutions or changed training access could alter player exposure. Either change can create a level or slope difference at the same time as competition restarts.</p></details></section>
+      <div class="exercise">
+    <h2>Practice</h2>
+    <p>An <a href="../exercises/0013-interrupted-time-series.html">exercise sheet of 7 questions</a> accompanies this lesson. It takes about thirty minutes and carries worked answers at the end. Attempt it before moving on.</p>
+  </div>
+
+  <section class="quiz" data-quiz data-answer="b" data-correct="Correct. Serial correlation can make ordinary standard errors overstate the precision of time-series estimates." data-incorrect="Repeated observations close in time often share unmeasured shocks."><fieldset><legend>Why should the analyst inspect residual autocorrelation?</legend><label><input type="radio" name="q" value="a"> To redefine the causal treatment itself</label><label><input type="radio" name="q" value="b"> To avoid overstated time-series estimate precision</label><label><input type="radio" name="q" value="c"> To prove no concurrent events existed</label></fieldset><button type="button">Check answer</button><p class="feedback" aria-live="polite"></p></section>
+  <section class="summary"><h2>What to remember</h2><ul><li>A segmented model separates immediate level change from slope change.</li><li>The counterfactual extends the pre-interruption trend.</li><li>Serial correlation and seasonality affect estimation and uncertainty.</li><li>Concurrent events at the interruption date weaken causal attribution.</li></ul></section>
+  <p class="citation"><strong>Primary reading.</strong> <a href="https://doi.org/10.17533/udea.iatreia.238">Duque-Arias et al. (2024)</a>; Ruiz de Villa, Chapter 11; and Wooldridge, <em>Introductory Econometrics</em>, Chapters 10 to 12.</p>
+  <p>If any step is unclear, ask your teaching agent to work through another football example with you.</p>
+  <nav class="lesson-nav"><a href="0012-synthetic-control.html">Previous lesson: Build and assess a synthetic control</a><a href="0014-longitudinal-g-methods.html">Next lesson: Choose a method for time-varying treatment</a></nav>
+</main>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

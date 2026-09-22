@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Source 0003 · add_data, render, build</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <article class="page">
+    <header class="lesson-head">
+      <p class="kicker"><a href="../index.html">Lessons</a> · Source 0003 of 0010 · the drawing contract</p>
+      <h1>Collect, draw, then dress the figure</h1>
+      <p class="lede">Subclasses own data. <code>BaseChart.build()</code> owns spines, labels, title, and footnote. <code>render()</code> is the subclass method that draws and then calls <code>build()</code>.</p>
+    </header>
+
+    <p><code>BaseChart.add_data</code> always raises <code>NotImplementedError</code>. That is the seam: “you must say how this chart type eats a DataFrame.” <code>LineChart</code> and <code>BarChart</code> override it to <em>append a dict</em> onto <code>self._lines</code> or <code>self._bars</code> and return <code>self</code> so you can chain calls.</p>
+
+    <p>Neither subclass draws in <code>add_data</code>. Drawing happens in <code>render()</code>, which ends with <code>return self.build()</code>.</p>
+
+    <div class="diagram">
+      <svg viewBox="0 0 640 250" role="img" aria-label="Sequence from add_data to build">
+        <rect x="8" y="8" width="624" height="234" fill="#fff" stroke="#d9d4c8"/>
+        <rect x="24" y="36" width="170" height="88" fill="#f3f0e8" stroke="#00005f"/>
+        <text x="36" y="72" font-family="IBM Plex Mono, monospace" font-size="14" fill="#00005f">add_data(df, …)</text>
+        <text x="36" y="96" font-family="Iowan Old Style, serif" font-size="13" fill="#5c5c5c">append a series dict</text>
+        <text x="206" y="82" font-size="20" fill="#ff7800">→</text>
+        <rect x="234" y="36" width="170" height="88" fill="#f3f0e8" stroke="#00005f"/>
+        <text x="246" y="72" font-family="IBM Plex Mono, monospace" font-size="14" fill="#00005f">render(…)</text>
+        <text x="246" y="96" font-family="Iowan Old Style, serif" font-size="13" fill="#5c5c5c">ax.plot / ax.bar</text>
+        <text x="416" y="82" font-size="20" fill="#ff7800">→</text>
+        <rect x="444" y="36" width="170" height="88" fill="#f3f0e8" stroke="#ff7800"/>
+        <text x="456" y="72" font-family="IBM Plex Mono, monospace" font-size="14" fill="#00005f">build()</text>
+        <text x="456" y="96" font-family="Iowan Old Style, serif" font-size="13" fill="#5c5c5c">declutter + type</text>
+        <text x="24" y="168" font-family="Iowan Old Style, serif" font-size="15" fill="#1a1a1a">Intended call: construct → add_data (once or many) → render().</text>
+        <text x="24" y="196" font-family="Iowan Old Style, serif" font-size="14" fill="#5c5c5c">render() already calls build(). Calling build() yourself first can duplicate titles.</text>
+      </svg>
+      <p class="caption">Template-method shape: subclasses fill in drawing; the base class finishes the page.</p>
+    </div>
+
+    <h2>A real meals-served call</h2>
+    <p>This is the shape you already use in the exercise 2.2 notebook:</p>
+    <pre>chart = BarChart(
+    title="Meals served over time",
+    subtitle="# of meals served",
+    x_label="Campaign year",
+    y_label="Meals served",
+    footnote=FOOT,
+)
+chart.add_data(df, x="Campaign Year", y="Meals Served", color=GREEN)
+fig, ax = chart.render(width=0.7, show_legend=False)
+ax.set_ylim(0, 300_000)  # hatch: scale is not in src/ yet</pre>
+    <p><code>render</code> returns the same <code>(fig, ax)</code> pair <code>build()</code> returns, so you can still reach matplotlib after the library has dressed the chart.</p>
+
+    <h2>The README trap</h2>
+    <p>The project README calls <code>chart.build()</code> <em>before</em> <code>add_data</code>. The tests sometimes do too. <code>build()</code> writes title text onto the figure. <code>render()</code> calls <code>build()</code> again. Two titles. Trust the source: <code>LineChart.render</code> and <code>BarChart.render</code> both end with <code>return self.build()</code>.</p>
+
+    <div class="quiz" data-answer="2"
+         data-ok="Correct: add_data stores; render draws and then build styles."
+         data-no="add_data does not call ax.plot. render() does, then build().">
+      <p class="quiz-q">When does a line actually appear on the Axes?</p>
+      <button data-choice="0">Inside BaseChart.__init__ now</button>
+      <button data-choice="1">Inside LineChart.add_data now</button>
+      <button data-choice="2">Inside LineChart.render plot</button>
+    </div>
+
+    <p class="primary-source"><strong>Primary source:</strong> <code>add_data</code> in <a href="https://github.com/phmelzer/datavizlib/blob/api-exploration-tejas/src/datavizlib/charts/base.py">base.py</a>, then the <code>render</code> methods in <a href="https://github.com/phmelzer/datavizlib/blob/api-exploration-tejas/src/datavizlib/charts/line.py">line.py</a> and <a href="https://github.com/phmelzer/datavizlib/blob/api-exploration-tejas/src/datavizlib/charts/bar.py">bar.py</a>.</p>
+
+    <div class="ask">If you want to hatch <code>y_limits</code> or tick formatting, ask where it should live: <code>render()</code>, <code>build()</code>, or a new method. That choice is the whole design.</div>
+
+    <nav class="lesson-nav">
+      <a href="0002-basechart-contract.html">← Constructor</a>
+      <a href="0004-layout-margins.html">Next: margins →</a>
+    </nav>
+  </article>
+  <script src="../assets/quiz.js"></script>
+</body>
+</html>

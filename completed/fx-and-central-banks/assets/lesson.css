@@ -1,0 +1,156 @@
+/* lesson.css — shared stylesheet for the FX & Central Banks teaching workspace.
+   Tufte-influenced: one column of prose, wide right margin for sidenotes,
+   generous leading, restrained colour. Prints cleanly on A4/Letter. */
+
+:root {
+  --ink:        #16130f;
+  --ink-muted:  #5c554b;
+  --ink-faint:  #8a8175;
+  --paper:      #fdfaf4;
+  --paper-warm: #f5efe2;
+  --rule:       #ddd4c2;
+  --accent:     #8c2f16;   /* yen-red, used sparingly */
+  --accent-alt: #1f4d5c;   /* dollar-teal */
+  --good:       #2f6b40;
+  --bad:        #97331c;
+  --serif: "Palatino Linotype", Palatino, "Book Antiqua", Georgia, "Times New Roman", serif;
+  --sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --mono: "SF Mono", "Menlo", "Consolas", monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ink:        #ece5d8;
+    --ink-muted:  #a89f8f;
+    --ink-faint:  #7d7466;
+    --paper:      #14120f;
+    --paper-warm: #1e1b16;
+    --rule:       #38332b;
+    --accent:     #e08a6c;
+    --accent-alt: #7fb8c9;
+    --good:       #7fc294;
+    --bad:        #e59078;
+  }
+}
+:root[data-theme="dark"] {
+  --ink: #ece5d8; --ink-muted: #a89f8f; --ink-faint: #7d7466;
+  --paper: #14120f; --paper-warm: #1e1b16; --rule: #38332b;
+  --accent: #e08a6c; --accent-alt: #7fb8c9; --good: #7fc294; --bad: #e59078;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 19px;
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page { max-width: 44rem; margin: 0 auto; padding: 4rem 1.5rem 8rem; }
+
+/* ---- Masthead ---- */
+.masthead { border-bottom: 1px solid var(--rule); padding-bottom: 1.4rem; margin-bottom: 2.6rem; }
+.eyebrow {
+  font-family: var(--sans); font-size: 0.7rem; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--ink-faint); margin: 0 0 0.7rem;
+}
+h1 { font-size: 2.1rem; line-height: 1.18; margin: 0 0 0.5rem; font-weight: 400; letter-spacing: -0.01em; }
+.standfirst { font-size: 1.06rem; color: var(--ink-muted); font-style: italic; margin: 0; }
+.meta { font-family: var(--sans); font-size: 0.74rem; color: var(--ink-faint); margin-top: 1rem; }
+
+h2 {
+  font-size: 1.28rem; font-weight: 400; margin: 3rem 0 0.9rem;
+  padding-bottom: 0.3rem; border-bottom: 1px solid var(--rule);
+  letter-spacing: -0.005em;
+}
+h3 { font-size: 1.02rem; font-weight: 600; margin: 2rem 0 0.5rem; }
+p { margin: 0 0 1.15rem; }
+a { color: var(--accent-alt); text-underline-offset: 2px; text-decoration-thickness: 0.5px; }
+a:hover { color: var(--accent); }
+strong { font-weight: 600; }
+em.term { font-style: normal; font-weight: 600; color: var(--accent); }
+
+ul, ol { margin: 0 0 1.15rem; padding-left: 1.3rem; }
+li { margin-bottom: 0.45rem; }
+
+/* ---- Sidenote (Tufte) ---- */
+.sidenote {
+  float: right; clear: right;
+  width: 13rem; margin-right: -15rem; margin-top: 0.35rem; margin-bottom: 0.8rem;
+  font-family: var(--sans); font-size: 0.76rem; line-height: 1.5; color: var(--ink-muted);
+}
+@media (max-width: 1180px) {
+  .sidenote {
+    float: none; width: auto; margin: 0.9rem 0 1.2rem;
+    padding-left: 0.9rem; border-left: 2px solid var(--rule);
+  }
+}
+
+/* ---- Blocks ---- */
+.callout {
+  background: var(--paper-warm); border-left: 3px solid var(--accent);
+  padding: 1rem 1.2rem; margin: 1.8rem 0; font-size: 0.95rem;
+}
+.callout .label {
+  font-family: var(--sans); font-size: 0.66rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 0.4rem;
+}
+.callout p:last-child { margin-bottom: 0; }
+
+blockquote.article {
+  margin: 1.8rem 0; padding: 0.2rem 0 0.2rem 1.2rem;
+  border-left: 3px solid var(--rule); color: var(--ink-muted); font-style: italic;
+}
+blockquote.article p:last-child { margin-bottom: 0; }
+blockquote.article cite { display: block; font-style: normal; font-family: var(--sans); font-size: 0.72rem; color: var(--ink-faint); margin-top: 0.5rem; }
+
+table { width: 100%; border-collapse: collapse; margin: 1.6rem 0; font-size: 0.9rem; }
+.scroll-x { overflow-x: auto; }
+th, td { text-align: left; padding: 0.55rem 0.7rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-family: var(--sans); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); font-weight: 600; }
+td.num { font-family: var(--mono); font-size: 0.85rem; white-space: nowrap; }
+
+figure { margin: 2.2rem 0; }
+figure svg { width: 100%; height: auto; display: block; }
+figcaption { font-family: var(--sans); font-size: 0.76rem; color: var(--ink-faint); margin-top: 0.6rem; line-height: 1.5; }
+
+/* SVG theming hooks */
+.dg-ink   { fill: var(--ink); }
+.dg-muted { fill: var(--ink-muted); }
+.dg-stroke{ stroke: var(--ink); fill: none; }
+.dg-rule  { stroke: var(--rule); fill: none; }
+.dg-box   { fill: var(--paper-warm); stroke: var(--rule); }
+.dg-label { font-family: var(--sans); font-size: 11px; fill: var(--ink-muted); }
+.dg-label-b { font-family: var(--sans); font-size: 11.5px; font-weight: 600; fill: var(--ink); }
+
+/* ---- Footer / nav ---- */
+.lesson-nav {
+  margin-top: 4rem; padding-top: 1.2rem; border-top: 1px solid var(--rule);
+  font-family: var(--sans); font-size: 0.82rem;
+  display: flex; flex-wrap: wrap; gap: 0.6rem 1.6rem; justify-content: space-between;
+}
+.ask {
+  margin-top: 2.6rem; padding: 1rem 1.2rem; background: var(--paper-warm);
+  border: 1px dashed var(--rule); font-family: var(--sans); font-size: 0.85rem; color: var(--ink-muted);
+}
+.ask strong { color: var(--ink); }
+
+.source-box { margin-top: 2.4rem; padding-top: 1rem; border-top: 1px solid var(--rule); }
+.source-box .label { font-family: var(--sans); font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); }
+.source-box ol { font-size: 0.85rem; color: var(--ink-muted); margin-top: 0.6rem; }
+
+/* ---- Print ---- */
+@media print {
+  :root { --paper: #fff; --paper-warm: #f4f1ea; --ink: #000; --ink-muted: #444; --rule: #bbb; }
+  body { font-size: 10.5pt; }
+  .page { max-width: none; padding: 0; }
+  .sidenote { float: none; width: auto; margin: 0.6em 0; padding-left: 0.8em; border-left: 2px solid #bbb; }
+  .quiz button, .lesson-nav, .ask { display: none; }
+  .quiz .answer-reveal { display: block !important; }
+  h2, h3 { page-break-after: avoid; }
+  figure, .callout, table { page-break-inside: avoid; }
+}

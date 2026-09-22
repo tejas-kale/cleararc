@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Source 0006 · Measure, then shift</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <style>
+    [data-space] { cursor: pointer; }
+    [data-space][data-active="true"] { outline: 2px solid #ff7800; outline-offset: 2px; }
+    .coord-out {
+      min-height: 3.2rem;
+      background: #fff;
+      border: 1px solid var(--rule);
+      padding: 0.7rem 0.9rem;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <article class="page">
+    <header class="lesson-head">
+      <p class="kicker"><a href="../index.html">Lessons</a> · Source 0006 of 0010 · transforms</p>
+      <h1>Measure the label, then shift it</h1>
+      <p class="lede">The library does not guess where a label sits. It draws, asks matplotlib for a pixel box, converts that box into axes coordinates, and adds a shift.</p>
+    </header>
+
+    <p>Matplotlib keeps several coordinate systems. The ones this file uses:</p>
+    <ul>
+      <li><strong>Axes</strong> — <code>(0,0)</code> bottom-left of the plot, <code>(1,1)</code> top-right. <code>ax.transAxes</code>.</li>
+      <li><strong>Figure</strong> — <code>(0,0)</code> bottom-left of the whole page. <code>fig.transFigure</code>.</li>
+      <li><strong>Display</strong> — pixels (or points, depending on backend). <code>get_window_extent</code> returns this.</li>
+    </ul>
+
+    <div class="diagram" data-coord-board>
+      <svg viewBox="0 0 640 280" role="img" aria-label="Clickable figure, axes, and display spaces">
+        <rect data-space="figure" data-active="false"
+              data-explain="Figure space: fig.text(x, y, …) and subplots_adjust use this. Title x comes from a bbox converted with fig.transFigure.inverted()."
+              x="30" y="20" width="580" height="240" fill="#fff" stroke="#00005f" stroke-width="3"/>
+        <rect data-space="axes" data-active="false"
+              data-explain="Axes space: set_label_coords(x, y) defaults to this. (0,1) is the top-left of the data rectangle. The y-label is shifted until its top (y1) hits 1.0."
+              x="90" y="70" width="460" height="150" fill="#f3f0e8" stroke="#808080" stroke-width="2"/>
+        <text x="46" y="44" font-family="IBM Plex Mono, monospace" font-size="13" fill="#00005f">figure (click the white frame)</text>
+        <text x="106" y="96" font-family="IBM Plex Mono, monospace" font-size="13" fill="#5c5c5c">axes (click the inner rectangle)</text>
+        <circle data-space="display" data-active="false"
+                data-explain="Display space: get_window_extent returns pixels. You almost never leave numbers here — BaseChart always inverted()-transforms them back to axes or figure."
+                cx="120" cy="200" r="10" fill="#ff7800"/>
+        <text x="138" y="205" font-family="IBM Plex Mono, monospace" font-size="12" fill="#ff7800">display sample (click the dot)</text>
+      </svg>
+      <p class="coord-out" data-coord-out>Click the white frame, the inner plot, or the orange dot.</p>
+      <p class="caption">Three spaces, one figure. Alignment code hops between them on purpose.</p>
+    </div>
+
+    <h2>The y-label recipe</h2>
+    <p><code>_align_y_label_to_tick</code>:</p>
+    <ol>
+      <li>Park the label at <code>(-0.10, 0.5)</code> in axes coordinates — a known parking spot.</li>
+      <li><code>draw()</code> so the renderer can measure text.</li>
+      <li><code>get_window_extent</code> → transform with <code>ax.transAxes.inverted()</code> to get a box in axes space.</li>
+      <li><code>shift = 1.0 - bbox_axes.y1</code> — how far the top of the text is from the top of the Axes.</li>
+      <li>Set coords to <code>(-0.10, 0.5 + shift)</code>.</li>
+    </ol>
+    <p>The x-label recipe is the same idea on the other axis: park at <code>(0.5, -0.10)</code>, measure left edge <code>x0</code>, shift so <code>x0</code> meets <code>0.0</code>.</p>
+
+    <div class="example">
+      <p><strong>Example.</strong> Suppose after parking, the y-label’s top is at axes <code>y = 0.62</code>. Then <code>shift = 1.0 - 0.62 = 0.38</code>, and the new y is <code>0.5 + 0.38 = 0.88</code>. The top of “MEALS SERVED” now kisses the top of the axis line.</p>
+      <p>The <em>x</em> of the y-label stays <code>-0.10</code>. That is why a long tick like <code>300,000</code> can collide with the label — the parking x does not depend on tick width. You already wrote that down in the 2.2 notebook.</p>
+    </div>
+
+    <p><code>fig.canvas.draw()</code> is not decorative. Without a draw, <code>get_window_extent</code> can be empty or stale. That is why <code>build()</code> draws, aligns, then draws again.</p>
+
+    <div class="quiz" data-answer="2"
+         data-ok="Yes. Display pixels are converted back to axes fractions before the shift."
+         data-no="get_window_extent is display space; the shift is computed after transAxes.inverted().">
+      <p class="quiz-q">In which space is the y-label shift computed?</p>
+      <button data-choice="0">Raw data values on axes</button>
+      <button data-choice="1">Figure inches on canvas</button>
+      <button data-choice="2">Axes fractions after invert</button>
+    </div>
+
+    <p class="primary-source"><strong>Primary source:</strong> Matplotlib <a href="https://matplotlib.org/stable/users/explain/artists/transforms_tutorial.html">Transformations tutorial</a> and <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axis.Axis.set_label_coords.html"><code>Axis.set_label_coords</code></a>. Then <code>_align_y_label_to_tick</code> / <code>_align_x_label_to_tick</code> in <a href="https://github.com/phmelzer/datavizlib/blob/api-exploration-tejas/src/datavizlib/charts/base.py">base.py</a>.</p>
+
+    <div class="ask">If the parking coordinate <code>-0.10</code> is the hatch you want, ask — we can trace it against a real tick bbox next.</div>
+
+    <nav class="lesson-nav">
+      <a href="0005-declutter-spines-and-type.html">← Spines</a>
+      <a href="0007-title-and-footnote-anchors.html">Next: title and footnote anchors →</a>
+    </nav>
+  </article>
+  <script src="../assets/quiz.js"></script>
+  <script src="../assets/coords.js"></script>
+</body>
+</html>

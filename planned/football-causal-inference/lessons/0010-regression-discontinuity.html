@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Estimate a local effect at a threshold</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<header class="topbar"><div><a href="../README.md">Course index</a><span>Lesson 10 of 17</span></div></header>
+<main>
+  <p class="eyebrow">Regression discontinuity</p>
+  <h1>Estimate a local effect at a threshold</h1>
+  <p class="lead">Regression discontinuity compares units immediately above and below a treatment threshold. The estimate is local, and its credibility depends on continuity at the cut-off.</p>
+  <div class="lesson-meta"><span>About 20 minutes</span><span>Includes guided exercises</span><span><a href="../exercises/0010-regression-discontinuity.html">Exercise sheet</a></span></div>
+  <section class="objective"><h2>What you will be able to do</h2><p>You will be able to define the running variable and cut-off, interpret a sharp regression-discontinuity estimate and assess its main diagnostics.</p></section>
+  <section class="scenario"><h2>Football thresholds</h2><p>Reilly and Witt used the sixth and seventh position split in the Scottish Premiership to estimate how league design affected attendance. Speer compared teams close to promotion and relegation cut-offs to study later sporting and financial outcomes. These settings use a ranking or points measure that determines treatment at a threshold.</p></section>
+      <h2>Define the design</h2><p>The running variable is the measure that determines treatment. The cut-off is the value where treatment changes. A sharp design assigns treatment deterministically at the cut-off. A fuzzy design changes the probability of treatment but allows exceptions.</p><p class="formula">Local effect = outcome limit just above cut-off - outcome limit just below cut-off</p><p>The comparison uses teams very close to the cut-off. If their untreated potential outcomes would change smoothly through the threshold, a jump in observed outcomes can be attributed to treatment.</p>
+      <section class="worked"><h2>Worked interpretation</h2><p>Suppose clubs finishing just above a promotion cut-off have average next-season revenue of 18.2 million pounds, while the fitted outcome just below the cut-off is 13.7 million pounds. The local discontinuity is 4.5 million pounds. The estimate describes clubs at the margin of promotion, not champions or clubs far below the cut-off.</p><p>The estimate can include every consequence of promotion, including broadcast income, attendance and player decisions. It is the total effect of crossing the threshold under the assignment rule.</p></section>
+      <h2>Check continuity and manipulation</h2><p>The continuity assumption fails if another cause of the outcome jumps at the same threshold. Researchers should inspect predetermined club characteristics on both sides and test fake cut-offs where treatment does not change.</p><p>Precise manipulation is a concern when teams can sort around the threshold using information related to their potential outcomes. Football positions are earned through match results, so strategic effort is expected. The key question is whether teams can precisely control the final running variable near the threshold. Rules, tie-breakers and late-season incentives need careful discussion.</p>
+      <h2>Fit the local comparison</h2><p>The researcher should plot binned outcome means and fit separate local trends on each side. A narrow bandwidth improves local comparability but uses fewer observations. A wide bandwidth adds precision but relies on stronger functional-form assumptions. High-order global polynomials can behave badly near boundaries and should not be the default.</p>
+      <section class="exercise"><h2>Exercise 1. Identify the parts</h2><p>In a study of relegation, name the treatment, running variable, cut-off and local population.</p><details><summary>Show a suggested answer</summary><p>The treatment is relegation. The running variable can be final league points or rank under the exact relegation rule. The cut-off separates the final relegated and surviving positions. The local population consists of teams whose final standing is close to that boundary.</p></details></section>
+      <section class="exercise"><h2>Exercise 2. Interpret external validity</h2><p>Why should an estimate for sixth versus seventh place not be applied directly to the league winner?</p><details><summary>Show a suggested answer</summary><p>The design identifies an effect for clubs near the split threshold. The league winner differs in quality, supporter expectations and schedule consequences. Applying the estimate to that club requires an additional assumption that the effect is stable far from the cut-off.</p></details></section>
+      <div class="exercise">
+    <h2>Practice</h2>
+    <p>An <a href="../exercises/0010-regression-discontinuity.html">exercise sheet of 7 questions</a> accompanies this lesson. It takes about thirty minutes and carries worked answers at the end. Attempt it before moving on.</p>
+  </div>
+
+  <section class="quiz" data-quiz data-answer="b" data-correct="Correct. Regression discontinuity primarily identifies the treatment effect for units near the cut-off." data-incorrect="The identifying comparison uses teams immediately around the assignment threshold."><fieldset><legend>Which clubs does the estimate primarily describe?</legend><label><input type="radio" name="q" value="a"> Every football club across all divisions</label><label><input type="radio" name="q" value="b"> Clubs located close to the threshold</label><label><input type="radio" name="q" value="c"> Only clubs far above the threshold</label></fieldset><button type="button">Check answer</button><p class="feedback" aria-live="polite"></p></section>
+  <section class="summary"><h2>What to remember</h2><ul><li>The running variable determines treatment at a cut-off.</li><li>The continuity assumption supports a local causal comparison.</li><li>Manipulation, predetermined-variable jumps and fake cut-offs are important diagnostics.</li><li>The estimate applies most directly to units near the threshold.</li></ul></section>
+  <p class="citation"><strong>Primary reading.</strong> <a href="https://eprints.lse.ac.uk/113344/1/1527002521989393.pdf">Reilly and Witt (2021)</a>; <a href="https://doi.org/10.1016/j.serev.2022.100003">Speer (2023)</a>; Angrist and Pischke, Chapter 4; and Hayashi, Chapter 21.</p>
+  <p>If any step is unclear, ask your teaching agent to work through another football example with you.</p>
+  <nav class="lesson-nav"><a href="0009-event-studies-and-staggered-timing.html">Previous lesson: Interpret an event study with staggered timing</a><a href="0011-instrumental-variables-and-late.html">Next lesson: Interpret an instrumental-variable estimate</a></nav>
+</main>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

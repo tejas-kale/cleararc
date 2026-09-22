@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Source 0009 · BarChart groups, stacks, and flips</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <article class="page">
+    <header class="lesson-head">
+      <p class="kicker"><a href="../index.html">Lessons</a> · Source 0009 of 0010 · bar.py</p>
+      <h1>BarChart groups, stacks, and flips</h1>
+      <p class="lede">Same collect-then-draw shape as lines, plus geometry: shared categories, offsets for groups, running <code>bottom</code>/<code>left</code> for stacks, <code>bar</code> vs <code>barh</code> for orientation.</p>
+    </header>
+
+    <p><code>add_data</code> stores <code>df, x, y, label, color, alpha</code>. <code>color</code> may be one value or a list whose length equals the number of rows (one color per bar). A mismatched list raises.</p>
+
+    <h2>Shared categories are mandatory</h2>
+    <p>Before drawing, <code>render</code> takes the first series’ <code>x</code> column as the category order. Every other series must have the <em>same values in the same order</em>. That is stricter than <code>LineChart</code>.</p>
+    <pre>x_values = self._bars[0]["df"][self._bars[0]["x"]].tolist()
+# all other series must match exactly</pre>
+    <p>Then <code>x = np.arange(len(x_values))</code> — categories become integers 0, 1, 2, … so grouped bars can be offset in data space. Tick labels put the original strings back.</p>
+
+    <h2>Grouped arithmetic</h2>
+    <p>For <code>stacked=False</code>:</p>
+    <pre>group_width = min(0.9, width)
+gap = inner_gap * group_width
+bar_width = (group_width - gap * (n_series - 1)) / n_series
+base_offsets = x - group_width/2 + bar_width/2
+series_offsets = base_offsets + idx * (bar_width + gap)</pre>
+    <p>If the gaps would eat the whole group, gap is forced to <code>0</code>. Vertical uses <code>ax.bar</code>; horizontal uses <code>ax.barh</code> with the same offsets on the other axis.</p>
+
+    <div class="diagram">
+      <svg viewBox="0 0 640 200" role="img" aria-label="Grouped bar offsets inside one category">
+        <rect x="16" y="16" width="608" height="168" fill="#fff" stroke="#d9d4c8"/>
+        <text x="28" y="40" font-family="IBM Plex Mono, monospace" font-size="13" fill="#5c5c5c">one category at integer x = 0</text>
+        <rect x="80" y="60" width="480" height="16" fill="#f3f0e8" stroke="#808080"/>
+        <text x="88" y="73" font-family="IBM Plex Mono, monospace" font-size="11" fill="#5c5c5c">group_width</text>
+        <rect x="90" y="92" width="130" height="70" fill="#00005f"/>
+        <rect x="240" y="92" width="130" height="50" fill="#ff7800"/>
+        <rect x="390" y="92" width="130" height="60" fill="#55c3f0"/>
+        <text x="100" y="132" font-family="IBM Plex Mono, monospace" font-size="11" fill="#fff">idx=0</text>
+        <text x="250" y="122" font-family="IBM Plex Mono, monospace" font-size="11" fill="#fff">idx=1</text>
+        <text x="400" y="128" font-family="IBM Plex Mono, monospace" font-size="11" fill="#00005f">idx=2</text>
+        <text x="220" y="175" font-family="Iowan Old Style, serif" font-size="12" fill="#5c5c5c">small gaps = inner_gap × group_width</text>
+      </svg>
+    </div>
+
+    <h2>Stacked uses a running baseline</h2>
+    <p>Vertical: <code>bottom = zeros</code>, draw, <code>bottom += y_data</code>. Horizontal: the same with <code>left</code> and <code>ax.barh</code>. This is matplotlib’s documented stacked-bar pattern, not a custom compositor.</p>
+
+    <div class="example">
+      <p><strong>Example.</strong> From the tests — two series, stacked, horizontal:</p>
+      <pre>chart.add_data(df, x="category", y="missed", label="Missed", color="#D70000")
+chart.add_data(df, x="category", y="vaccinated", label="Vaccinated", color="#55C3F0")
+fig, ax = chart.render(stacked=True, orientation="horizontal")</pre>
+      <p>Call order is draw order: “Missed” is the base; “Vaccinated” sits to its right.</p>
+      <p>Per-bar colors (exercise 2.2 style): pass a list the same length as the frame, e.g. highlight “Direct Sales” in navy and mute the rest.</p>
+    </div>
+
+    <p>Legend appears only if <code>show_legend</code> is true <em>and</em> at least one series has a label. Default <code>width=0.8</code>, <code>inner_gap=0.02</code>, <code>orientation="vertical"</code>.</p>
+
+    <div class="quiz" data-answer="2"
+         data-ok="Right. Every series must share the first series’ x values and order."
+         data-no="BarChart.render compares each series’ x column to the first series, exactly.">
+      <p class="quiz-q">What must every bar series share?</p>
+      <button data-choice="0">Identical color lists always</button>
+      <button data-choice="1">Identical y-value totals</button>
+      <button data-choice="2">Identical x-category order</button>
+    </div>
+
+    <p class="primary-source"><strong>Primary source:</strong> <a href="https://github.com/phmelzer/datavizlib/blob/api-exploration-tejas/src/datavizlib/charts/bar.py">bar.py</a>, matplotlib <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.bar.html"><code>Axes.bar</code></a>, <a href="https://matplotlib.org/stable/gallery/lines_bars_and_markers/barchart.html">grouped bar example</a>, <a href="https://matplotlib.org/stable/gallery/lines_bars_and_markers/bar_stacked.html">stacked bar example</a>. Tests: <a href="https://github.com/phmelzer/datavizlib/blob/api-exploration-tejas/tests/test_bar.py">test_bar.py</a>.</p>
+
+    <div class="ask">If grouped vs stacked still blurs, ask with one of your DataFrames — we can print <code>series_offsets</code> or the running <code>bottom</code> for those rows.</div>
+
+    <nav class="lesson-nav">
+      <a href="0008-linechart.html">← LineChart</a>
+      <a href="0010-extend-basechart.html">Next: extend BaseChart →</a>
+    </nav>
+  </article>
+  <script src="../assets/quiz.js"></script>
+</body>
+</html>

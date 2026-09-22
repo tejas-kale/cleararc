@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Exercise sheet 7: Fixed effects and the Ashenfelter dip</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<header class="topbar"><div><a href="../index.html">Course index</a><span>Exercise sheet 7 of 17</span></div></header>
+<main>
+  <p class="eyebrow">Exercise sheet</p>
+  <h1>Fixed effects and the Ashenfelter dip</h1>
+  <p class="lead">7 questions drawn from <a href="../lessons/0007-fixed-effects-and-the-ashenfelter-dip.html">Lesson 7</a>. What a within-unit comparison removes, and why recovery is not impact.</p>
+  <div class="lesson-meta"><span>30 minutes</span><span>7 questions</span><span>Answers at the end</span></div>
+
+  <section class="sheet-intro">
+    <h2>How to use this sheet</h2>
+    <p>Work through the questions in order and write your answers down before reading any part of the answer section. Give yourself about thirty minutes in total. If one question runs long, write what you have, mark it and move on, because the answer section explains the reasoning in full.</p>
+    <p>Most questions ask for a short written answer rather than a number. The aim is a defensible statement, so a sentence or two of reasoning is worth more than a single word.</p>
+    <p>The questions are collapsed so that you can take them one at a time. Open one, answer it, then open the next. The answers are held behind a single button at the foot of the page, so nothing is revealed until you choose to reveal it.</p>
+  </section>
+
+  <details class="question">
+    <summary><span class="marks">Question 1</span><span class="q-title">Sort the variables</span></summary>
+    <p>For a regression of points on dismissal with team-season fixed effects, state whether each variable is absorbed by the fixed effect, needs separate handling, or should not be included at all: stadium capacity; the identity of the club owner, unchanged all season; the strength of the next opponent; an injury to the first-choice goalkeeper in matchweek 13; the club's average points per match across the previous five seasons; the formation used after the new coach arrives.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 2</span><span class="q-title">Compute the trap</span></summary>
+    <p>A club's long-run rate is 1.5 points per match. Over five matches it earns 0.4 per match, dismisses the coach, and then earns 1.4 per match over the following ten. Compute the naive before-and-after change. Then suppose a matched club with an identical slump that did not dismiss recovers to 1.45 per match over its next ten. State the difference-in-differences style estimate and explain, in one sentence, what the naive number actually measured.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 3</span><span class="q-title">Explain the dip</span></summary>
+    <p>Explain the Ashenfelter dip in your own words using the dismissal setting. In particular, say why the dip arises from how treatment is selected rather than from any property of the treatment, and name one non-football setting where the same pattern appears.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 4</span><span class="q-title">State what remains</span></summary>
+    <p>An analyst argues that because the model includes team-season fixed effects and matchweek fixed effects, "all confounding is handled". List three specific confounders that survive both sets of fixed effects in the dismissal setting, and say for each why neither fixed effect absorbs it.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 5</span><span class="q-title">Design the better comparison</span></summary>
+    <p>Describe a comparison group that addresses the dip directly. Specify what you would match on, how many pre-treatment periods you would inspect, and what pattern in those periods would make you abandon the design.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 6</span><span class="q-title">Choose a panel unit</span></summary>
+    <p>Explain what changes if the fixed effect is specified at club level across ten seasons, rather than at team-season level. Say what extra variation is used, what extra confounding is admitted, and which specification you would choose for the dismissal question.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 7</span><span class="q-title">Judge a claim</span></summary>
+    <p>A study reports that with team-season and matchweek fixed effects, the dismissal coefficient is +0.18 points per match with a standard error of 0.05, and concludes that sacking a coach is worth about seven points over a season. Write a critique of at most six sentences covering the estimand, the identification and the uncertainty.</p>
+  </details>
+
+  <section class="answers">
+    <h2>Answers</h2>
+    <p class="answer-note">Read these only after writing your own answers. Where an answer says "a good answer includes", treat the listed points as the marking scheme rather than as the only wording that works.</p>
+
+    <details class="answer-reveal">
+      <summary>Show all answers</summary>
+      <section class="answer">
+        <span class="marks">Answer 1</span>
+        <h3>Sort the variables</h3>
+      <ol>
+        <li>Stadium capacity: absorbed, since it does not change within a team-season.</li>
+        <li>Owner identity, unchanged all season: absorbed, for the same reason.</li>
+        <li>Next opponent's strength: needs separate handling. It varies match to match and is a strong cause of points; it may also correlate with dismissal timing if boards act after a bad run against weak opponents.</li>
+        <li>Goalkeeper injury in matchweek 13: needs separate handling. It varies within the team-season and can be both a cause of the dismissal decision and of subsequent points.</li>
+        <li>Average points over the previous five seasons: absorbed, and in fact collinear with the fixed effect, since it is constant within the team-season.</li>
+        <li>Post-dismissal formation: should not be included. It is a mediator, and controlling for it changes the estimand away from the total effect.</li>
+      </ol>
+      <p>The test for the first column is simply whether the variable varies within a single team's single season. If it does not, the fixed effect has already taken it.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 2</span>
+        <h3>Compute the trap</h3>
+      <p>The naive before-and-after change is 1.4 minus 0.4, which is +1.0 points per match.</p>
+      <p>The comparison club's change is 1.45 minus 0.4, which is +1.05. Subtracting gives 1.0 minus 1.05, which is -0.05 points per match, essentially nothing, and if anything slightly negative.</p>
+      <p>The naive number measured the reversal of a temporary slump, not the effect of the dismissal. Both clubs returned towards their usual level; the dismissal added nothing detectable.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 3</span>
+        <h3>Explain the dip</h3>
+      <p>Boards dismiss coaches after a run of unusually bad results. A run of results contains two components, the club's persistent underlying quality and transient noise from injuries, fixtures, refereeing and luck. A very bad run is disproportionately likely to contain a large negative noise draw, because that is what makes it extreme. Noise, by definition, does not persist, so the following matches tend to come back towards the club's underlying level whatever the board does.</p>
+      <p>The dip is a selection phenomenon: it arises because treatment is triggered by an extreme value of a noisy variable that also predicts the outcome. Nothing about sacking a coach causes it, and the same pattern would appear if boards responded to bad runs by repainting the dressing room.</p>
+      <p>The original setting is job training: participants enrol after a sharp drop in earnings, and earnings recover partly on their own, so before-and-after comparisons overstate the programme. Medical treatment started at a symptom flare-up is another.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 4</span>
+        <h3>State what remains</h3>
+      <p>First, the club's own injury situation. It changes within a team-season, so the team-season effect does not absorb it, and it is club-specific, so the common matchweek effect does not either. It plausibly causes both the dismissal and later points.</p>
+      <p>Second, the difficulty of the specific fixtures ahead. Every club faces a different opponent in a given matchweek, so a matchweek effect removes only what is common to all clubs that week. If boards tend to sack before an easier run, the estimate absorbs the schedule.</p>
+      <p>Third, the transient form shock itself, which is the Ashenfelter dip. It is a within-team-season deviation and is not common across clubs, so it survives both. This is the important one, because it is the mechanism that generated the treatment.</p>
+      <p>A good answer also notes the general point: fixed effects remove what is constant along a dimension, and every confounder here varies along both dimensions at once.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 5</span>
+        <h3>Design the better comparison</h3>
+      <p>Match dismissing clubs to retaining clubs on the trajectory that triggered the decision, not just on its level: points per match over each of the last five matchweeks separately rather than their average, league position at the decision point, squad strength or wage bill, and the difficulty of the fixtures ahead. Matching within season and division keeps the shared shocks aligned.</p>
+      <p>Inspect at least the five matchweeks before the decision, and preferably eight to ten, so that the shape of the dip is visible rather than just its depth. Five is the minimum because the level can be matched while the slope is not.</p>
+      <p>Abandon the design if the two groups' pre-treatment paths diverge systematically rather than converging in level, in particular if the dismissing clubs are falling while the comparison clubs are flat, since then the comparison group does not reproduce the shock that triggered treatment and the post-period difference will contain the remainder of that divergence. Also abandon it if no adequate comparison exists for the deepest slumps, which is a positivity failure.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 6</span>
+        <h3>Choose a panel unit</h3>
+      <p>A club fixed effect absorbs only what is constant for the club across a decade: its stadium, its city, its broad institutional character. Anything that changes between seasons, including squad quality, ownership, budget and division, is left in and now contributes variation to the estimate.</p>
+      <p>That extra variation means more precision, since comparisons run across seasons as well as within them. It also admits confounding from every between-season change: a club that sacked its coach in a season when it had also sold its best player is now compared with itself in a better-resourced season.</p>
+      <p>For the dismissal question, team-season is the right unit. The decision is made within a season, against a fixed squad and a fixed set of expectations, and the confounders of interest are seasonal. The cost, fewer degrees of freedom and wider intervals, is worth paying. A good answer notes that this is a bias-variance choice made on subject-matter grounds, not a statistical test.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 7</span>
+        <h3>Judge a claim</h3>
+      <p>The coefficient is identified from within-team-season variation in dismissal timing, so it describes clubs that actually dismissed, in seasons where they did, which is closer to an ATT than to the leaguewide effect the conclusion implies. Identification still requires that, conditional on the two fixed effects and controls, dismissal timing is unrelated to transient form and fixture difficulty, and the Ashenfelter dip is a direct reason to doubt it, so +0.18 is plausibly an upper bound rather than an estimate. The extrapolation to seven points over a season assumes the effect persists at a constant rate for all 38 matches, whereas any bounce is typically concentrated in the first few matches and could reverse. The standard error also needs to allow for serial correlation within teams; if it does not, 0.05 is too small and the interval too narrow. Finally, the estimate averages over versions of dismissal, permanent and interim, which the summary sentence does not mention. The defensible statement is much narrower than the one the study made.</p>
+      </section>
+    </details>
+  </section>
+
+  <p class="citation"><strong>Related reading.</strong> <a href="https://doi.org/10.1177/1527002511402155">De Paola and Scoppa (2012)</a>; Wooldridge, <em>Introductory Econometrics</em>, Chapters 13 and 14; Hayashi, <em>Econometrics</em>, Chapter 17.</p>
+  <p>If your answer and the suggested answer disagree and you cannot see why, ask your teaching agent to work through that question with you rather than assuming the sheet is right.</p>
+  <nav class="lesson-nav"><a href="0006-weighting-standardisation-and-aipw.html">Previous sheet: Weighting, standardisation and AIPW</a><a href="0008-difference-in-differences.html">Next sheet: Difference in differences</a></nav>
+</main>
+</body>
+</html>

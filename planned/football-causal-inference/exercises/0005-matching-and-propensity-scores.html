@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Exercise sheet 5: Matching and propensity scores</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<header class="topbar"><div><a href="../index.html">Course index</a><span>Exercise sheet 5 of 17</span></div></header>
+<main>
+  <p class="eyebrow">Exercise sheet</p>
+  <h1>Matching and propensity scores</h1>
+  <p class="lead">7 questions drawn from <a href="../lessons/0005-matching-and-propensity-scores.html">Lesson 5</a>. Score estimation, common support, balance diagnostics, and what matching cannot fix.</p>
+  <div class="lesson-meta"><span>30 minutes</span><span>7 questions</span><span>Answers at the end</span></div>
+
+  <section class="sheet-intro">
+    <h2>How to use this sheet</h2>
+    <p>Work through the questions in order and write your answers down before reading any part of the answer section. Give yourself about thirty minutes in total. If one question runs long, write what you have, mark it and move on, because the answer section explains the reasoning in full.</p>
+    <p>Most questions ask for a short written answer rather than a number. The aim is a defensible statement, so a sentence or two of reasoning is worth more than a single word.</p>
+    <p>The questions are collapsed so that you can take them one at a time. Open one, answer it, then open the next. The answers are held behind a single button at the foot of the page, so nothing is revealed until you choose to reveal it.</p>
+  </section>
+
+  <details class="question">
+    <summary><span class="marks">Question 1</span><span class="q-title">Screen the covariates</span></summary>
+    <p>For the effect of scheduling a fixture on a non-frequent day on attendance, decide whether each variable may enter the propensity model, and give a one-line reason: last season's average attendance; the expected television audience estimated when the schedule was drawn up; rainfall recorded during the match; the away club's league position on the morning of the match; whether the match was later moved again; and the number of tickets sold.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 2</span><span class="q-title">Apply a radius</span></summary>
+    <p>A treated fixture has a propensity score of 0.62. Candidate control fixtures have scores 0.60, 0.64, 0.66, 0.55 and 0.71. With a radius of 0.05, list which controls are eligible. Then suppose the treated fixture is a derby and none of the eligible controls is. State what you would do and why the score alone did not catch this.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 3</span><span class="q-title">Read a balance table</span></summary>
+    <p>After matching, an analyst reports standardised mean differences: derby indicator 0.02, last season's attendance 0.04, expected TV audience 0.31, home club position 0.05, stadium capacity 0.01. The treatment model has a c-statistic of 0.88, which the analyst describes as excellent. Write the verdict you would give, and say what you would change.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 4</span><span class="q-title">Reason about common support</span></summary>
+    <p>An analyst finds that all fixtures involving Champions League clubs on rearranged Monday nights have propensity scores above 0.9, and no control fixture exceeds 0.85. Describe the two options available, and state precisely how the estimand differs between them.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 5</span><span class="q-title">State what matching cannot do</span></summary>
+    <p>A referee objects that the matched study "cannot rule out that better-supported clubs were given the unusual slots for reasons the data do not capture". Explain whether more covariates, a better model or a larger sample would address the objection, and name what would.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 6</span><span class="q-title">Order the workflow</span></summary>
+    <p>Put these steps in the order a defensible matched analysis performs them, and explain why two of them must not be swapped: check covariate balance; estimate the outcome contrast; select covariates on causal grounds; estimate the propensity score; define common support; match within a radius.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 7</span><span class="q-title">Choose a design for a new question</span></summary>
+    <p>A club wants to know whether signing a player over 30 on a three-year contract affects the club's wage-bill efficiency over those three years. Sketch a matched design: name the treatment, the target estimand, four covariates, the main positivity worry and the balance check you would insist on.</p>
+  </details>
+
+  <section class="answers">
+    <h2>Answers</h2>
+    <p class="answer-note">Read these only after writing your own answers. Where an answer says "a good answer includes", treat the listed points as the marking scheme rather than as the only wording that works.</p>
+
+    <details class="answer-reveal">
+      <summary>Show all answers</summary>
+      <section class="answer">
+        <span class="marks">Answer 1</span>
+        <h3>Screen the covariates</h3>
+      <ol>
+        <li>Last season's average attendance: yes. It is fixed before scheduling and plausibly affects both the scheduling decision and attendance.</li>
+        <li>Expected television audience at scheduling time: yes. It is precisely the kind of information the scheduler used, and it predicts demand.</li>
+        <li>Rainfall during the match: no. It occurs after treatment and cannot have caused the scheduling decision. A forecast available at scheduling time could be considered instead.</li>
+        <li>Away club's league position on the morning of the match: borderline and usually no. Schedules are set weeks or months ahead, so position on the day was not available to the scheduler. Position at the time the schedule was fixed would be the right version.</li>
+        <li>Whether the match was moved again: no. It is post-treatment and is arguably part of the treatment history.</li>
+        <li>Tickets sold: no. It is the outcome, or so close to it as to make no difference.</li>
+      </ol>
+      <p>The organising question for every row is the same: was this quantity determined before the scheduling decision, and could it have influenced that decision?</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 2</span>
+        <h3>Apply a radius</h3>
+      <p>Eligible controls are those within 0.05 of 0.62, so 0.60, 0.64 and 0.66. The fixtures at 0.55 and 0.71 fall outside the radius.</p>
+      <p>If the treated fixture is a derby and none of its matches is, the design has failed on a covariate that matters a great deal for attendance, even though the numerical distance is small. I would check the balance of the derby indicator across the whole matched sample, and if it is poor, either match exactly on the derby indicator and use the score within those strata, or add the indicator with a stronger role in the model, or drop derbies to a separately reported analysis while stating the change in target population.</p>
+      <p>The score alone did not catch it because the propensity score is a summary. Two fixtures with the same probability of being scheduled unusually can differ on any covariate whose contributions happen to offset. The balancing property holds in expectation over the whole sample, not fixture by fixture, so balance must be checked on the original covariates after matching. This is exactly why a well fitting treatment model is not the diagnostic that matters.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 3</span>
+        <h3>Read a balance table</h3>
+      <p>The design has not succeeded. Four covariates are well balanced, but the expected television audience is at 0.31, far above the conventional 0.1 threshold, and it is likely one of the strongest determinants of both scheduling and attendance. A single badly imbalanced strong confounder is enough to leave the estimate confounded, and averaging the diagnostics is not a defence.</p>
+      <p>The c-statistic is not a merit at all here. It measures how well treatment is predicted, which is a separate question from whether the matched sample is balanced, and a very high value often signals poor overlap, because it means treated and control fixtures are easy to tell apart.</p>
+      <p>I would respecify the propensity model to allow a more flexible relationship for the television audience, such as splines or interactions with capacity, rematch, and re-examine the balance. If balance still fails, I would restrict the analysis to the region of common support where balance is achievable and state the resulting population, or move to a method that targets balance directly, such as entropy balancing.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 4</span>
+        <h3>Reason about common support</h3>
+      <p>Option one is to keep those fixtures and let the model extrapolate, using controls that are not really comparable. This preserves the nominal target population but the estimate for those units rests entirely on the functional form of the model rather than on data, and it is not identified, because positivity fails.</p>
+      <p>Option two is to trim to the region of common support and drop them. This gives an estimate that is supported by data, but the estimand changes: it now describes the effect among fixtures for which both scheduling outcomes plausibly occur, and it says nothing about elite midweek rearrangements.</p>
+      <p>The second is the honest choice, provided the paper describes the retained population explicitly rather than continuing to call it "the effect on league fixtures". The trimmed estimand is often the more useful one anyway, because a scheduler has no real discretion over the fixtures that were dropped.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 5</span>
+        <h3>State what matching cannot do</h3>
+      <p>None of the three addresses it. Matching removes imbalance on measured covariates; it has no purchase on an unmeasured common cause. A more flexible model balances the same variables better. A larger sample narrows the interval around a biased estimate, which makes the problem worse to the extent that it lends false confidence. More covariates help only if the new ones capture the missing cause, which is the referee's point, not a rebuttal of it.</p>
+      <p>What would address it: a design that does not rely on measuring the confounder. A discontinuity in the scheduling rule, an instrument affecting scheduling but not demand, a within-fixture comparison across seasons with fixed effects, or a natural experiment such as a broadcast contract change. Failing that, a formal sensitivity analysis stating how strong an unmeasured confounder would need to be to overturn the result, which is an honest bound rather than a fix.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 6</span>
+        <h3>Order the workflow</h3>
+      <p>The order is: select covariates on causal grounds; estimate the propensity score; define common support; match within a radius; check covariate balance; estimate the outcome contrast.</p>
+      <p>The pair that must not be swapped is the last two. If the outcome contrast is computed before balance is checked, the analyst can revise the design after seeing the answer, and the reported estimate then reflects a search over specifications rather than a pre-committed design. The whole point of separating design from analysis is that everything before the outcome step can be iterated freely, using only treatment and covariate data, without any risk of tuning towards a preferred result.</p>
+      <p>Selecting covariates before estimating the score is the second pairing worth noting: covariates enter on causal grounds, not because they improve the fit of the treatment model.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 7</span>
+        <h3>Choose a design for a new question</h3>
+      <p>Treatment: signing a player aged 30 or over to a contract of three or more years during a given transfer window, with the comparison being signing a player under 30 to a contract of the same length, or making no equivalent signing, depending on which decision the club actually faces. Naming the comparison explicitly is the part most answers skip.</p>
+      <p>Estimand: the ATT, because the question is whether the signings clubs actually made were good ones.</p>
+      <p>Covariates measured before the window: the club's league position and points per match in the prior season, its wage bill, the size and age profile of the existing squad in that position, and the fee and reported wage of the signing itself if the comparison holds cost fixed.</p>
+      <p>Positivity worry: the richest clubs sign expensive over-30 players almost always, and small clubs almost never, so at the extremes of the wage-bill distribution one arm may be empty. Expect to trim and to report a mid-range population.</p>
+      <p>The balance check I would insist on is on prior-season wage bill and squad age profile, because those drive both the signing decision and the efficiency outcome; standardised mean differences under 0.1 on both, examined before any outcome is computed.</p>
+      </section>
+    </details>
+  </section>
+
+  <p class="citation"><strong>Related reading.</strong> <a href="https://doi.org/10.1016/j.ejor.2020.03.062">Goller and Krumer (2020)</a>; Hernan and Robins, <em>What If</em>, Section 4.5 and Chapter 15; Ruiz de Villa, Chapter 5.</p>
+  <p>If your answer and the suggested answer disagree and you cannot see why, ask your teaching agent to work through that question with you rather than assuming the sheet is right.</p>
+  <nav class="lesson-nav"><a href="0004-emulate-a-target-trial.html">Previous sheet: Emulate a target trial</a><a href="0006-weighting-standardisation-and-aipw.html">Next sheet: Weighting, standardisation and AIPW</a></nav>
+</main>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Exercise sheet 13: Interrupted time series</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<header class="topbar"><div><a href="../index.html">Course index</a><span>Exercise sheet 13 of 17</span></div></header>
+<main>
+  <p class="eyebrow">Exercise sheet</p>
+  <h1>Interrupted time series</h1>
+  <p class="lead">7 questions drawn from <a href="../lessons/0013-interrupted-time-series.html">Lesson 13</a>. Segmented models, level against slope, autocorrelation and co-interventions.</p>
+  <div class="lesson-meta"><span>30 minutes</span><span>7 questions</span><span>Answers at the end</span></div>
+
+  <section class="sheet-intro">
+    <h2>How to use this sheet</h2>
+    <p>Work through the questions in order and write your answers down before reading any part of the answer section. Give yourself about thirty minutes in total. If one question runs long, write what you have, mark it and move on, because the answer section explains the reasoning in full.</p>
+    <p>Most questions ask for a short written answer rather than a number. The aim is a defensible statement, so a sentence or two of reasoning is worth more than a single word.</p>
+    <p>The questions are collapsed so that you can take them one at a time. Open one, answer it, then open the next. The answers are held behind a single button at the foot of the page, so nothing is revealed until you choose to reveal it.</p>
+  </section>
+
+  <details class="question">
+    <summary><span class="marks">Question 1</span><span class="q-title">Interpret the coefficients</span></summary>
+    <p>A segmented model of weekly muscular injury rate gives beta1 = 0.02, beta2 = -0.40 and beta3 = +0.05, where beta1 is the pre-interruption slope, beta2 the level change at the interruption and beta3 the change in slope. Explain each coefficient in plain language, state the post-interruption slope, and compute the modelled difference from the old trend at week 12 after the interruption.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 2</span><span class="q-title">Name the counterfactual</span></summary>
+    <p>State exactly what the interrupted time series design uses as the counterfactual, and explain why this makes the design weaker than difference in differences even when the fit is excellent. Then name the single feature of a series that most improves the credibility of that counterfactual.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 3</span><span class="q-title">List and rank the co-interventions</span></summary>
+    <p>For the pandemic restart of Colombian professional football, name four changes other than the restart itself that could plausibly have shifted muscular injury rates. Rank them by how seriously they threaten the causal reading, and explain your top choice.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 4</span><span class="q-title">Fix the outcome definition</span></summary>
+    <p>An analyst uses the weekly count of muscular injuries as the outcome. After the restart, both the count and the number of matches played rise sharply. Explain why the count is the wrong outcome, write down a better one, and say what assumption the fix requires.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 5</span><span class="q-title">Diagnose autocorrelation</span></summary>
+    <p>Residuals from the segmented regression show a first-order autocorrelation of 0.55. Explain what this does to the reported standard errors and to the point estimate, describe how you would detect it, and name two ways to handle it.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 6</span><span class="q-title">Handle seasonality</span></summary>
+    <p>Injury rates in this league are systematically higher in the six weeks after preseason and again during the congested end-of-year period. The interruption happens to fall in the congested period. Explain the danger, and describe two ways to prevent the seasonal pattern from contaminating the estimate.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 7</span><span class="q-title">Design a controlled version</span></summary>
+    <p>A league introduces a mandatory concussion substitute protocol on a known date. You have weekly data on the number of players returning to play after a head impact, for that league and for two comparable leagues that made no change. Specify the design, write the contrast you would report, and name the assumption you would defend most carefully.</p>
+  </details>
+
+  <section class="answers">
+    <h2>Answers</h2>
+    <p class="answer-note">Read these only after writing your own answers. Where an answer says "a good answer includes", treat the listed points as the marking scheme rather than as the only wording that works.</p>
+
+    <details class="answer-reveal">
+      <summary>Show all answers</summary>
+      <section class="answer">
+        <span class="marks">Answer 1</span>
+        <h3>Interpret the coefficients</h3>
+      <p>beta1 = 0.02 means the injury rate was rising by 0.02 units per week before the interruption. beta2 = -0.40 means that at the moment of the interruption the rate dropped immediately by 0.40 units relative to where the continued old trend would have put it. beta3 = +0.05 means the slope after the interruption is 0.05 units per week steeper than before.</p>
+      <p>The post-interruption slope is 0.02 + 0.05 = 0.07 units per week.</p>
+      <p>At week 12 the difference from the counterfactual old trend is -0.40 + 12 x 0.05 = -0.40 + 0.60 = +0.20. The immediate drop has been more than reversed by the steeper trend, and the series crosses the counterfactual at week 8.</p>
+      <p class="answer-note">This pattern, a favourable jump followed by an unfavourable slope, is common and is why reporting only the level change is misleading. Always state the horizon at which the effect is quoted.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 2</span>
+        <h3>Name the counterfactual</h3>
+      <p>The counterfactual is the continuation of the pre-interruption trend into the post-period, extrapolated from the fitted model. It is generated entirely from the treated unit's own history; no comparison unit is involved.</p>
+      <p>That is weaker than difference in differences because nothing in the design accounts for shocks that arrive at the same time as the interruption. Difference in differences uses a contemporaneous control group, which absorbs whatever both groups experienced. An interrupted time series has no such protection, so any co-intervention or coincident change is attributed to the interruption. An excellent fit to the pre-period says the extrapolation is smooth, not that it is right about a period nobody observed.</p>
+      <p>The feature that most improves credibility is a long, stable pre-period with many observations and no other breaks, because it makes the trend well estimated and lets the analyst see whether the series is genuinely trend-stationary rather than wandering. A close second, and the better fix, is adding an untreated control series, which turns the design into a controlled interrupted time series.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 3</span>
+        <h3>List and rank the co-interventions</h3>
+      <p>Four candidates: a compressed fixture calendar raising match load; a long lay-off degrading conditioning before the restart; a change to the permitted number of substitutions altering individual exposure; and changed medical access or injury surveillance altering how injuries were detected and recorded.</p>
+      <p>My ranking, most to least threatening: the lay-off, the compressed calendar, the surveillance change, then substitutions.</p>
+      <p>The lay-off is the most serious because it is not separable from the treatment even in principle. The interruption is the lay-off, so the design cannot distinguish the effect of returning to competition from the effect of the detraining that preceded it. The others are, at least conceptually, separable, and could be handled with data: fixture density can be measured and included, substitution rules are known and dated, and surveillance changes can be checked by looking at the mix of injury severities recorded. When a co-intervention is definitionally bound to the interruption, the honest response is to redefine the estimand as the effect of the whole package and to say so.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 4</span>
+        <h3>Fix the outcome definition</h3>
+      <p>The count confounds injury risk with exposure. If players spend more hours training and playing, more injuries occur even at an unchanged risk per hour, so the level jump would be manufactured by the schedule rather than by any change in player vulnerability.</p>
+      <p>A better outcome is the injury rate per 1,000 hours of player exposure, computed from recorded training and match hours, or an equivalent per-1,000-match-hours rate if training data are unavailable.</p>
+      <p>The fix assumes that exposure hours are measured accurately in both periods and that risk scales roughly proportionally with exposure. The second assumption is not innocuous: fatigue accumulates, so the tenth hour in a week is more dangerous than the first, and a simple rate can understate the effect of congestion. If that non-linearity matters, exposure belongs in the model as a covariate with a flexible form rather than only in the denominator. A good answer notes that this is itself a substantive claim about how load causes injury.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 5</span>
+        <h3>Diagnose autocorrelation</h3>
+      <p>Positive autocorrelation means neighbouring weeks share shocks, so consecutive residuals carry overlapping information and the effective number of independent observations is far below the nominal count. Ordinary least squares standard errors, which assume independence, are therefore too small, intervals too narrow and p-values too low. The point estimate remains approximately unbiased, though it is less efficient; the damage is almost entirely to inference.</p>
+      <p>Detection: plot the residuals against time and look for runs of the same sign, inspect the autocorrelation and partial autocorrelation functions, and use a formal test such as Durbin-Watson or Breusch-Godfrey.</p>
+      <p>Handling: fit a model with an explicit error structure, such as regression with ARMA errors or a Prais-Winsten transformation, chosen to match the autocorrelation pattern; or keep ordinary least squares and use Newey-West heteroskedasticity and autocorrelation consistent standard errors with a sensibly chosen lag length. A third option, aggregating to a coarser time unit, reduces the problem but throws away resolution on the level change, which is the quantity of interest.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 6</span>
+        <h3>Handle seasonality</h3>
+      <p>If the interruption coincides with a seasonal peak, the model will attribute the seasonal rise to the interruption. The extrapolated counterfactual carries only the fitted linear trend, not the recurring within-year pattern, so the level change absorbs whatever the season would have produced anyway. The direction is predictable: the effect will look harmful.</p>
+      <p>The first way is to model seasonality explicitly, adding harmonic terms or calendar-month indicators estimated from the multi-year pre-period, so the counterfactual continues both the trend and the seasonal cycle. This requires enough pre-period years to estimate the cycle, which is the practical constraint.</p>
+      <p>The second is to compare like with like across years, for example by using the same weeks of previous seasons as the comparison, which effectively converts the design into a controlled comparison against the unit's own seasonal history. Adding a genuine control series from a league that did not interrupt achieves the same thing more convincingly, since it absorbs the seasonal pattern without requiring the analyst to specify it correctly.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 7</span>
+        <h3>Design a controlled version</h3>
+      <p>Design: a controlled interrupted time series. Fit a segmented model to the treated league and to each control league over the same weeks, with terms for time, the post-protocol indicator and time since the protocol, plus interactions with a treated-league indicator so the contrast is estimated directly. Model seasonality and exposure as in Question 6, and use an error structure that handles serial correlation.</p>
+      <p>Contrast to report: the difference between the treated league's level and slope changes and the control leagues' contemporaneous changes at the same dates, that is, the interaction terms, reported at a stated horizon such as 12 and 26 weeks after the protocol, alongside the full plotted series.</p>
+      <p>The assumption I would defend hardest is that the control leagues experienced no comparable change at the same time. Concussion protocols tend to be adopted in waves following the same international guidance, so the most likely failure is that the control leagues quietly changed practice too, even without a formal rule. I would document each control league's regulatory history explicitly, and check for a level shift in the controls at the same date, since finding one would invalidate them as controls.</p>
+      </section>
+    </details>
+  </section>
+
+  <p class="citation"><strong>Related reading.</strong> <a href="https://doi.org/10.17533/udea.iatreia.238">Duque-Arias et al. (2024)</a>; Ruiz de Villa, Chapter 11; Wooldridge, Chapters 10 to 12.</p>
+  <p>If your answer and the suggested answer disagree and you cannot see why, ask your teaching agent to work through that question with you rather than assuming the sheet is right.</p>
+  <nav class="lesson-nav"><a href="0012-synthetic-control.html">Previous sheet: Synthetic control</a><a href="0014-longitudinal-g-methods.html">Next sheet: Longitudinal g-methods</a></nav>
+</main>
+</body>
+</html>

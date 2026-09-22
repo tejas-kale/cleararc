@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Exercise sheet 10: Regression discontinuity</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<header class="topbar"><div><a href="../index.html">Course index</a><span>Exercise sheet 10 of 17</span></div></header>
+<main>
+  <p class="eyebrow">Exercise sheet</p>
+  <h1>Regression discontinuity</h1>
+  <p class="lead">7 questions drawn from <a href="../lessons/0010-regression-discontinuity.html">Lesson 10</a>. Running variables, cut-offs, continuity, manipulation and what "local" costs you.</p>
+  <div class="lesson-meta"><span>30 minutes</span><span>7 questions</span><span>Answers at the end</span></div>
+
+  <section class="sheet-intro">
+    <h2>How to use this sheet</h2>
+    <p>Work through the questions in order and write your answers down before reading any part of the answer section. Give yourself about thirty minutes in total. If one question runs long, write what you have, mark it and move on, because the answer section explains the reasoning in full.</p>
+    <p>Most questions ask for a short written answer rather than a number. The aim is a defensible statement, so a sentence or two of reasoning is worth more than a single word.</p>
+    <p>The questions are collapsed so that you can take them one at a time. Open one, answer it, then open the next. The answers are held behind a single button at the foot of the page, so nothing is revealed until you choose to reveal it.</p>
+  </section>
+
+  <details class="question">
+    <summary><span class="marks">Question 1</span><span class="q-title">Name the parts</span></summary>
+    <p>For a study of the effect of relegation from a top division on a club's revenue two seasons later, name the treatment, the running variable, the cut-off, whether the design is sharp or fuzzy, and the population the estimate describes. Then state one reason the running variable is harder to define here than in a typical test-score example.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 2</span><span class="q-title">Compute and interpret</span></summary>
+    <p>Fitted values approaching the promotion cut-off from above give next-season revenue of 18.2 million pounds; from below, 13.7 million. State the estimate, and write two sentences on what is included in it. Then say why the estimate should not be described as "the effect of promotion on revenue for a typical second-division club".</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 3</span><span class="q-title">Test for manipulation</span></summary>
+    <p>A referee worries that clubs manipulate their final position. Explain what precise manipulation would have to mean here for the design to fail, describe the standard diagnostic, and explain why the fact that clubs try very hard to avoid relegation does not by itself break the design.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 4</span><span class="q-title">Choose a bandwidth</span></summary>
+    <p>An analyst reports estimates of 4.1 million at a bandwidth of 3 points, 4.5 million at 6 points, 5.9 million at 12 points and 7.4 million at 20 points, with intervals narrowing as the bandwidth widens. Explain the trade-off this table displays, say which estimate you would headline, and state what pattern in such a table would worry you.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 5</span><span class="q-title">Find a coincident treatment</span></summary>
+    <p>Reilly and Witt exploit the split of the Scottish Premiership after the sixth and seventh positions. Explain what a coincident treatment at that threshold would be, give one concrete example, and say why this threat is more serious in football than in many other regression discontinuity settings.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 6</span><span class="q-title">Run the falsification battery</span></summary>
+    <p>List four falsification checks you would require in a regression discontinuity paper on relegation and revenue, and for each say what result would count as a failure.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 7</span><span class="q-title">Decide whether the design applies</span></summary>
+    <p>A club asks whether giving a player his professional debut before the age of 19 affects his career appearance total. Someone proposes a regression discontinuity at age 19. Say whether this is a valid design, and explain your reasoning in terms of the running variable and the assignment rule. If it is not valid, name a design from this course that fits better.</p>
+  </details>
+
+  <section class="answers">
+    <h2>Answers</h2>
+    <p class="answer-note">Read these only after writing your own answers. Where an answer says "a good answer includes", treat the listed points as the marking scheme rather than as the only wording that works.</p>
+
+    <details class="answer-reveal">
+      <summary>Show all answers</summary>
+      <section class="answer">
+        <span class="marks">Answer 1</span>
+        <h3>Name the parts</h3>
+      <p>Treatment: relegation. Running variable: the club's final league standing expressed as points, or more precisely its distance from the last safe position under the competition's exact ranking rule. Cut-off: the boundary between the lowest safe position and the highest relegated one. The design is sharp, because relegation follows deterministically from final standing. Population: clubs finishing very close to the relegation boundary.</p>
+      <p>The running variable is harder to define because league standing is not a single number. Ties are broken by goal difference, then goals scored, then head-to-head results, so two clubs on equal points can be on opposite sides of the cut-off. The running variable must be constructed to respect the actual tie-break rule, which usually means computing a signed distance to the threshold under the full ranking, rather than using raw points. Points are also discrete and coarse, which limits how close to the boundary the data can get.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 2</span>
+        <h3>Compute and interpret</h3>
+      <p>The estimate is 4.5 million pounds.</p>
+      <p>It is the total effect of crossing the threshold, which bundles every consequence of promotion: broadcast distributions, higher attendance and ticket prices, sponsorship uplift, prize money, and any change in player trading that follows. Nothing separates those channels, and nothing should be added to the 4.5 million as though it were only the broadcast component.</p>
+      <p>It should not be called the effect for a typical club because it is identified only at the margin. Clubs finishing near the promotion boundary are a particular kind of club, and a mid-table or bottom club would not experience the same jump, since revenue gains scale with existing support and commercial base. Extending the number away from the cut-off requires an extrapolation assumption that the design does not supply.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 3</span>
+        <h3>Test for manipulation</h3>
+      <p>For the design to fail, clubs would have to control their final position precisely enough to land on the favourable side of the threshold, and to do so in a way related to their potential outcomes. Effort alone is not enough; the club would need to be able to guarantee finishing seventeenth rather than eighteenth.</p>
+      <p>The standard diagnostic is a density test on the running variable: if units sort, the density of the running variable jumps at the cut-off, with an excess just above and a deficit just below. Alongside it, one checks whether predetermined characteristics, such as wage bill or previous-season position, jump at the threshold, since sorting on the outcome usually shows up as sorting on its causes.</p>
+      <p>Strenuous effort does not break the design because final standing depends on other teams' results, refereeing, injuries and the residual randomness of matches. What matters is control of the realised value near the boundary, and that control is very imperfect: a club can raise its expected points but cannot choose to finish exactly one point clear. The concern becomes real in specific circumstances, such as the final matchday when both the club and its opponent know the standings and one has nothing to play for.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 4</span>
+        <h3>Choose a bandwidth</h3>
+      <p>Narrow bandwidths use only units very close to the cut-off, where the continuity assumption is most credible and the functional form matters least, but they use few observations, so the interval is wide. Wide bandwidths add data and precision, but they include units far from the threshold whose comparability rests on the fitted trend being correct. The rising estimates here are the signature of that: as the window widens, the estimate is increasingly driven by the extrapolated slope.</p>
+      <p>I would headline the estimate at or near the smallest bandwidth that still gives usable precision, so 4.1 or 4.5 million, and report the whole table. The 7.4 million figure at 20 points is not a regression discontinuity estimate in any meaningful sense; at that width the design is effectively a regression on a large sample of dissimilar clubs.</p>
+      <p>The worrying pattern is exactly this one, a steady monotone drift with bandwidth, which suggests the fitted trend is misspecified or that the two sides differ systematically away from the cut-off. A reassuring table shows estimates that are flat across a range of bandwidths and move only in the very widest windows.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 5</span>
+        <h3>Find a coincident treatment</h3>
+      <p>A coincident treatment is another cause of the outcome that changes at the same cut-off. The design attributes the whole jump to the treatment of interest, so anything else that switches on at the same point is inseparable from it.</p>
+      <p>A concrete example: the position that determines the league split may also determine European qualification, or prize-money bands, or the number of home fixtures in the remaining schedule. If the split boundary coincides with a change in the number of home matches, then attendance jumps for a reason that has nothing to do with the split itself.</p>
+      <p>The threat is worse in football because league rules are written to attach many consequences to the same rank boundaries. Qualification, prize money, fixture allocation and broadcast selection are all keyed to final standing, so a single threshold routinely carries several treatments at once. In a setting where a threshold is set by an administrative rule for one purpose, coincident treatment is unusual; here it should be assumed until ruled out, by reading the competition regulations carefully and stating what else changes at the cut-off.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 6</span>
+        <h3>Run the falsification battery</h3>
+      <ol>
+        <li>Density of the running variable at the cut-off. Failure: a visible jump, with more clubs just above the safe line than just below, indicating sorting.</li>
+        <li>Continuity of predetermined covariates, such as previous-season wage bill, stadium capacity and attendance. Failure: a significant discontinuity in any strong predictor of revenue at the true cut-off, which means the two sides differ for reasons other than treatment.</li>
+        <li>Placebo cut-offs at points where nothing changes, for instance between the tenth and eleventh positions. Failure: estimates of similar magnitude at fake thresholds, which indicates the method manufactures jumps.</li>
+        <li>Sensitivity to bandwidth and to polynomial order, including a check that high-order global polynomials are not driving the result. Failure: an estimate that changes sign or magnitude materially across reasonable specifications.</li>
+      </ol>
+      <p>A fifth worth adding is a donut specification that drops observations immediately at the threshold, which tests whether the result depends on the units most susceptible to manipulation or to measurement error in the running variable.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 7</span>
+        <h3>Decide whether the design applies</h3>
+      <p>It is not a valid design. Regression discontinuity requires that treatment be determined by the running variable through a rule at the cut-off. Here age does not determine whether a player debuts; a coach does. Nothing changes discontinuously at 19, so there is no jump in treatment probability to exploit, and any jump in the outcome at 19 would reflect the coach's selection rather than a rule.</p>
+      <p>The proposal also confuses the treatment with a characteristic of the treated. Debuting before 19 is partly a measure of how good the player already was, which is precisely the confounding the design is supposed to remove.</p>
+      <p>A better fit depends on what rule-like variation exists. If a competition imposes a minimum age or a squad quota for under-19 players, that rule can serve as an instrument for early debut, giving a local average treatment effect for players whose debut timing responds to it, which is Lesson 11. Failing that, a target trial emulation with matched comparison on ability at each decision point, as in Lessons 4 and 5, is the honest observational route.</p>
+      </section>
+    </details>
+  </section>
+
+  <p class="citation"><strong>Related reading.</strong> <a href="https://eprints.lse.ac.uk/113344/1/1527002521989393.pdf">Reilly and Witt (2021)</a>; <a href="https://doi.org/10.1016/j.serev.2022.100003">Speer (2023)</a>; Angrist and Pischke, Chapter 4; Hayashi, Chapter 21.</p>
+  <p>If your answer and the suggested answer disagree and you cannot see why, ask your teaching agent to work through that question with you rather than assuming the sheet is right.</p>
+  <nav class="lesson-nav"><a href="0009-event-studies-and-staggered-timing.html">Previous sheet: Event studies and staggered timing</a><a href="0011-instrumental-variables-and-late.html">Next sheet: Instrumental variables and the LATE</a></nav>
+</main>
+</body>
+</html>

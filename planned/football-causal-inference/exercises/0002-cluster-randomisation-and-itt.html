@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Exercise sheet 2: Cluster randomisation and intention to treat</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<header class="topbar"><div><a href="../index.html">Course index</a><span>Exercise sheet 2 of 17</span></div></header>
+<main>
+  <p class="eyebrow">Exercise sheet</p>
+  <h1>Cluster randomisation and intention to treat</h1>
+  <p class="lead">7 questions drawn from <a href="../lessons/0002-cluster-randomisation-and-itt.html">Lesson 2</a>. Units of assignment, clustering and what an ITT estimate does and does not say.</p>
+  <div class="lesson-meta"><span>30 minutes</span><span>7 questions</span><span>Answers at the end</span></div>
+
+  <section class="sheet-intro">
+    <h2>How to use this sheet</h2>
+    <p>Work through the questions in order and write your answers down before reading any part of the answer section. Give yourself about thirty minutes in total. If one question runs long, write what you have, mark it and move on, because the answer section explains the reasoning in full.</p>
+    <p>Most questions ask for a short written answer rather than a number. The aim is a defensible statement, so a sentence or two of reasoning is worth more than a single word.</p>
+    <p>The questions are collapsed so that you can take them one at a time. Open one, answer it, then open the next. The answers are held behind a single button at the foot of the page, so nothing is revealed until you choose to reveal it.</p>
+  </section>
+
+  <details class="question">
+    <summary><span class="marks">Question 1</span><span class="q-title">Separate the three units</span></summary>
+    <p>A national association randomises 24 youth academies to a new hamstring protocol or to usual practice. Within each academy, 40 players are followed, and every training session is logged. For this trial, name the unit of randomisation, the unit of observation and the unit that determines the effective sample size for uncertainty. Then say what happens to precision if the association doubles the players per academy to 80 rather than doubling the academies to 48.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 2</span><span class="q-title">Explain the design choice</span></summary>
+    <p>The FIFA 11+ trial assigned whole teams rather than individual players. Give two distinct reasons why individual randomisation within a team would have been a worse design here, and name one cost the team-level design pays in exchange.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 3</span><span class="q-title">Diagnose a wrong analysis</span></summary>
+    <p>An analyst re-analyses the FIFA 11+ trial by fitting a logistic regression of injury on assignment across all 344 players, treating each player as an independent observation. The result is reported with a very narrow confidence interval. Explain precisely what has gone wrong, say whether the point estimate or the interval is more affected, and name two analysis approaches that would fix it.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 4</span><span class="q-title">State what the trial estimated</span></summary>
+    <p>The experimental group recorded 26 injuries and the control group 82. Write one sentence stating the estimand this contrast targets, using the language of assignment rather than of receipt. Then explain, in two or three sentences, why the same trial cannot report the effect of completing every session simply by dropping the players who missed sessions.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 5</span><span class="q-title">Judge a baseline table</span></summary>
+    <p>A reviewer notes that in a 21-team trial, the intervention teams had a mean age of 24.1 years against 22.6 in control, and runs a significance test on the difference, which returns p = 0.31. The reviewer concludes that randomisation worked and no adjustment is needed. Give two separate criticisms of that reasoning.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 6</span><span class="q-title">Find the interference</span></summary>
+    <p>Two of the 21 teams in a similar trial share a training ground and several coaching staff, and one is assigned to the intervention and one to control. Explain which assumption this threatens, what it does to the estimate, and what the trialists could have done at the design stage.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 7</span><span class="q-title">Choose the design for a new question</span></summary>
+    <p>A league wants to know whether a new video-based concussion recognition module for match officials reduces the number of players who continue playing after a head impact. There are 90 officials, who are assigned to matches centrally and rotate across all clubs. Recommend a unit of randomisation, state the main threat your choice creates, and name the estimand you would report.</p>
+  </details>
+
+  <section class="answers">
+    <h2>Answers</h2>
+    <p class="answer-note">Read these only after writing your own answers. Where an answer says "a good answer includes", treat the listed points as the marking scheme rather than as the only wording that works.</p>
+
+    <details class="answer-reveal">
+      <summary>Show all answers</summary>
+      <section class="answer">
+        <span class="marks">Answer 1</span>
+        <h3>Separate the three units</h3>
+      <p>The academy is the unit of randomisation, with 24 independent allocations. The player is the unit of observation, with 960 outcome records. Uncertainty is governed by the 24 academies, because players within an academy share coaching, pitches, schedules and load, so their outcomes are correlated.</p>
+      <p>Doubling players within academies adds correlated information and improves precision only slightly, with the gain limited by the intraclass correlation. Doubling the number of academies adds independent allocations and improves precision far more. This is the practical reason cluster trials are usually constrained by cluster count rather than by participant count.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 2</span>
+        <h3>Explain the design choice</h3>
+      <p>First, contamination. Players train together, so control players would see and copy the extra exercises, which pulls the two arms towards each other and biases the estimate towards zero. Second, the intervention is partly a property of the session itself. Adding ten minutes to the end of a shared training session is not something one player can receive while the player beside him does not, so individual assignment would not deliver a coherent treatment at all.</p>
+      <p>The cost is precision and balance. With 21 clusters the trial has few independent allocations, so chance imbalance between arms is more likely and the standard errors are wider than a player-randomised trial of the same size would suggest.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 3</span>
+        <h3>Diagnose a wrong analysis</h3>
+      <p>The analysis has treated 344 observations as 344 independent randomisations when only 21 independent randomisations occurred. Injuries within a team are correlated through shared coaching, pitches and fixture load, so each player contributes less than one observation's worth of independent information. The standard error is therefore too small and the interval too narrow, and the p-value is too low.</p>
+      <p>The point estimate is much less affected than the interval. An unweighted individual-level comparison of assigned groups is usually close to unbiased for the assignment effect; it is the uncertainty that is misstated. Fixes include a cluster-level analysis comparing the 21 team-level injury rates, generalised estimating equations with an exchangeable working correlation and cluster-robust standard errors, or a mixed model with a random intercept for team.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 4</span>
+        <h3>State what the trial estimated</h3>
+      <p>The contrast targets the effect of being assigned to the additional post-training FIFA 11+ programme, rather than to the standard programme alone, on injuries over the season, under the level of adherence that actually occurred in the trial.</p>
+      <p>Dropping non-completers breaks the randomisation, because completion is a choice made after assignment. Players who complete every session are likely to be fitter, more motivated, less injured already and at clubs with better organisation, and all of those also affect injury risk directly. The comparison of completers with controls is therefore an observational comparison inside a randomised trial, and it needs its own identification argument, not the trial's.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 5</span>
+        <h3>Judge a baseline table</h3>
+      <p>First, the test answers the wrong question. Randomisation is a property of the assignment procedure, and if the sequence was properly generated and concealed, we already know any imbalance arose by chance. A significance test on a baseline variable tests a null we know to be true by design, so it can neither validate nor invalidate the randomisation.</p>
+      <p>Second, a non-significant test does not mean the imbalance is harmless. With 21 clusters the test has very little power, and a 1.5-year age gap can still confound the injury comparison if age predicts injury. The relevant judgement is whether the imbalance is large enough on a variable that matters, which is a question about the magnitude and about prior knowledge of injury risk, not about a p-value. Pre-specified adjustment for strong prognostic baseline variables is the usual response.</p>
+      <p>A good answer also notes what the reviewer should have examined instead: how the sequence was generated, whether allocation was concealed, and how much loss to follow-up occurred in each arm.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 6</span>
+        <h3>Find the interference</h3>
+      <p>It threatens the assumption of no relevant interference between clusters. The control team's potential outcome now depends on the other team's assignment, because coaches who learned the added programme are likely to use parts of it in the control sessions.</p>
+      <p>The likely consequence is attenuation. The control arm receives some of the intervention, so the measured difference understates the true effect of the programme. Note that the direction is predictable here, which is not always the case with interference.</p>
+      <p>At the design stage the trialists could have made the shared training ground the cluster rather than the team, so that both teams receive the same assignment, or excluded one of the pair, or stratified the randomisation so that linked teams are allocated together. Recording the contact between clusters and reporting it is the minimum.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 7</span>
+        <h3>Choose the design for a new question</h3>
+      <p>Randomise the official, not the club or the match. The intervention is knowledge held by a person, it travels with the official across fixtures, and 90 officials gives far more independent allocations than the number of clubs would.</p>
+      <p>The main threat is interference between officials, who talk to one another, attend the same briefings and work in teams on the same match. If a trained referee works with an untrained assistant, the assistant is partly exposed. A secondary threat is that outcomes are observed at the match, so matches must be attributed to an official, and matches with officials from both arms need a stated rule.</p>
+      <p>Report an intention-to-treat effect: the effect of being assigned the module, rather than the usual guidance, on the rate of players continuing after a head impact across the matches that official worked in the follow-up season, with uncertainty clustered on the official.</p>
+      </section>
+    </details>
+  </section>
+
+  <p class="citation"><strong>Related reading.</strong> <a href="https://doi.org/10.1016/j.jphys.2017.08.004">Al Attar et al. (2017)</a>; Hernan and Robins, <em>What If</em>, Chapters 2 and 9; Sweet, <em>Experimentation for Engineers</em>, Chapters 1 and 2.</p>
+  <p>If your answer and the suggested answer disagree and you cannot see why, ask your teaching agent to work through that question with you rather than assuming the sheet is right.</p>
+  <nav class="lesson-nav"><a href="0001-from-question-to-estimand.html">Previous sheet: Define a causal question and estimand</a><a href="0003-dags-and-back-door-identification.html">Next sheet: Causal diagrams and back-door identification</a></nav>
+</main>
+</body>
+</html>

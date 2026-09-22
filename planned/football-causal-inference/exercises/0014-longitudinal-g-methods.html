@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Exercise sheet 14: Longitudinal g-methods</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<header class="topbar"><div><a href="../index.html">Course index</a><span>Exercise sheet 14 of 17</span></div></header>
+<main>
+  <p class="eyebrow">Exercise sheet</p>
+  <h1>Longitudinal g-methods</h1>
+  <p class="lead">7 questions drawn from <a href="../lessons/0014-longitudinal-g-methods.html">Lesson 14</a>. Treatment-confounder feedback, sustained strategies and the three g-methods.</p>
+  <div class="lesson-meta"><span>30 minutes</span><span>7 questions</span><span>Answers at the end</span></div>
+
+  <section class="sheet-intro">
+    <h2>How to use this sheet</h2>
+    <p>Work through the questions in order and write your answers down before reading any part of the answer section. Give yourself about thirty minutes in total. If one question runs long, write what you have, mark it and move on, because the answer section explains the reasoning in full.</p>
+    <p>Most questions ask for a short written answer rather than a number. The aim is a defensible statement, so a sentence or two of reasoning is worth more than a single word.</p>
+    <p>The questions are collapsed so that you can take them one at a time. Open one, answer it, then open the next. The answers are held behind a single button at the foot of the page, so nothing is revealed until you choose to reveal it.</p>
+  </section>
+
+  <details class="question">
+    <summary><span class="marks">Question 1</span><span class="q-title">Identify the double role</span></summary>
+    <p>Weekly minutes played increase soreness. Soreness affects the coach's decision about the following week's minutes, and soreness also predicts injury. State soreness's two roles precisely, and explain why this makes the standard advice about controlling for confounders self-contradictory here.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 2</span><span class="q-title">Write two strategies</span></summary>
+    <p>Write down two contrasting sustained treatment strategies for the weekly load decision, one static and one dynamic. Explain the practical difference, and say which one a fitness coach is more likely to find useful and why.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 3</span><span class="q-title">Compute a weight</span></summary>
+    <p>For a two-week history, a player received high load in week 1 when the probability of high load given baseline was 0.5, then moderate load in week 2 when the probability of moderate load given the full history was 0.2. Compute the unstabilised inverse-probability weight for this history. Explain what a weight of that size means, and describe what a stabilised weight would change.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 4</span><span class="q-title">Compare the three methods</span></summary>
+    <p>Describe in two sentences each what the parametric g-formula, a marginal structural model and a structural nested model do. Then name one situation favouring each.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 5</span><span class="q-title">Diagnose positivity</span></summary>
+    <p>Club policy forbids high load whenever fatigue exceeds 8 on a 10-point scale. (a) Can the data estimate a strategy that assigns high load at fatigue 9? (b) Distinguish this from the situation where high load at fatigue 9 is allowed but happens only twice in the dataset, and say what each case demands of the analyst.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 6</span><span class="q-title">Get the time order right</span></summary>
+    <p>An analyst records fatigue at the end of each week, after the training block has been completed, and uses week t fatigue as the confounder for the week t load decision. Explain the error, describe its likely consequence, and say what data collection change fixes it.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 7</span><span class="q-title">Specify a study</span></summary>
+    <p>A club wants to know whether a policy of resting a player for one league match after every European away fixture reduces injuries across a season. Specify the two strategies, the decision points, the time-varying confounder that creates feedback, the estimand, and one positivity worry.</p>
+  </details>
+
+  <section class="answers">
+    <h2>Answers</h2>
+    <p class="answer-note">Read these only after writing your own answers. Where an answer says "a good answer includes", treat the listed points as the marking scheme rather than as the only wording that works.</p>
+
+    <details class="answer-reveal">
+      <summary>Show all answers</summary>
+      <section class="answer">
+        <span class="marks">Answer 1</span>
+        <h3>Identify the double role</h3>
+      <p>Soreness in week t is a mediator of the effect of minutes in week t-1, because earlier minutes cause it and it lies on a path to injury. It is simultaneously a confounder of the effect of minutes in week t, because the coach uses it to set that week's minutes and it independently predicts injury.</p>
+      <p>The standard advice says to adjust for confounders of treatment and outcome, and also says never to adjust for mediators of the treatment being studied. Soreness is both, so the two rules issue opposite instructions about the same variable. Adjusting for it removes the week t confounding but blocks part of the week t-1 effect and, because soreness is a collider on paths involving unmeasured causes of injury, can also open new biasing paths. Not adjusting leaves the week t effect confounded.</p>
+      <p>The resolution is that no single regression can be right. The estimand must be a whole treatment strategy across weeks, and the covariate history must be handled in time order, which is what the g-methods do.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 2</span>
+        <h3>Write two strategies</h3>
+      <p>Static: assign high load every Monday for the whole season, regardless of the player's state. The comparison static strategy is moderate load every Monday.</p>
+      <p>Dynamic: assign high load whenever the player's fatigue score is at or below 6 on a 10-point scale, and moderate load otherwise, evaluated each Monday. A comparison dynamic strategy might use a threshold of 4.</p>
+      <p>The practical difference is that the dynamic strategy is a rule that reads the player's current state, so the treatment a player receives under it depends on his history, whereas the static strategy ignores it. Estimating a dynamic strategy requires modelling how the covariate evolves, since the rule's future assignments depend on it.</p>
+      <p>A coach finds the dynamic strategy more useful, and by a wide margin. No coach would ever apply a fixed load to a visibly exhausted player, so the static contrast estimates the effect of a policy nobody would implement, and it is also the one most likely to violate positivity. The dynamic rule matches how the decision is actually made and answers the question the coach has, which is where to put the threshold.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 3</span>
+        <h3>Compute a weight</h3>
+      <p>The unstabilised weight is the product of the inverse probabilities: 1/0.5 x 1/0.2 = 2 x 5 = 10.</p>
+      <p>This player represents ten players in the pseudo-population. The large value comes from the week 2 choice: given his history, moderate load was unusual, so he is one of few observations supplying information about that branch of the treatment history. Note how the weights multiply across time, which is why long follow-up produces extreme weights even when each period's probability is unremarkable.</p>
+      <p>A stabilised weight replaces the numerator of 1 with the probability of the observed treatment given only baseline covariates, and treatment history, rather than 1. This leaves the same balance property but shrinks the spread of the weights dramatically, because the numerator moves in the same direction as the denominator. The estimate is unchanged in expectation and the variance is much smaller, which is why stabilised weights are the default rather than an option.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 4</span>
+        <h3>Compare the three methods</h3>
+      <p>Parametric g-formula: models how each time-varying covariate and the outcome evolve given the past, then simulates every player forward under each strategy and averages the simulated outcomes. It reconstructs the whole counterfactual world rather than reweighting the observed one.</p>
+      <p>Marginal structural model: estimates the probability of the observed treatment at each time given the past, weights each observed history by the inverse of that probability, and fits a simple model for the outcome as a function of the treatment strategy in the weighted data. The weighting creates sequential balance so the simple model can be read causally.</p>
+      <p>Structural nested model: parameterises the effect of a treatment increment at each time given the past, and uses g-estimation to find the parameter value that makes treatment independent of the transformed, effect-removed outcome. It models the effect directly rather than the outcome level.</p>
+      <p>Favouring situations: the g-formula when positivity is near-violated and one is willing to extrapolate from an outcome model, or when many complex dynamic strategies must be compared. Marginal structural models when the strategies are few and simple and one prefers to model the treatment process, which is often better understood than the outcome. Structural nested models when effect modification by time-varying covariates matters and when near-violations of positivity make weighting unstable, since g-estimation is markedly more robust there.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 5</span>
+        <h3>Diagnose positivity</h3>
+      <p>(a) No. The policy makes the probability of high load at fatigue 9 exactly zero, so no observation exists and none could exist in this setting. This is a structural or deterministic positivity violation, and no estimator can repair it; any number produced comes wholly from the model's extrapolation.</p>
+      <p>(b) The second case is a random or practical positivity violation. The decision is possible but rare, so the data contain a little information, with two observations carrying enormous weights and dominating the estimate.</p>
+      <p>The demands differ. For the structural violation the analyst must change the question: redefine the target strategy so that it never requires high load above fatigue 8, which is anyway the clinically sensible rule, or obtain data from a league without the policy. Reporting an estimate for the original strategy is not an option. For the practical violation, the analyst can proceed but must show the weight distribution, report the effective sample size, examine sensitivity to truncation, and state plainly that the estimate for that region rests on two observations. The g-formula is often preferred there, since it extrapolates through a model transparently rather than through an unstable weight.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 6</span>
+        <h3>Get the time order right</h3>
+      <p>The confounder for a decision must be measured before that decision. Fatigue recorded at the end of week t is partly a consequence of the load assigned in week t, so it is a post-treatment variable for that decision. Conditioning on it removes part of the very effect being estimated and, because it is a common effect of the load and of unmeasured player characteristics that also cause injury, conditioning opens a collider path.</p>
+      <p>The likely consequence is an attenuated and possibly sign-flipped estimate. High load raises end-of-week fatigue, so comparing high and moderate load players at equal end-of-week fatigue compares an unusually resilient high-load player with an unusually fragile moderate-load one.</p>
+      <p>The fix is to record fatigue on Monday morning before the load decision, and to timestamp every covariate so that the analysis can order them relative to each decision. In practice this means designing the data collection around the decision points rather than around the weekly reporting cycle, which is the single most common source of failure in longitudinal analyses of this kind.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 7</span>
+        <h3>Specify a study</h3>
+      <p>Strategies: rest the player for the next league match after every European away fixture, or make him available for selection as normal after every European away fixture. Both are sustained strategies applied across the whole season.</p>
+      <p>Decision points: each league match that follows a European away fixture, so roughly six to ten points across a season, with eligibility assessed at each.</p>
+      <p>Feedback variable: accumulated load and fatigue, or a soreness or wellness score measured before each selection. It is caused by earlier selection decisions, it drives the current one, and it predicts injury, which is exactly the feedback structure.</p>
+      <p>Estimand: the difference in the expected number of time-loss injuries over the season, or in injury-free days, comparing the two sustained strategies among players who play regularly in both competitions.</p>
+      <p>Positivity worry: a manager will not rest a key player before a decisive fixture, so for histories where the next league match is high-stakes and the squad is depleted, the resting strategy may never be observed. Estimating it requires either a dynamic strategy that permits selection in those states, or an explicit acknowledgement that the contrast is unidentified in that region.</p>
+      </section>
+    </details>
+  </section>
+
+  <p class="citation"><strong>Related reading.</strong> Hernan and Robins, <em>What If</em>, Chapters 19 to 21. The training-load example is constructed.</p>
+  <p>If your answer and the suggested answer disagree and you cannot see why, ask your teaching agent to work through that question with you rather than assuming the sheet is right.</p>
+  <nav class="lesson-nav"><a href="0013-interrupted-time-series.html">Previous sheet: Interrupted time series</a><a href="0015-double-machine-learning.html">Next sheet: Double machine learning</a></nav>
+</main>
+</body>
+</html>

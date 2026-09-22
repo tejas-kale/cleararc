@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Exercise sheet 1: Define a causal question and estimand</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<header class="topbar"><div><a href="../index.html">Course index</a><span>Exercise sheet 1 of 17</span></div></header>
+<main>
+  <p class="eyebrow">Exercise sheet</p>
+  <h1>Define a causal question and estimand</h1>
+  <p class="lead">8 questions drawn from <a href="../lessons/0001-from-question-to-estimand.html">Lesson 1</a>. Potential outcomes, ATE and ATT, and the identification assumptions.</p>
+  <div class="lesson-meta"><span>30 minutes</span><span>8 questions</span><span>Answers at the end</span></div>
+
+  <section class="sheet-intro">
+    <h2>How to use this sheet</h2>
+    <p>Work through the questions in order and write your answers down before reading any part of the answer section. Give yourself about thirty minutes in total. If one question runs long, write what you have, mark it and move on, because the answer section explains the reasoning in full.</p>
+    <p>Most questions ask for a short written answer rather than a number. The aim is a defensible statement, so a sentence or two of reasoning is worth more than a single word.</p>
+    <p>The questions are collapsed so that you can take them one at a time. Open one, answer it, then open the next. The answers are held behind a single button at the foot of the page, so nothing is revealed until you choose to reveal it.</p>
+  </section>
+
+  <details class="question">
+    <summary><span class="marks">Question 1</span><span class="q-title">Name the missing quantity</span></summary>
+    <p>A club sits fourteenth after matchweek 12. It dismisses its head coach and takes seven points from the following five matches. Write down, in one sentence each, what <em>Y(1)</em> and <em>Y(0)</em> are for this club at this decision point, which one is observed, and what number the observed value takes.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 2</span><span class="q-title">Reject three candidate counterfactuals</span></summary>
+    <p>An analyst offers three candidates for the missing potential outcome of the club in Question 1. For each, give one specific reason it fails.</p>
+    <ol>
+      <li>The five points the club took in the five matches before the dismissal.</li>
+      <li>The average points taken over the same five matchweeks by the four clubs that kept their coaches.</li>
+      <li>The points the club took over the same five matchweeks in the previous season.</li>
+    </ol>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 3</span><span class="q-title">Compute an ATE and an ATT</span></summary>
+    <p>Five clubs are eligible at matchweek 10. Both potential outcomes are shown, which no real dataset would give you.</p>
+    <table>
+      <thead><tr><th>Club</th><th>Y(1)</th><th>Y(0)</th><th>Decision</th></tr></thead>
+      <tbody>
+        <tr><td>Harbour City</td><td>9</td><td>4</td><td>Dismiss</td></tr>
+        <tr><td>Old Mill FC</td><td>6</td><td>8</td><td>Retain</td></tr>
+        <tr><td>Northgate United</td><td>7</td><td>5</td><td>Dismiss</td></tr>
+        <tr><td>Vale Rovers</td><td>5</td><td>5</td><td>Retain</td></tr>
+        <tr><td>Kings Park</td><td>8</td><td>2</td><td>Dismiss</td></tr>
+      </tbody>
+    </table>
+    <p>Calculate the ATE and the ATT. Then compute the naive difference in observed mean points between the clubs that dismissed and the clubs that retained. Which of the three numbers is largest, and what does the gap between the naive difference and the ATT tell you about how these boards chose?</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 4</span><span class="q-title">Choose the estimand that matches the decision</span></summary>
+    <p>Three people want an answer from the same coach-dismissal dataset.</p>
+    <ol>
+      <li>A league regulator wondering whether to impose a mid-season sacking window on all clubs.</li>
+      <li>A board that has just dismissed its coach and wants to know whether it was right.</li>
+      <li>A board currently sitting eighteenth and deciding tonight whether to dismiss.</li>
+    </ol>
+    <p>For each, state whether the ATE, the ATT or neither is the quantity they need, and say why in one sentence. Where you answer neither, name the population you would actually want.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 5</span><span class="q-title">Write two causal questions in full form</span></summary>
+    <p>Rewrite each of these as a question with a population, two treatment strategies, an outcome and a time horizon, using the form given in the lesson.</p>
+    <ol>
+      <li>"Does playing on a Monday night hurt attendance?"</li>
+      <li>"Does a winter training camp reduce injuries?"</li>
+    </ol>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 6</span><span class="q-title">Match the failure to the assumption</span></summary>
+    <p>Name which identification assumption each situation threatens, and explain the threat in one sentence.</p>
+    <ol>
+      <li>Half the clubs in the dataset appointed a permanent successor, and half appointed a caretaker from the academy for the rest of the season.</li>
+      <li>Every club in the bottom three at matchweek 20 in the sample dismissed its coach.</li>
+      <li>Boards dismiss coaches after poor runs, and clubs on poor runs would tend to improve anyway.</li>
+      <li>A dismissal is followed by a bounce partly because the next opponent, a rival in the same league, prepares differently for an unfamiliar coach.</li>
+    </ol>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 7</span><span class="q-title">Sharpen a vague treatment strategy</span></summary>
+    <p>An analyst writes the treatment as "the club changes its coach". List three distinct ambiguities in that phrase that would make consistency doubtful, then write one version of the strategy precise enough that two analysts working from the same match records would classify every club identically.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 8</span><span class="q-title">Critique a published claim</span></summary>
+    <p>A report states: "Across the last ten seasons, clubs that dismissed their head coach mid-season averaged 1.31 points per match afterwards, against 1.28 for clubs that did not. Dismissal therefore has no effect." Write a short critique of no more than six sentences. Say what quantity the report has actually computed, why it is not the ATT, and in which direction you expect the bias to run.</p>
+  </details>
+
+  <section class="answers">
+    <h2>Answers</h2>
+    <p class="answer-note">Read these only after writing your own answers. Where an answer says "a good answer includes", treat the listed points as the marking scheme rather than as the only wording that works.</p>
+
+    <details class="answer-reveal">
+      <summary>Show all answers</summary>
+      <section class="answer">
+        <span class="marks">Answer 1</span>
+        <h3>Name the missing quantity</h3>
+      <p><em>Y(1)</em> is the number of league points the club would take over its next five matches if it dismissed the coach at matchweek 12. <em>Y(0)</em> is the number of points the same club would take over those same five matches, against those same opponents, if it retained the coach instead. Because the board dismissed, <em>Y(1)</em> is observed and equals seven. <em>Y(0)</em> is not observed and never will be.</p>
+      <p>The most common error is to describe <em>Y(0)</em> as what some other club did, or as what this club did earlier. <em>Y(0)</em> is defined for this club, at this decision point, over this specific fixture list. That is what makes it unobservable rather than merely unmeasured.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 2</span>
+        <h3>Reject three candidate counterfactuals</h3>
+      <ol>
+        <li>The earlier five matches were played at a different time, against different opponents, with a different injury list, and they are precisely the run that triggered the dismissal. Using them builds the selection into the comparison, and an unusually poor run tends to be followed by a better one whatever the board does.</li>
+        <li>The clubs that kept their coaches are not comparable, because boards dismiss after poor results. Those clubs were on average performing better at matchweek 12, so their subsequent points reflect a stronger starting position rather than the absence of dismissal.</li>
+        <li>The previous season involves a different squad, a possibly different league position and different opponents in those matchweeks. The club's underlying quality may also have changed between seasons in ways related to why the coach was under pressure.</li>
+      </ol>
+      <p>All three failures share a shape. Each candidate differs from the true <em>Y(0)</em> in ways related to the reason for treatment, which is exactly what exchangeability rules out.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 3</span>
+        <h3>Compute an ATE and an ATT</h3>
+      <p>The club-level effects are +5, -2, +2, 0 and +6.</p>
+      <p>The ATE is (5 - 2 + 2 + 0 + 6) divided by 5, which is 2.2 points.</p>
+      <p>The ATT averages over the three clubs that dismissed, so it is (5 + 2 + 6) divided by 3, which is about 4.33 points.</p>
+      <p>The naive comparison uses observed outcomes only. The dismissing clubs are observed at <em>Y(1)</em> and average 8. The retaining clubs are observed at <em>Y(0)</em> and average 6.5. The naive difference is 1.5 points.</p>
+      <p>The ATT is the largest of the three. The naive difference understates it by about 2.83 points, because the clubs that dismissed have a much lower <em>Y(0)</em> on average, about 3.67, than the clubs that retained, at 6.5. In this constructed sample the boards dismissed at clubs that would have done badly anyway, and those clubs also happened to benefit most. The naive difference mixes the two facts together and reports neither.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 4</span>
+        <h3>Choose the estimand that matches the decision</h3>
+      <ol>
+        <li>The regulator needs the ATE, or something close to it. A rule applied to every club changes the strategy for clubs that would not otherwise have dismissed, so the relevant average runs over all eligible clubs.</li>
+        <li>The board that has already dismissed needs the ATT. The question is whether the decision helped clubs like the ones that took it, which is exactly the population the ATT averages over.</li>
+        <li>Neither, strictly. This board wants the effect among clubs that are eligible and deciding now, sitting eighteenth, with this form and this squad. That is a conditional effect for a narrower population, sometimes written as a conditional average treatment effect. The ATT is the closer of the two standard estimands, because the decision profile resembles the treated population.</li>
+      </ol>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 5</span>
+        <h3>Write two causal questions in full form</h3>
+      <p>Attendance: among top-flight league fixtures that could feasibly be scheduled either way, what is the average effect of scheduling the fixture on a Monday evening rather than on a Saturday afternoon on the number of paying spectators present at that fixture? The time horizon is supplied by the fixture itself, since attendance is measured once. A good answer notices this rather than inventing a follow-up period.</p>
+      <p>Training camp: among senior squad players under contract at the winter break and medically cleared to travel, what is the average effect of attending a ten-day warm-weather camp rather than remaining on the club's normal domestic schedule on the number of time-loss injuries recorded over the remaining sixteen league matches?</p>
+      <p>A good answer includes a named comparison strategy rather than an implicit "no camp", a specific outcome definition rather than "injuries", and a follow-up window with a stated start. Mark yourself strictly on the comparison strategy, because that is the part most often left blank.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 6</span>
+        <h3>Match the failure to the assumption</h3>
+      <ol>
+        <li>Consistency. "Dismissal" covers two materially different interventions, so the observed outcome under the label does not correspond to one well defined potential outcome.</li>
+        <li>Positivity. Clubs in the bottom three at matchweek 20 are never observed under retention, so the data contain no information about what retention would do for that type of club.</li>
+        <li>Exchangeability. The reason for treatment is itself a cause of the later outcome through regression towards the club's usual level, so treated and untreated clubs do not stand in for each other's missing outcomes.</li>
+        <li>No relevant interference. One club's treatment changes another club's potential outcome through the fixture list, which is a persistent difficulty in a league where every unit plays every other unit.</li>
+      </ol>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 7</span>
+        <h3>Sharpen a vague treatment strategy</h3>
+      <p>Three ambiguities worth naming, from a longer list: whether a mutually agreed departure or a resignation counts as a change; whether the successor is permanent, an interim from within the staff, or an academy caretaker; whether the assistant coaches and fitness staff change too; when the change is deemed to occur, on the announcement, on the last match of the old coach or on the first match of the new one; and whether a change during an international break counts differently from one between two league fixtures.</p>
+      <p>A workable precise version: the club announces the departure of the head coach within 48 hours of the final whistle of its matchweek-<em>k</em> fixture, and a named successor, whether permanent or interim, takes charge of the following league fixture. The comparison strategy is that the same head coach takes charge of each of the next five league fixtures.</p>
+      <p>The test to apply to your own version is the one in the question. If two analysts with the same match records could disagree about how to classify any club, the strategy is not yet precise enough.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 8</span>
+        <h3>Critique a published claim</h3>
+      <p>The report has computed a difference in observed mean outcomes between two self-selected groups, which is an association, not a causal effect. It is not the ATT because the 1.28 figure comes from clubs that did not dismiss, and those clubs were not on the same trajectory. The clubs that dismissed were, almost by construction, in worse form and probably weaker overall, so their missing <em>Y(0)</em> is lower than the 1.28 the report substitutes for it. That substitution biases the estimate downwards, which means the true ATT is likely more positive than the reported gap of 0.03. The near-zero difference is therefore consistent with a genuinely positive effect that selection has hidden, as well as with a genuinely null one. Distinguishing the two needs a comparison group matched on the form and standing that prompted the dismissal, which is what Lessons 5 and 7 build.</p>
+      <p class="answer-note">If you argued the bias runs the other way, check the direction of selection. Dismissal follows bad results, so the treated group's counterfactual is worse than the untreated group's observed outcome, and the naive contrast understates a positive effect.</p>
+      </section>
+    </details>
+  </section>
+
+  <p class="citation"><strong>Related reading.</strong> Hernan and Robins, <em>Causal Inference: What If</em>, Chapters 1 and 3. The dismissal setting comes from <a href="https://doi.org/10.1177/1527002511402155">De Paola and Scoppa (2012)</a>, whose own identification strategy is the subject of <a href="../lessons/0007-fixed-effects-and-the-ashenfelter-dip.html">Lesson 7</a>.</p>
+  <p>If your answer and the suggested answer disagree and you cannot see why, ask your teaching agent to work through that question with you rather than assuming the sheet is right.</p>
+  <nav class="lesson-nav"><a href="../lessons/0001-from-question-to-estimand.html">Back to Lesson 1</a><a href="0002-cluster-randomisation-and-itt.html">Next sheet: Cluster randomisation and intention to treat</a></nav>
+</main>
+</body>
+</html>

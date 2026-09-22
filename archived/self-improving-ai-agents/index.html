@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Self-improving AI agents · Course index</title>
+<link rel="stylesheet" href="assets/lesson.css">
+<link rel="stylesheet" href="assets/reference.css">
+</head>
+<body class="reference">
+<main class="page">
+
+<header class="masthead">
+  <p class="eyebrow">Teaching workspace</p>
+  <h1>Self-improving AI agents</h1>
+  <p class="standfirst">Seventeen short lessons distilling Stanford's CS329A into the parts a practitioner can act on: what to tune, what to measure, what to ignore, and one question worth answering yourself.</p>
+  <p class="meta">About 2 hours 40 minutes end to end · Built 21 August 2026 from the nine 2026 lectures · Arc V added 23 August 2026</p>
+</header>
+
+<p>This is not a summary of the course. It is the course re-cut for someone who uses agents rather than researches them, so every lesson ends with a dial to turn or a number to collect. Every lesson also carries a <strong>project hook</strong>, which is a testable question that lesson raises and the measurement that would answer it, and Arc V turns one of those into a real experiment. Read <a href="MISSION.md">MISSION.md</a> for why it is shaped this way.</p>
+
+<h2>Arc I · The map and the dial</h2>
+<p>Where improvement comes from now, and the one lever that is entirely yours.</p>
+<div class="scroll-x">
+<table>
+  <thead><tr><th>#</th><th>Lesson</th><th>What it gives you</th><th>Time</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td><a href="lessons/0001-where-the-returns-moved.html">Where the returns moved</a></td><td>Three axes of improvement, and which ones you control</td><td>9 min</td></tr>
+    <tr><td>2</td><td><a href="lessons/0002-the-dial-you-already-have.html">The dial you already have</a></td><td>Parallel against sequential test-time compute, and how to budget it</td><td>10 min</td></tr>
+    <tr><td>3</td><td><a href="lessons/0003-coverage-is-not-accuracy.html">Coverage is not accuracy</a></td><td>The generation-verification gap, and a two-number diagnostic</td><td>9 min</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>Arc II · Verification</h2>
+<p>The binding constraint, which is why it gets four lessons.</p>
+<div class="scroll-x">
+<table>
+  <thead><tr><th>#</th><th>Lesson</th><th>What it gives you</th><th>Time</th></tr></thead>
+  <tbody>
+    <tr><td>4</td><td><a href="lessons/0004-what-counts-as-a-verifier.html">What counts as a verifier</a></td><td>Outcome against process rewards, and the verifier taxonomy</td><td>10 min</td></tr>
+    <tr><td>5</td><td><a href="lessons/0005-judges-you-can-trust.html">Judges you can trust</a></td><td>LLM-as-judge done defensibly, its known biases, and weak-verifier ensembles</td><td>11 min</td></tr>
+    <tr><td>6</td><td><a href="lessons/0006-inference-architectures.html">Inference architectures</a></td><td>Fusion, critics, and rankers, and why stacking layers works</td><td>10 min</td></tr>
+    <tr><td>7</td><td><a href="lessons/0007-tools-as-ground-truth.html">Tools as ground truth</a></td><td>Feedback loops that contact reality, and tool design that pays</td><td>10 min</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>Arc III · Getting better over time</h2>
+<p>How agents plan, learn from experience, and when tuning is warranted.</p>
+<div class="scroll-x">
+<table>
+  <thead><tr><th>#</th><th>Lesson</th><th>What it gives you</th><th>Time</th></tr></thead>
+  <tbody>
+    <tr><td>8</td><td><a href="lessons/0008-planning-and-multi-step.html">Planning and multi-step reasoning</a></td><td>Decomposition that helps against decomposition that hurts</td><td>10 min</td></tr>
+    <tr><td>9</td><td><a href="lessons/0009-buy-or-tune.html">Buy or tune</a></td><td>RL and post-training, reduced to a decision you can make</td><td>10 min</td></tr>
+    <tr><td>10</td><td><a href="lessons/0010-the-submission-budget.html">The submission budget</a></td><td>Funnels, free filters, behavioural clustering, and learned selection</td><td>10 min</td></tr>
+    <tr><td>11</td><td><a href="lessons/0011-deep-research-agents.html">Deep research agents</a></td><td>An architecture worth copying for analysis work</td><td>10 min</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>Arc IV · Measuring it</h2>
+<p>The part most teams skip, and the reason they cannot tell whether anything they did worked.</p>
+<div class="scroll-x">
+<table>
+  <thead><tr><th>#</th><th>Lesson</th><th>What it gives you</th><th>Time</th></tr></thead>
+  <tbody>
+    <tr><td>12</td><td><a href="lessons/0012-evals-that-change-decisions.html">Evals that change decisions</a></td><td>A harness for one real workflow, and pass@k against pass^k</td><td>11 min</td></tr>
+    <tr><td>13</td><td><a href="lessons/0013-long-horizon-and-context.html">Long horizons and context</a></td><td>Why long tasks fail, and the four context strategies</td><td>10 min</td></tr>
+    <tr><td>14</td><td><a href="lessons/0014-the-frontier.html">The frontier</a></td><td>What is unsolved, how to read the next paper, and where project questions come from</td><td>9 min</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>Arc V · Answering one question yourself</h2>
+<p>The part the original course grades. One hypothesis, one experiment with a control, one written result, at a scale one person can carry in two to four weeks part-time.</p>
+<div class="scroll-x">
+<table>
+  <thead><tr><th>#</th><th>Lesson</th><th>What it gives you</th><th>Time</th></tr></thead>
+  <tbody>
+    <tr><td>15</td><td><a href="lessons/0015-choosing-a-question.html">Choosing a question you can finish</a></td><td>The scope test, and a written pre-registration</td><td>10 min</td></tr>
+    <tr><td>16</td><td><a href="lessons/0016-running-the-experiment.html">Running the experiment</a></td><td>Control conditions, the noise floor, and the four ways small experiments lie</td><td>11 min</td></tr>
+    <tr><td>17</td><td><a href="lessons/0017-writing-up.html">Writing up what you found</a></td><td>One page in five parts, written whether the result is positive or null</td><td>8 min</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>Reference</h2>
+<p>Lessons are read once. These are for coming back to.</p>
+<ul>
+  <li><a href="reference/glossary.html"><strong>Glossary</strong></a>, every term the course uses, defined once and used consistently.</li>
+  <li><a href="reference/tuning-dials.html"><strong>Tuning dials</strong></a>, one page holding every lever on an agent, what it costs, and when to reach for it.</li>
+  <li><a href="reference/eval-playbook.html"><strong>Eval playbook</strong></a>, the harness, the metrics, and the failure taxonomy on one printable sheet.</li>
+  <li><a href="reference/project-playbook.html"><strong>Project playbook</strong></a>, Arc V compressed: the scope test, the pre-registration template, and the writeup skeleton.</li>
+</ul>
+
+<h2>Workspace files</h2>
+<ul>
+  <li><a href="MISSION.md">MISSION.md</a>, why this course exists and what success looks like.</li>
+  <li><a href="RESOURCES.md">RESOURCES.md</a>, the primary sources ranked by trust, plus communities.</li>
+  <li><a href="GLOSSARY.md">GLOSSARY.md</a>, the glossary in source form.</li>
+  <li><a href="NOTES.md">NOTES.md</a>, teaching preferences and open threads.</li>
+  <li><code>learning-records/</code>, what has been learned and what changed as a result.</li>
+  <li><code>transcripts/</code>, the full text of all nine lectures.</li>
+</ul>
+
+<div class="ask">
+  <strong>These lessons are one half of the loop.</strong> The other half is asking your teacher about the runs that confuse you. Bring a failing trace, a benchmark number you do not trust, or a paper you cannot place on the map. If you are starting Arc V, bring the question before you build anything, because scoping is where a second opinion is worth the most.
+</div>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Source 0002 · BaseChart’s constructor contract</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <article class="page">
+    <header class="lesson-head">
+      <p class="kicker"><a href="../index.html">Lessons</a> · Source 0002 of 0010 · base.py</p>
+      <h1>Every chart starts as a story frame</h1>
+      <p class="lede"><code>BaseChart</code> refuses to exist without a title and a footnote. Axis labels are optional. A matplotlib figure is created immediately.</p>
+    </header>
+
+    <p>Open <code>src/datavizlib/charts/base.py</code>. The constructor signature is:</p>
+    <pre>def __init__(self, title, x_label, y_label, footnote, subtitle=None):</pre>
+    <p><code>_validate_inputs</code> only checks <code>title</code> and <code>footnote</code>. Empty <code>x_label</code> or <code>y_label</code> is allowed — the tests say so, because some storytelling charts drop an axis title on purpose.</p>
+
+    <div class="example">
+      <p><strong>Example.</strong> This raises. The README snippet that omits <code>footnote</code> would too:</p>
+      <pre>BaseChart(title="Meals served", x_label="Year", y_label="Meals", footnote="")</pre>
+      <p>This is legal, and later layout code treats the empty y-label as “align the title to tick labels instead”:</p>
+      <pre>BaseChart(title="Meals served", x_label="Year", y_label="", footnote="Source: Knaflic")</pre>
+    </div>
+
+    <h2>What is created before you add any data</h2>
+    <p>The constructor calls <code>plt.subplots()</code>, stores the strings, then <code>_configure_layout()</code>. You already have a <code>fig</code> and an <code>ax</code> with no artists on them. Colors are copied from <code>ALDI_PALETTE</code>. Grey <code>#808080</code> is the “background” ink for ticks, leftover spines, and the subtitle — navy/orange stay free for data.</p>
+
+    <div class="diagram">
+      <svg viewBox="0 0 640 220" role="img" aria-label="Constructor creates figure then stores copy">
+        <rect x="8" y="8" width="624" height="204" fill="#fff" stroke="#d9d4c8"/>
+        <rect x="24" y="28" width="180" height="70" fill="#f3f0e8" stroke="#00005f"/>
+        <text x="34" y="58" font-family="IBM Plex Mono, monospace" font-size="13" fill="#00005f">title, footnote</text>
+        <text x="34" y="78" font-family="Iowan Old Style, serif" font-size="13" fill="#5c5c5c">required</text>
+        <rect x="230" y="28" width="180" height="70" fill="#f3f0e8" stroke="#808080"/>
+        <text x="240" y="58" font-family="IBM Plex Mono, monospace" font-size="13" fill="#1a1a1a">x_label, y_label</text>
+        <text x="240" y="78" font-family="Iowan Old Style, serif" font-size="13" fill="#5c5c5c">may be empty</text>
+        <rect x="436" y="28" width="180" height="70" fill="#f3f0e8" stroke="#ff7800"/>
+        <text x="446" y="58" font-family="IBM Plex Mono, monospace" font-size="13" fill="#1a1a1a">subtitle</text>
+        <text x="446" y="78" font-family="Iowan Old Style, serif" font-size="13" fill="#5c5c5c">optional</text>
+        <text x="24" y="140" font-family="Iowan Old Style, serif" font-size="15" fill="#1a1a1a">then: fig, ax = plt.subplots() → _configure_layout() → palette copy</text>
+        <text x="24" y="172" font-family="Iowan Old Style, serif" font-size="14" fill="#5c5c5c">No bars or lines yet. add_data() is still NotImplementedError here.</text>
+      </svg>
+    </div>
+
+    <h2>The palette helper you will see in subclasses</h2>
+    <p><code>_get_next_color(index)</code> wraps with modulo. Line charts pass <code>len(self._lines)</code> so the second series gets the second swatch. Bar charts pass the series index in <code>render()</code>. If you pass an explicit <code>color=</code>, the helper is skipped.</p>
+
+    <div class="quiz" data-answer="1"
+         data-ok="Yes. Only title and footnote are required; empty axis labels are intentional."
+         data-no="Check _validate_inputs and tests/test_base.py — x_label and y_label may be empty.">
+      <p class="quiz-q">Which pair must be non-empty to construct a <code>BaseChart</code>?</p>
+      <button data-choice="0">x_label and y_label pair</button>
+      <button data-choice="1">title and footnote pair</button>
+      <button data-choice="2">subtitle and palette pair</button>
+    </div>
+
+    <p class="primary-source"><strong>Primary source:</strong> <a href="https://github.com/phmelzer/datavizlib/blob/api-exploration-tejas/src/datavizlib/charts/base.py"><code>BaseChart.__init__</code> and <code>_validate_inputs</code></a>, plus <a href="https://github.com/phmelzer/datavizlib/blob/api-exploration-tejas/tests/test_base.py"><code>tests/test_base.py</code></a>. Context for why a chart starts with words: <a href="https://github.com/phmelzer/datavizlib/blob/api-exploration-tejas/docs/principles/01-start-with-context-not-the-chart.md">Start with context, not the chart</a>.</p>
+
+    <div class="ask">If the required-fields rule feels too strict or too loose for a chart you want to hatch, ask. We can look at the exact <code>raise</code> paths together.</div>
+
+    <nav class="lesson-nav">
+      <a href="0001-src-layout-and-public-api.html">← Layout of src/</a>
+      <a href="0003-add-data-render-build.html">Next: add_data, render, build →</a>
+    </nav>
+  </article>
+  <script src="../assets/quiz.js"></script>
+</body>
+</html>

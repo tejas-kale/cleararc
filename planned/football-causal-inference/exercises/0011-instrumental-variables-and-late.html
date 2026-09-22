@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Exercise sheet 11: Instrumental variables and the LATE</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<header class="topbar"><div><a href="../index.html">Course index</a><span>Exercise sheet 11 of 17</span></div></header>
+<main>
+  <p class="eyebrow">Exercise sheet</p>
+  <h1>Instrumental variables and the LATE</h1>
+  <p class="lead">7 questions drawn from <a href="../lessons/0011-instrumental-variables-and-late.html">Lesson 11</a>. Relevance, independence, exclusion, monotonicity, and who the estimate is about.</p>
+  <div class="lesson-meta"><span>30 minutes</span><span>7 questions</span><span>Answers at the end</span></div>
+
+  <section class="sheet-intro">
+    <h2>How to use this sheet</h2>
+    <p>Work through the questions in order and write your answers down before reading any part of the answer section. Give yourself about thirty minutes in total. If one question runs long, write what you have, mark it and move on, because the answer section explains the reasoning in full.</p>
+    <p>Most questions ask for a short written answer rather than a number. The aim is a defensible statement, so a sentence or two of reasoning is worth more than a single word.</p>
+    <p>The questions are collapsed so that you can take them one at a time. Open one, answer it, then open the next. The answers are held behind a single button at the foot of the page, so nothing is revealed until you choose to reveal it.</p>
+  </section>
+
+  <details class="question">
+    <summary><span class="marks">Question 1</span><span class="q-title">Compute two Wald estimates</span></summary>
+    <p>(a) A policy increases the probability of starting an academy player by 0.20 and increases win probability by 0.03. Compute the Wald estimate and state its units.</p>
+    <p>(b) Easing a foreign-player restriction raises the number of immigrant starters by 0.8 per match and raises average goal difference by 0.12. Compute the estimate. Then suppose a second league's easing raises immigrant starters by only 0.05 and goal difference by 0.02. Compute that estimate and comment.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 2</span><span class="q-title">Assign each condition to its evidence</span></summary>
+    <p>For each of relevance, independence, exclusion and monotonicity, state whether it can be assessed from the data, argued from institutional knowledge, or partially both. Then explain why a first-stage F statistic of 300 tells you nothing about three of the four.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 3</span><span class="q-title">Attack the exclusion restriction</span></summary>
+    <p>Foreign-player restrictions are used as an instrument for the number of immigrant starters, with performance as the outcome. Name three distinct channels through which the restriction could affect performance other than through the number of immigrant starters, and for each say whether redefining the treatment would rescue the design.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 4</span><span class="q-title">Describe the compliers</span></summary>
+    <p>Describe, in football terms, which clubs the LATE from the foreign-player restriction is about. Then name the two other groups the estimate says nothing about, and explain why the LATE could be much larger or smaller than the ATE.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 5</span><span class="q-title">Break monotonicity</span></summary>
+    <p>Construct a plausible story in which easing a foreign-player restriction causes some clubs to use fewer immigrant starters. Explain what this does to the interpretation of the ratio estimate.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 6</span><span class="q-title">Correct a procedure</span></summary>
+    <p>An analyst runs the first stage, saves the fitted values, puts them into a second regression, and reports the standard errors from that second regression. Explain what is wrong, and separately explain why adding a control variable to the second stage but not the first is also an error.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 7</span><span class="q-title">Propose and then reject an instrument</span></summary>
+    <p>You want the effect of a manager's tactical experience in European competition on domestic results. Propose an instrument, then argue against your own proposal on each of relevance, independence and exclusion, and say what you would conclude.</p>
+  </details>
+
+  <section class="answers">
+    <h2>Answers</h2>
+    <p class="answer-note">Read these only after writing your own answers. Where an answer says "a good answer includes", treat the listed points as the marking scheme rather than as the only wording that works.</p>
+
+    <details class="answer-reveal">
+      <summary>Show all answers</summary>
+      <section class="answer">
+        <span class="marks">Answer 1</span>
+        <h3>Compute two Wald estimates</h3>
+      <p>(a) 0.03 divided by 0.20 is 0.15. Starting an academy player raises win probability by 15 percentage points, for clubs whose selection responds to the policy.</p>
+      <p>(b) 0.12 divided by 0.8 is 0.15 goals per additional immigrant starter. The second league gives 0.02 divided by 0.05, which is 0.40 goals per starter.</p>
+      <p>The second estimate should not be taken at face value. A first stage of 0.05 is very weak, so the denominator is small and imprecisely estimated, and dividing by it inflates both the point estimate and its sampling variability enormously. Weak instruments also bias the estimate towards the ordinary least squares value and make conventional intervals badly wrong. A first stage that small is a reason to report the reduced form and abandon the ratio, not to report 0.40.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 2</span>
+        <h3>Assign each condition to its evidence</h3>
+      <p>Relevance is testable in the data: regress treatment on the instrument and controls, and inspect the strength of the association. Independence is largely an institutional argument, though it can be partially probed by checking that the instrument is unrelated to predetermined covariates. Exclusion is not testable at all in the just-identified case and must be argued from knowledge of the policy; with more instruments than endogenous variables, an overidentification test provides weak indirect evidence. Monotonicity is not directly testable either, although some implications, such as non-negative first stages within every subgroup, can be checked.</p>
+      <p>An F statistic of 300 says only that the policy moved the treatment a great deal. It says nothing about whether the policy was introduced for reasons related to expected performance, nothing about whether it affects performance through channels other than the treatment, and nothing about whether it pushed some clubs in the opposite direction. A powerful instrument that violates exclusion produces a precisely estimated wrong answer, which is worse than an imprecise one.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 3</span>
+        <h3>Attack the exclusion restriction</h3>
+      <p>First, transfer market prices. A restriction changes demand for domestic players, so their fees and wages move, which changes what every club can afford across the whole squad. Redefining the treatment as, say, total squad quality would absorb this channel, but that treatment is far harder to measure and the estimate then answers a different question.</p>
+      <p>Second, youth development. A binding restriction gives clubs an incentive to invest in academies, and that investment affects performance over subsequent seasons through players who are not immigrant starters. Redefinition does not rescue this easily, because the channel operates on a longer timescale than the treatment and would require a treatment defined as the whole roster-composition strategy.</p>
+      <p>Third, squad composition beyond the starting eleven. The restriction changes who is available on the bench and in rotation, which affects results through fatigue management and injury cover. Redefining the treatment as immigrant players in the squad rather than in the starting line-up would capture much of this, and is the most rescuable of the three.</p>
+      <p>The general lesson is that a policy instrument tends to violate exclusion for a narrow treatment definition and satisfy it for a broad one, at the price of a vaguer estimand. Choosing between them is a substantive decision, not a technical one.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 4</span>
+        <h3>Describe the compliers</h3>
+      <p>The compliers are clubs whose use of immigrant starters actually changed because the restriction changed: clubs at the margin, who wanted more immigrant players than the old rule allowed but not so many that they were unaffected by the new limit. In practice these are likely to be mid-table clubs with international scouting but limited budgets.</p>
+      <p>The estimate says nothing about always-takers, clubs that field many immigrant starters regardless because they operate at the top of the market and can sign whoever they wish, and nothing about never-takers, clubs that field few regardless because of a domestic recruitment model, financial constraint or club policy.</p>
+      <p>The LATE can differ sharply from the ATE because these groups are not alike. If the marginal immigrant signing for a mid-table club is a clear upgrade on the domestic alternative, the complier effect is large, while a top club's marginal immigrant signing displaces an already excellent domestic player and would show a much smaller effect. That is a reason to expect the LATE to exceed the ATE here, and it is why the population served by the estimate must be described rather than left implicit.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 5</span>
+        <h3>Break monotonicity</h3>
+      <p>Suppose the easing applies league-wide. A club with a strong academy may find that rival clubs immediately sign the best available foreign players, which raises the market price of foreign talent beyond that club's reach, while simultaneously making domestic players cheaper as demand for them falls. That club responds to the easing by shifting towards domestic players, so it uses fewer immigrant starters after a policy that permits more.</p>
+      <p>Such clubs are defiers. With defiers present, the Wald ratio is no longer a weighted average of complier effects; it becomes a difference between complier and defier contributions in the numerator, divided by a net first stage in the denominator. The estimate can lie outside the range of every individual causal effect in the population, and the reassuring interpretation as "the effect for units that responded" is simply unavailable.</p>
+      <p>Note that the story depends on general equilibrium effects, one club's response changing another's environment, which is also an interference problem. Monotonicity is most at risk exactly where instruments act through markets rather than on isolated units.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 6</span>
+        <h3>Correct a procedure</h3>
+      <p>The second regression's standard errors treat the fitted values as though they were known data, when they are estimates carrying their own sampling uncertainty. The reported standard errors are therefore too small. Two-stage least squares software computes the correct combined variance; manual substitution does not. The point estimate from the manual procedure is right, which is what makes the error easy to miss.</p>
+      <p>Omitting a control from the first stage while including it in the second breaks the logic of the procedure. The instrument's validity is conditional on the controls, so the first stage must isolate the variation in treatment that is driven by the instrument given those controls. If a control appears only in the second stage, the fitted values contain variation correlated with it, and the exclusion argument no longer applies to the variation actually being used. Every exogenous control belongs in both stages.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 7</span>
+        <h3>Propose and then reject an instrument</h3>
+      <p>Proposal: whether the club qualified for a European competition in the previous season, on the grounds that qualification exposes the manager to more European fixtures and so builds experience.</p>
+      <p>Relevance is the strongest part of the case, since qualification mechanically increases European matches, though it is weakened by managers changing clubs and by experience accumulated elsewhere. Independence fails badly: qualification is earned by finishing high, so it is determined by exactly the club quality that also drives next season's domestic results. Conditioning on previous-season points helps but is unlikely to be enough, since qualification is a discontinuous function of the same variable. Exclusion fails too: European qualification brings revenue, squad expansion, prestige in recruitment and also fixture congestion and travel, each of which affects domestic results without passing through the manager's experience at all.</p>
+      <p>The conclusion is that this instrument should be abandoned. Its most promising feature, the sharp qualification boundary, points to a different design: a regression discontinuity at the qualification cut-off, estimating the effect of qualifying itself rather than of managerial experience. That is a narrower question but an identifiable one, and choosing the answerable question over the desired one is often the right move.</p>
+      </section>
+    </details>
+  </section>
+
+  <p class="citation"><strong>Related reading.</strong> <a href="https://doi.org/10.1287/mnsc.2021.03356">Glennon et al. (2025)</a>; Hernan and Robins, Chapter 16; Angrist and Pischke, Chapter 3; Ruiz de Villa, Chapter 9.</p>
+  <p>If your answer and the suggested answer disagree and you cannot see why, ask your teaching agent to work through that question with you rather than assuming the sheet is right.</p>
+  <nav class="lesson-nav"><a href="0010-regression-discontinuity.html">Previous sheet: Regression discontinuity</a><a href="0012-synthetic-control.html">Next sheet: Synthetic control</a></nav>
+</main>
+</body>
+</html>

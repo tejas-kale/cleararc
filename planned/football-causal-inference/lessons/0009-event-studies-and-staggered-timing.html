@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Interpret an event study with staggered timing</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<header class="topbar"><div><a href="../README.md">Course index</a><span>Lesson 9 of 17</span></div></header>
+<main>
+  <p class="eyebrow">Dynamic treatment effects</p>
+  <h1>Interpret an event study with staggered timing</h1>
+  <p class="lead">An event study estimates effects before and after treatment relative to an omitted period. Staggered treatment dates require care because already-treated units can become invalid controls.</p>
+  <div class="lesson-meta"><span>About 20 minutes</span><span>Includes guided exercises</span><span><a href="../exercises/0009-event-studies-and-staggered-timing.html">Exercise sheet</a></span></div>
+  <section class="objective"><h2>What you will be able to do</h2><p>You will be able to read event-time coefficients, use leads to inspect pre-treatment patterns and explain the problem with conventional two-way fixed effects under staggered timing.</p></section>
+  <section class="scenario"><h2>Football matches and district infections</h2><p>Breidenbach and Mitze studied whether hosting professional football matches affected COVID-19 infections in German districts. Districts hosted matches at different times. The outcome could change before, immediately after and several weeks after a match, so one post-treatment coefficient would hide the timing.</p></section>
+      <h2>Event time places units on a common clock</h2><p>Calendar time records the date. Event time records periods relative to treatment. Event time -2 means two periods before treatment, 0 means the treatment period and +3 means three periods after treatment. An event-study regression includes indicators for these relative periods and omits one pre-treatment period as the reference.</p><p class="formula">Outcome_it = unit effect_i + date effect_t + sum of event-time effects + error_it</p><p>Lead coefficients describe periods before treatment. If they differ from zero, the treated and comparison outcomes may already have been separating, or units may have anticipated treatment. Lag coefficients describe the path after treatment relative to the omitted period.</p>
+      <section class="worked"><h2>Worked interpretation</h2><p>Suppose week -1 is the reference. The estimates are 0.01 at week -3, 0.03 at week -2, 0.10 at week 0, 0.25 at week +1 and 0.08 at week +2. The small leads are compatible with similar pre-treatment movement, although uncertainty must be considered. The effect appears largest one week after hosting and then falls.</p><p>The pattern is descriptive until the design supports parallel untreated trends, no anticipation and limited spillovers between neighbouring districts.</p></section>
+      <h2>Staggered timing changes the comparisons</h2><p>In a conventional two-way fixed-effects model, a district treated early can later serve as a comparison for a district treated later. If treatment effects persist or vary over time, that comparison is contaminated. The weighted average can even use negative weights and produce a coefficient outside the underlying cohort effects.</p><p>A safer analysis estimates effects for each treatment cohort and calendar period using not-yet-treated or never-treated units, then aggregates those effects transparently. The researcher should show which comparison group supports each estimate.</p>
+      <h2>Use pre-treatment coefficients carefully</h2><p>A non-significant lead does not prove parallel trends. The estimate may be imprecise. Researchers should inspect the size and pattern of leads, use joint tests, and explain whether the assignment process makes a common untreated trend plausible.</p>
+      <section class="exercise"><h2>Exercise 1. Read an event path</h2><p>Leads become steadily more positive from week -4 to week -1. What concern does this create?</p><details><summary>Show a suggested answer</summary><p>The outcome was already trending differently before treatment. The post-treatment coefficients may extend that earlier divergence rather than measure a treatment effect. The analyst should reconsider the comparison group, trend specification and assignment process.</p></details></section>
+      <section class="exercise"><h2>Exercise 2. Choose valid controls</h2><p>District A hosts in week 4 and District B hosts in week 8. Can District A serve as an untreated control for B in week 7 if hosting effects last six weeks?</p><details><summary>Show a suggested answer</summary><p>No. District A is still affected by its earlier treatment in week 7. Using it as an untreated comparison would contaminate B's estimate. A not-yet-treated or never-treated district is preferable.</p></details></section>
+      <div class="exercise">
+    <h2>Practice</h2>
+    <p>An <a href="../exercises/0009-event-studies-and-staggered-timing.html">exercise sheet of 7 questions</a> accompanies this lesson. It takes about thirty minutes and carries worked answers at the end. Attempt it before moving on.</p>
+  </div>
+
+  <section class="quiz" data-quiz data-answer="a" data-correct="Correct. A pre-treatment lead can indicate an earlier trend difference or anticipation." data-incorrect="A lead occurs before treatment, so it cannot be interpreted as an ordinary treatment response."><fieldset><legend>What can a large pre-treatment lead indicate?</legend><label><input type="radio" name="q" value="a"> Earlier divergence or treatment anticipation</label><label><input type="radio" name="q" value="b"> Guaranteed delayed treatment impact later</label><label><input type="radio" name="q" value="c"> Perfectly parallel untreated outcome trends</label></fieldset><button type="button">Check answer</button><p class="feedback" aria-live="polite"></p></section>
+  <section class="summary"><h2>What to remember</h2><ul><li>Event time describes periods relative to treatment.</li><li>Leads inspect pre-treatment patterns and possible anticipation.</li><li>Lags describe how the estimated effect changes after treatment.</li><li>Staggered timing requires comparison groups that are untreated at each cohort's treatment time.</li></ul></section>
+  <p class="citation"><strong>Primary reading.</strong> <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8411384/">Breidenbach and Mitze (2022)</a>; Wooldridge, <em>Introductory Econometrics</em>, Chapters 13 and 14; and Hayashi, Chapters 17 and 18.</p>
+  <p>If any step is unclear, ask your teaching agent to work through another football example with you.</p>
+  <nav class="lesson-nav"><a href="0008-difference-in-differences.html">Previous lesson: Estimate a difference-in-differences effect</a><a href="0010-regression-discontinuity.html">Next lesson: Estimate a local effect at a threshold</a></nav>
+</main>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

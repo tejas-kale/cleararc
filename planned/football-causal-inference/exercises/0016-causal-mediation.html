@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Exercise sheet 16: Causal mediation</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<header class="topbar"><div><a href="../index.html">Course index</a><span>Exercise sheet 16 of 17</span></div></header>
+<main>
+  <p class="eyebrow">Exercise sheet</p>
+  <h1>Causal mediation</h1>
+  <p class="lead">7 questions drawn from <a href="../lessons/0016-causal-mediation.html">Lesson 16</a>. Total, direct and indirect effects, and why randomising treatment is not enough.</p>
+  <div class="lesson-meta"><span>30 minutes</span><span>7 questions</span><span>Answers at the end</span></div>
+
+  <section class="sheet-intro">
+    <h2>How to use this sheet</h2>
+    <p>Work through the questions in order and write your answers down before reading any part of the answer section. Give yourself about thirty minutes in total. If one question runs long, write what you have, mark it and move on, because the answer section explains the reasoning in full.</p>
+    <p>Most questions ask for a short written answer rather than a number. The aim is a defensible statement, so a sentence or two of reasoning is worth more than a single word.</p>
+    <p>The questions are collapsed so that you can take them one at a time. Open one, answer it, then open the next. The answers are held behind a single button at the foot of the page, so nothing is revealed until you choose to reveal it.</p>
+  </section>
+
+  <details class="question">
+    <summary><span class="marks">Question 1</span><span class="q-title">Name the three parts</span></summary>
+    <p>A warm-up programme reduces injuries partly by improving landing technique. Name the treatment, mediator and outcome, then define the total, indirect and direct effects for this example in one sentence each, in terms of what each would tell a physiotherapist.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 2</span><span class="q-title">Explain the gap in randomisation</span></summary>
+    <p>The warm-up programme is randomised at club level. Explain why this identifies the total effect but not the indirect effect. Name three variables that could confound the mediator-outcome relationship in this example, and say which of them can be handled by measurement.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 3</span><span class="q-title">Diagnose the treatment-induced confounder</span></summary>
+    <p>In the EuroFIT setting, the programme changes physical ability, and physical ability affects both autonomous motivation, the mediator, and physical activity, the outcome. Explain why this specific structure defeats the ordinary approach, and name the class of estimand that is still available.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 4</span><span class="q-title">Choose the effect definition</span></summary>
+    <p>Explain the difference between a natural indirect effect and an interventional indirect effect in plain terms, and say which you would report for the EuroFIT motivation question and why. Include one respect in which your choice is worse.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 5</span><span class="q-title">Get the timing right</span></summary>
+    <p>An analyst measures autonomous motivation and physical activity in the same follow-up questionnaire, twelve weeks after randomisation. Explain the two distinct problems this creates, and describe the measurement schedule you would have specified instead.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 6</span><span class="q-title">Report a fragile result</span></summary>
+    <p>A mediation analysis estimates an indirect effect of 0.21 that falls to 0.04 when a plausible degree of unmeasured mediator-outcome confounding is assumed, and to 0.11 under an alternative mediator measurement. Write the two or three sentences you would put in the paper's abstract.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 7</span><span class="q-title">Decide whether to do it at all</span></summary>
+    <p>A club has a randomised trial showing that a sleep-education programme reduces injuries. The medical staff want to know whether the effect runs through sleep duration. Write down what you would need before attempting a mediation analysis, and state the circumstances under which you would advise against it.</p>
+  </details>
+
+  <section class="answers">
+    <h2>Answers</h2>
+    <p class="answer-note">Read these only after writing your own answers. Where an answer says "a good answer includes", treat the listed points as the marking scheme rather than as the only wording that works.</p>
+
+    <details class="answer-reveal">
+      <summary>Show all answers</summary>
+      <section class="answer">
+        <span class="marks">Answer 1</span>
+        <h3>Name the three parts</h3>
+      <p>Treatment: assignment to the warm-up programme. Mediator: landing technique measured after a training period but before the injuries of interest. Outcome: subsequent time-loss injury.</p>
+      <p>The total effect tells the physiotherapist how much injury risk falls if the squad is put on the programme, counting every mechanism it operates through. The indirect effect through landing technique tells them how much of that reduction is delivered by the improvement in technique specifically, which is the part that a technique-focused coaching intervention might reproduce. The direct effect tells them how much reduction remains from everything else the programme does, such as improved strength, mobility or warm-up compliance, with technique held at the value it would have taken without the programme.</p>
+      <p>The practical value of the split is that it tells the physiotherapist whether to invest in a technique programme or in the other components, which the total effect alone cannot.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 2</span>
+        <h3>Explain the gap in randomisation</h3>
+      <p>Randomisation makes assignment independent of all potential outcomes, so the assignment-to-injury contrast is identified. It says nothing about landing technique, which is not assigned but achieved: players end up with the technique they end up with, and the reasons they do are not randomised. The mediator-outcome comparison is therefore an observational comparison sitting inside a randomised trial.</p>
+      <p>Three candidate confounders: baseline athletic coordination, which improves technique and independently protects against injury; training effort or conscientiousness, which raises both technique gains and general injury-avoidant behaviour; and prior injury history, which limits technique improvement and strongly predicts future injury.</p>
+      <p>Prior injury history and baseline coordination can be measured before randomisation and adjusted for, so they are tractable. Effort is the hard one: it is partly a response to the programme itself, which makes it a treatment-induced confounder rather than a baseline one, and adjusting for it blocks part of the treatment effect while failing to adjust leaves the mediator-outcome relationship confounded. That is the structural problem, not a data collection failure.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 3</span>
+        <h3>Diagnose the treatment-induced confounder</h3>
+      <p>Physical ability is caused by the programme and confounds the mediator-outcome relationship. Adjusting for it blocks a portion of the treatment's effect, since ability is on a causal path from programme to activity, and it can also open a collider path if ability shares unmeasured causes with activity. Not adjusting leaves the motivation-activity comparison confounded. Neither choice is correct, and the problem is structural rather than a matter of finding a better model.</p>
+      <p>Consequently the natural direct and indirect effects are not identified by any adjustment for measured covariates, because their definition requires setting the mediator to the value it would have taken under the other treatment, while ability itself would also have differed.</p>
+      <p>What remains available are interventional effects. Instead of the individual-level nested counterfactual, these compare outcomes when the mediator is drawn from the distribution it would have had under one treatment versus the other, given covariates. That quantity is identified under weaker conditions in the presence of a treatment-induced confounder, and it corresponds to a real intervention that shifts the population distribution of motivation, which is arguably closer to what a programme designer could actually do.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 4</span>
+        <h3>Choose the effect definition</h3>
+      <p>A natural indirect effect asks what would happen to each individual if he received the programme but his motivation took the value it would have taken had he not received it. That is a within-person counterfactual pairing that no intervention could produce, since nobody can be treated and untreated at once.</p>
+      <p>An interventional indirect effect asks what would happen if the programme were delivered and motivation were then drawn at random from the distribution it has among untreated people with the same covariates. It is a population-level shift rather than a person-level swap.</p>
+      <p>I would report the interventional version. It remains identified with a treatment-induced confounder, which the EuroFIT setting has, and it corresponds to a hypothetical action a programme designer could describe: change the motivation distribution and leave everything else alone.</p>
+      <p>The cost is interpretability at the individual level. The interventional effect does not decompose the total effect into two parts that necessarily add up in the same clean way, and it answers a question about a randomly assigned mediator distribution, which is not quite the mechanism question people think they are asking. Being explicit that the reported quantity is not the textbook decomposition is part of reporting it honestly.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 5</span>
+        <h3>Get the timing right</h3>
+      <p>The first problem is temporal order. A mediator must precede the outcome; if both are recorded at the same moment, there is no evidence that motivation changed before activity rather than after it. Activity plausibly raises motivation, so the arrow could run the other way, and the analysis would then report reverse causation as mediation.</p>
+      <p>The second is shared measurement error. Both are self-reported in one questionnaire, so a respondent's mood, recall style or desire to please the researcher affects both answers. That common cause of the two measurements induces an association between them that has nothing to do with any causal path, and it inflates the estimated indirect effect.</p>
+      <p>A better schedule measures baseline covariates and both variables before randomisation, the mediator at an intermediate point such as six weeks, and the outcome at twelve weeks, ideally with the outcome captured objectively, by accelerometer rather than by self-report, so the two do not share a measurement process. Separating the instruments matters as much as separating the times.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 6</span>
+        <h3>Report a fragile result</h3>
+      <p>"The programme increased physical activity, and the estimated share operating through autonomous motivation was 0.21 under our primary specification. This estimate was not robust: it fell to 0.04 under a plausible level of unmeasured mediator-outcome confounding and to 0.11 under an alternative measure of motivation. We therefore report the total effect as our primary finding and treat the mediation results as exploratory, consistent with a mediating role for motivation but not establishing its magnitude."</p>
+      <p class="answer-note">Mark yourself on whether you led with the fragility rather than burying it, whether you avoided the phrase "partially mediated by", which implies a settled decomposition, and whether the total effect was foregrounded as the finding the design actually supports.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 7</span>
+        <h3>Decide whether to do it at all</h3>
+      <p>Requirements: a mediator measured objectively and repeatedly between randomisation and the outcome window, so timing is unambiguous; baseline measurement of the plausible mediator-outcome confounders, including prior injury, training load, age and baseline sleep; a stated effect definition, natural or interventional, chosen before analysis; a plan for treatment-induced confounders such as changed training schedules; sufficient sample size, which is the constraint that most often bites, since mediation estimates are far less precise than total-effect estimates; and a pre-specified sensitivity analysis for unmeasured mediator-outcome confounding.</p>
+      <p>I would advise against it if the mediator is measured only once and at the same time as the outcome; if the trial is small, since an underpowered mediation analysis mostly generates noise that gets reported as mechanism; if no credible baseline confounders were collected; or if the decision the club faces does not actually depend on the answer. That last point deserves weight: if the club will run the whole programme regardless, the mechanism is interesting but not decision-relevant, and the analysis will consume credibility that the total effect has already earned.</p>
+      </section>
+    </details>
+  </section>
+
+  <p class="citation"><strong>Related reading.</strong> <a href="https://doi.org/10.1080/08870446.2026.2677081">Roynesdal et al. (2026)</a>; Hernan and Robins, Chapters 4 to 8; Ruiz de Villa, Chapter 6.</p>
+  <p>If your answer and the suggested answer disagree and you cannot see why, ask your teaching agent to work through that question with you rather than assuming the sheet is right.</p>
+  <nav class="lesson-nav"><a href="0015-double-machine-learning.html">Previous sheet: Double machine learning</a><a href="0017-causal-survival-analysis.html">Next sheet: Causal survival analysis</a></nav>
+</main>
+</body>
+</html>

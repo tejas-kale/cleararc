@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Source 0001 · The five files and the public names</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <article class="page">
+    <header class="lesson-head">
+      <p class="kicker"><a href="../index.html">Lessons</a> · Source 0001 of 0010 · src layout</p>
+      <h1>The five files and the public names</h1>
+      <p class="lede">Everything importable as <code>datavizlib</code> is five Python files. Two of them only re-export names.</p>
+    </header>
+
+    <p>The library is an <em>src layout</em> package. <code>pyproject.toml</code> tells setuptools that the import root is <code>src/</code>, not the repo root. That is why <code>from datavizlib import BarChart</code> loads <code>src/datavizlib/…</code>, not a top-level <code>datavizlib.py</code>.</p>
+
+    <div class="diagram">
+      <svg viewBox="0 0 640 280" role="img" aria-label="File tree of src/datavizlib">
+        <rect x="8" y="8" width="624" height="264" fill="#fff" stroke="#d9d4c8"/>
+        <text x="28" y="40" font-family="IBM Plex Mono, monospace" font-size="14" fill="#00005f">src/</text>
+        <text x="48" y="68" font-family="IBM Plex Mono, monospace" font-size="14" fill="#1a1a1a">datavizlib/</text>
+        <text x="68" y="96" font-family="IBM Plex Mono, monospace" font-size="14" fill="#1a1a1a">__init__.py</text>
+        <text x="280" y="96" font-family="Iowan Old Style, serif" font-size="13" fill="#5c5c5c">public names: BaseChart, BarChart, LineChart</text>
+        <text x="68" y="132" font-family="IBM Plex Mono, monospace" font-size="14" fill="#1a1a1a">charts/</text>
+        <text x="88" y="160" font-family="IBM Plex Mono, monospace" font-size="14" fill="#1a1a1a">__init__.py</text>
+        <text x="280" y="160" font-family="Iowan Old Style, serif" font-size="13" fill="#5c5c5c">same three names, relative imports</text>
+        <text x="88" y="196" font-family="IBM Plex Mono, monospace" font-size="14" fill="#1a1a1a">base.py</text>
+        <text x="280" y="196" font-family="Iowan Old Style, serif" font-size="13" fill="#5c5c5c">layout contract + matplotlib Figure/Axes</text>
+        <text x="88" y="232" font-family="IBM Plex Mono, monospace" font-size="14" fill="#1a1a1a">line.py · bar.py</text>
+        <text x="280" y="232" font-family="Iowan Old Style, serif" font-size="13" fill="#5c5c5c">collect data, draw, then call build()</text>
+      </svg>
+      <p class="caption">Two <code>__init__.py</code> files. One implementation hierarchy.</p>
+    </div>
+
+    <h2>What <code>from datavizlib import BarChart</code> actually does</h2>
+    <p>Python loads <code>src/datavizlib/__init__.py</code>. That file imports from the submodule and lists the names in <code>__all__</code>:</p>
+    <pre>from datavizlib.charts.bar import BarChart
+from datavizlib.charts.base import BaseChart
+from datavizlib.charts.line import LineChart
+
+__all__ = ["BaseChart", "BarChart", "LineChart"]</pre>
+
+    <p><code>charts/__init__.py</code> does the same job for <code>from datavizlib.charts import BarChart</code>. Neither file draws a chart. They are doorbells: they decide which class names are public.</p>
+
+    <div class="example">
+      <p><strong>Example.</strong> After <code>pip install -e .</code>, both of these resolve to the same class object:</p>
+      <pre>from datavizlib import LineChart
+from datavizlib.charts import LineChart as Also</pre>
+      <p><code>LineChart is Also</code> is <code>True</code>. There is one class, two import paths.</p>
+    </div>
+
+    <h2>What is not in <code>src/</code></h2>
+    <p>Tests live in <code>tests/</code>. Storytelling notes live in <code>docs/</code>. Your practice notebooks live in <code>learning/</code>. None of those are imported when someone does <code>import datavizlib</code>.</p>
+
+    <div class="quiz" data-answer="0"
+         data-ok="Right: the package __init__ is what from datavizlib import … loads."
+         data-no="The charts package can re-export too, but the public doorbell is src/datavizlib/__init__.py.">
+      <p class="quiz-q">Which file runs first for <code>from datavizlib import BarChart</code>?</p>
+      <button data-choice="0">src/datavizlib/__init__.py</button>
+      <button data-choice="1">src/datavizlib/charts.py</button>
+      <button data-choice="2">src/datavizlib/base.py__</button>
+    </div>
+    <p class="sidenote">The three choices are padded so they share length. There is no <code>charts.py</code> or <code>base.py__</code> — those names are distractors for the real files.</p>
+
+    <p class="primary-source"><strong>Primary source:</strong> <a href="https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/">PyPA, src layout vs flat layout</a>, then read <a href="https://github.com/phmelzer/datavizlib/blob/api-exploration-tejas/src/datavizlib/__init__.py"><code>src/datavizlib/__init__.py</code></a> and the <code>tool.setuptools</code> block in <a href="https://github.com/phmelzer/datavizlib/blob/api-exploration-tejas/pyproject.toml"><code>pyproject.toml</code></a>.</p>
+
+    <div class="ask">If any import path is unclear, ask the teacher. That is the point of this workspace.</div>
+
+    <nav class="lesson-nav">
+      <span>Start</span>
+      <a href="0002-basechart-contract.html">Next: the BaseChart contract →</a>
+    </nav>
+  </article>
+  <script src="../assets/quiz.js"></script>
+</body>
+</html>

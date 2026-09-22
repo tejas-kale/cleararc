@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Source 0007 · Title left, footnote at the plot</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <article class="page">
+    <header class="lesson-head">
+      <p class="kicker"><a href="../index.html">Lessons</a> · Source 0007 of 0010 · figure text</p>
+      <h1>Title left-aligns to axis words; footnote to the plot</h1>
+      <p class="lede">Titles are not <code>ax.set_title</code>. They are <code>fig.text</code> in figure coordinates, lined up with whichever y-axis words are actually visible.</p>
+    </header>
+
+    <h2>_get_ylabel_bbox</h2>
+    <p>This helper returns a dict of figure-space edges <code>x0, x1, y0, y1</code>. The rule:</p>
+    <ol>
+      <li>If there is a y-label, measure that text’s window extent.</li>
+      <li>Else measure the y tick labels and <code>Bbox.union</code> them (horizontal bar charts often live here: category names on the y-axis, no “Y” title).</li>
+      <li>If there are no tick labels either, fall back to the left edge of the Axes, converted into figure coordinates.</li>
+    </ol>
+    <p><code>_add_title</code> and <code>_add_subtitle</code> both take <code>x = ylabel_bbox["x0"]</code> so the title stack shares a left edge with that content. Title <code>y</code> is <code>0.91</code> with a subtitle, <code>0.94</code> without. Subtitle is always <code>y=0.86</code> and grey.</p>
+
+    <div class="diagram">
+      <svg viewBox="0 0 640 240" role="img" aria-label="Title aligned to y-label, footnote to axes origin">
+        <rect x="20" y="16" width="600" height="208" fill="#fff" stroke="#d9d4c8"/>
+        <text x="70" y="44" font-family="Iowan Old Style, serif" font-size="18" fill="#1a1a1a">Meals served over time</text>
+        <text x="70" y="68" font-family="Iowan Old Style, serif" font-size="13" fill="#808080"># of meals served</text>
+        <line x1="70" y1="44" x2="70" y2="200" stroke="#ff7800" stroke-dasharray="4 3"/>
+        <text x="24" y="120" transform="rotate(-90 24 120)" font-family="IBM Plex Mono, monospace" font-size="11" fill="#808080">MEALS SERVED</text>
+        <rect x="88" y="80" width="500" height="110" fill="#f3f0e8" stroke="#808080"/>
+        <circle cx="88" cy="190" r="5" fill="#00005f"/>
+        <text x="88" y="220" font-family="Iowan Old Style, serif" font-size="12" fill="#808080">Source: … (footnote x from Axes (0,0) → figure)</text>
+      </svg>
+      <p class="caption">Dashed orange: shared <code>x0</code> of the y-label bbox. Navy dot: axes origin used by the footnote.</p>
+    </div>
+
+    <h2>Footnote is a different anchor</h2>
+    <p><code>_add_footnote</code> does <em>not</em> use the y-label bbox. It maps Axes <code>(0, 0)</code> through <code>ax.transAxes</code> into display, then <code>fig.transFigure.inverted()</code> into figure space, and writes at <code>y=0.00</code>. So the footnote lines up with the start of the x-axis, even if the title is further left because of a wide y-label.</p>
+
+    <div class="example">
+      <p><strong>Example.</strong> Horizontal bars, <code>y_label=""</code>: titles align to category tick text. Footnote still sits under the plot’s left, not under “Direct Sales”. Two anchors, two jobs.</p>
+    </div>
+
+    <p>Default <code>fig.text</code> baseline at <code>y=0.00</code> can clip descenders (the tail of a “g”). That is the footnote hatch you noted: <code>va="bottom"</code> a little above zero would keep source lines on the page.</p>
+
+    <div class="quiz" data-answer="0"
+         data-ok="Correct. Title uses the y-content bbox; footnote uses Axes (0,0)."
+         data-no="They use different anchors on purpose — see _get_ylabel_bbox vs _add_footnote.">
+      <p class="quiz-q">What is the title’s x aligned to?</p>
+      <button data-choice="0">Left of y-axis content</button>
+      <button data-choice="1">Left of the x-axis line</button>
+      <button data-choice="2">Left of the figure frame</button>
+    </div>
+
+    <p class="primary-source"><strong>Primary source:</strong> <code>_get_ylabel_bbox</code>, <code>_add_title</code>, <code>_add_subtitle</code>, <code>_add_footnote</code> in <a href="https://github.com/phmelzer/datavizlib/blob/api-exploration-tejas/src/datavizlib/charts/base.py">base.py</a>. <code>Bbox.union</code> is matplotlib’s <a href="https://matplotlib.org/stable/api/transformations.html#matplotlib.transforms.Bbox.union">transforms.Bbox</a>.</p>
+
+    <div class="ask">Unclear why a title jumped when you dropped the y-label? Ask — we can replay the three branches of <code>_get_ylabel_bbox</code> on one of your figures.</div>
+
+    <nav class="lesson-nav">
+      <a href="0006-measure-then-shift.html">← Transforms</a>
+      <a href="0008-linechart.html">Next: LineChart →</a>
+    </nav>
+  </article>
+  <script src="../assets/quiz.js"></script>
+</body>
+</html>

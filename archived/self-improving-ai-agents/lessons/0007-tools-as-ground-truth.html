@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 7 · Tools as ground truth</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+<link rel="stylesheet" href="../assets/quiz.css">
+</head>
+<body>
+<main class="page">
+
+<header class="masthead">
+  <p class="eyebrow">Lesson 7 of 17 · Arc II · Self-improving AI agents</p>
+  <h1>Tools as ground truth</h1>
+  <p class="standfirst">Feedback comes from three places: the environment, an execution, or the model's own written principles. The quality of your error messages turns out to be a performance parameter.</p>
+  <p class="meta">About 10 minutes · Lecture 4 · Where verification stops being a model and becomes the world</p>
+</header>
+
+<p>Lessons 4 to 6 built increasingly sophisticated machinery for judging outputs with models. Lecture 4 makes the point that has to be made somewhere, which is that the best verifier is not a model at all. It is <strong>something that happened</strong>. Code ran or it did not. The query returned 400 rows or none. The API accepted the payload or rejected it with a reason.</p>
+
+<p>The lecture organises this around three papers, separated by where the feedback comes from.</p>
+
+<div class="scroll-x">
+<table>
+  <thead><tr><th>Method</th><th>Feedback comes from</th><th>Signal quality</th><th>Available when</th></tr></thead>
+  <tbody>
+    <tr><td><strong>ReAct</strong></td><td>The environment, through searches, lookups, and observations</td><td>Grounded but noisy</td><td>You have tools that report state</td></tr>
+    <tr><td><strong>RLEF</strong></td><td>Execution, by running code against tests</td><td>Crisp, close to an oracle</td><td>The task compiles and runs</td></tr>
+    <tr><td><strong>Constitutional AI</strong></td><td>The model, checked against written principles</td><td>Weak, but always available</td><td>Always, which makes it the fallback</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>ReAct, interleaving thought and action</h2>
+
+<p>ReAct is now so absorbed into how models behave that its novelty is easy to miss.<a href="#s1">¹</a> Before it there were two separate lineages. Chain-of-thought models reasoned well but were ungrounded and hallucinated confidently, and tool-using models acted without visibly reasoning. ReAct interleaves them as <strong>thought, then action, then observation</strong>, repeatedly, with the thought appended to the context so the next action is conditioned on it.</p>
+
+<p>The gain shows up exactly where reasoning alone fails for lack of facts, which is multi-hop question answering, fact verification, and web navigation. Reasoning alone hallucinates and acting alone flails, and together the observations correct the reasoning while the reasoning directs the actions. One detail is worth keeping: ReAct alone does not always beat chain-of-thought, but ReAct combined with self-consistency does. Grounding and sampling complement each other rather than substituting for each other.</p>
+
+<p class="sidenote">Frontier models now do this inside their chain of thought without being asked, and models like Qwen show the pattern because they were distilled on traces of this shape. That is why the paper reads as obvious today. Its structural claim is not obsolete. An interleaved trace of thought, action, and observation is far easier to interpret and debug than either half alone, which is why you should log all three.</p>
+
+<p>The named failure mode is <strong>error cascading</strong>. One wrong observation early poisons every step after it, and the model rarely goes back to check. Lesson 13 returns to this, because it is the dominant failure of long-horizon runs.</p>
+
+<h2>RLEF, and the public and private test split</h2>
+
+<p>RLEF trains coding agents with reinforcement learning, where the actions are code and the observations are execution feedback.<a href="#s2">²</a> The loop generates a solution, runs it against public tests, feeds failures back for another attempt, and once it passes, computes the training reward from a held-out private test set.</p>
+
+<figure>
+<svg viewBox="0 0 640 240" role="img" aria-label="Loop diagram: model generates code, runs public tests, feedback returns to the model on failure; on success, private tests determine the reward.">
+  <rect x="30" y="94" width="106" height="46" rx="3" class="dg-box"/>
+  <text x="83" y="112" class="dg-label-b" text-anchor="middle">generate</text>
+  <text x="83" y="128" class="dg-label" text-anchor="middle">code</text>
+
+  <line x1="136" y1="117" x2="196" y2="117" class="dg-rule" stroke-width="1.5"/>
+  <polygon points="196,113 205,117 196,121" class="dg-ink"/>
+
+  <rect x="208" y="94" width="120" height="46" rx="3" class="dg-box"/>
+  <text x="268" y="112" class="dg-label-b" text-anchor="middle">public tests</text>
+  <text x="268" y="128" class="dg-label" text-anchor="middle">iterate here</text>
+
+  <path d="M 268 140 C 268 196 83 196 83 146" class="dg-stroke" stroke-width="1.6" fill="none"/>
+  <polygon points="79,150 83,140 87,150" class="dg-ink"/>
+  <text x="176" y="212" class="dg-label" text-anchor="middle">failure trace returned to the model</text>
+
+  <line x1="328" y1="117" x2="392" y2="117" class="dg-rule" stroke-width="1.5"/>
+  <polygon points="392,113 401,117 392,121" class="dg-ink"/>
+  <text x="360" y="106" class="dg-label" text-anchor="middle">passes</text>
+
+  <rect x="404" y="94" width="126" height="46" rx="3" class="dg-box"/>
+  <text x="467" y="112" class="dg-label-b" text-anchor="middle">private tests</text>
+  <text x="467" y="128" class="dg-label" text-anchor="middle">reward only</text>
+
+  <text x="467" y="62" class="dg-label" text-anchor="middle">never shown to the model —</text>
+  <text x="467" y="78" class="dg-label" text-anchor="middle">so it cannot be memorised</text>
+  <line x1="467" y1="84" x2="467" y2="92" class="dg-rule" stroke-width="1"/>
+</svg>
+<figcaption>The separation is the whole trick. Tests the model can see become part of the problem statement and get satisfied specifically, and tests it cannot see measure whether the solution generalises. Any agent that iterates against a check will eventually satisfy the check rather than the intent behind it.</figcaption>
+</figure>
+
+<p>That separation is the transferable idea, and it has nothing to do with RL. <strong>Whenever your agent iterates against a check, hold some checks back.</strong> If it retries until the assertions pass, the assertions have become the specification and you have no evidence about anything they do not cover. This is Goodhart's law with a tighter loop, and the fix costs nothing. Split your checks, show half, and score on the other half.</p>
+
+<div class="callout">
+  <span class="label">Your error messages are a hyperparameter</span>
+  <p>RLEF's measured finding is about repair behaviour. With execution feedback in the loop, errors fall turn over turn and the model's edits become <strong>targeted repairs</strong>, meaning it fixes the part that broke. Without the loop, later attempts are not reliably better, because it rewrites instead of repairing. The feedback text itself, such as "execution timeout", is what makes that difference, separately from the binary pass or fail used as the training reward.</p>
+  <p>An agent handed "AssertionError" has almost nothing to work with. The same agent handed the failing input, the expected value, the actual value, and a stack trace can usually fix the bug on the next turn. If you wrap tools for agents, the richness of the failure path is doing more work than your prompt is.</p>
+  <p class="hedge">One caveat about how far this generalises. CodeContests problems are short, at a few lines each. Whether binary pass or fail is sufficient there while richer traces become necessary on larger problems was raised in the lecture as a student's conjecture, and the lecturer agreed it was plausible and untested. Treat it as a good hypothesis about your own codebase rather than as a result.</p>
+</div>
+
+<div class="quiz" data-answer="d">
+  <span class="label">Check yourself</span>
+  <p class="q">Your agent retries a data-cleaning task until all your validation checks pass. What does a clean run now tell you?</p>
+  <div class="opts">
+    <button class="opt">The data is clean, since every validation rule you wrote is now satisfied by the output.</button>
+    <button class="opt">Nothing at all, because agents that iterate cannot produce trustworthy output of any kind.</button>
+    <button class="opt">The agent has improved, since fewer retries are needed than on the previous comparable run.</button>
+    <button class="opt">Only that those checks pass. You have no evidence about anything they fail to cover.</button>
+  </div>
+  <div class="answer-reveal">
+    <p>The checks stopped being an independent measurement the moment they became a target the agent optimises against. It may have dropped the offending rows, coerced a type to silence a complaint, or special-cased the failing key. Hold back a validation set the agent never sees and score there instead. The second answer overstates the case, because iterating against checks is good and you should do it. You simply cannot also use those checks as your evidence.</p>
+  </div>
+</div>
+
+<h2>Constitutional AI, when there is no world to consult</h2>
+
+<p>Sometimes nothing can be executed. Constitutional AI handles that case by replacing human preference labels with a written <strong>constitution</strong> of explicit principles, and having the model critique and revise its own output against them.<a href="#s3">³</a> In the supervised stage the model responds, critiques itself against a principle, revises, and then trains on the revisions. In the RL stage a preference model built from the constitution scores responses and the policy optimises against it.</p>
+
+<p>Two things are worth taking from it. The mechanism is self-critique made specific, because with a constitution of 16 written principles the model is not asked whether something is good, it is asked whether the output violates a named principle. That is the same move as replacing a rating scale with a binary checklist in Lesson 5, and it works for the same reason. And the results are presented honestly as a trade between helpfulness and harmlessness rather than as a free win, with the constitution being where you write the trade down.</p>
+
+<p class="sidenote">The lecture adds a caution from the follow-on literature. Getting a model to critique itself is harder than it looks, because models are overconfident about what they do not know, and a consensus of other models often critiques better. That is Lesson 5's independence argument arriving from another direction. Where you can afford it, prefer a critic from another model family over self-critique.</p>
+
+<p class="sidenote">The version for your work: a constitution is an explicit written statement of what a good output must satisfy in your domain. A house style for analyses, a set of statistical practices, the caveats a report must always carry. Once written down it works as both a critique prompt and an eval rubric. Most teams keep this knowledge in reviewers' heads, where an agent cannot reach it.</p>
+
+<h2>Design rules for agent-facing tools</h2>
+
+<p>Here is the lecture reduced to what to change.</p>
+
+<ul>
+  <li><strong>Return rich failures</strong>, meaning expected against actual, the offending input, and the stack trace. Prefer a 400-word error to a boolean.</li>
+  <li><strong>Make tools report what they did</strong>, such as rows written, files changed, or bytes read, so the agent has an observation to reason about. A tool that returns "OK" gives it nothing.</li>
+  <li><strong>Fail loudly rather than degrading quietly.</strong> A tool that returns an empty result on error teaches the agent that its approach worked.</li>
+  <li><strong>Split checks into shown and held-out</strong>, which stops being optional the moment anything iterates.</li>
+</ul>
+
+<p>Two more rules matter once you are debugging rather than building. Write the constitution down for domains with no oracle, and use the same document as your critique prompt and your eval rubric. And log thought, action, and observation separately, because when a run goes wrong you need to know whether the reasoning was bad or the observation was, and those need completely different fixes.</p>
+
+<div class="project-hook">
+  <span class="label">Project hook</span>
+  <p class="question">How much does failure-message richness actually buy? Take one tool your agent calls often and prepare three versions of its error path: a bare boolean, a one-line message, and a full trace with expected and actual values. Run the same task set through each.</p>
+  <p class="measure"><span>Measure</span> Success rate and turns-to-fix under each version. This is the cleanest controlled experiment in the whole course, because the only thing that changes is a string, and it is a strong Arc V candidate for that reason.</p>
+</div>
+
+<div class="recall">
+  <span class="label">Retrieval practice</span>
+  <p class="prompt">Take a tool your agents call regularly. What does it return on failure? Rewrite that failure message the way you would want an agent to receive it, then say what the agent could now do that it could not before.</p>
+  <textarea placeholder="This is a real edit you can make today."></textarea>
+  <div class="model-answer">
+    <p>A typical before is "Error: query failed". A good after is the failing SQL, the database's own error text, the line and column, the schema of the tables referenced, and where it is cheap, a hint such as "column user_id not found, the table has userId". The agent goes from guessing at a rewrite, and often rewriting the whole query and losing the correct parts, to making a one-token fix. The general principle decides nearly every case: return whatever a competent colleague would need in order to fix it without asking you a follow-up question.</p>
+  </div>
+</div>
+
+<h2>What you can now do</h2>
+<p>You can classify a feedback source as environmental, execution-based, or self-critique, and you know their relative strength. You have the public and private split as a defence against your own agent gaming your checks, and a concrete rule for what tools should return. Rich failures are the cheapest performance improvement in this course.</p>
+<p>Next is <a href="0008-planning-and-multi-step.html">Lesson 8, planning and multi-step reasoning</a>, and the question of who decides what the steps are.</p>
+
+<div class="ask">
+  <strong>Send a tool wrapper.</strong> Tool interface design is unglamorous, consequential, and easy to review. Paste one in and we will rewrite its failure paths.
+</div>
+
+<div class="source-box">
+  <span class="label">Read one thing</span>
+  <ol>
+    <li id="s1"><a href="https://arxiv.org/abs/2210.03629">Yao et al., <em>ReAct: Synergizing Reasoning and Acting in Language Models</em></a>. Read it for the trace examples, which are still the clearest illustration of grounded reasoning.</li>
+    <li id="s2"><strong>Read this one:</strong> <a href="https://arxiv.org/abs/2410.02089">Gehring et al., <em>RLEF: Grounding Code LLMs in Execution Feedback</em></a>. The public and private split, and the discussion of how much feedback detail is enough, apply directly even if you never touch RL.</li>
+    <li id="s3"><a href="https://arxiv.org/abs/2212.08073">Bai et al., <em>Constitutional AI: Harmlessness from AI Feedback</em></a>. Skim the method and read the results on the helpfulness and harmlessness trade.</li>
+    <li id="s4"><a href="https://www.youtube.com/watch?v=Lxh9RF5S-K0">CS329A Lecture 4, Learning from Feedback with Tools and Code</a>, the source for this lesson.</li>
+  </ol>
+</div>
+
+<nav class="lesson-nav">
+  <span><a href="0006-inference-architectures.html">← Lesson 6</a></span>
+  <span><a href="../index.html">Index</a> · <a href="../reference/glossary.html">Glossary</a></span>
+  <span><a href="0008-planning-and-multi-step.html">Lesson 8: Planning and multi-step reasoning →</a></span>
+</nav>
+
+</main>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

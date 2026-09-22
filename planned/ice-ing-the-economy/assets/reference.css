@@ -1,0 +1,44 @@
+/* reference.css — layout for ./reference/*.html quick-reference sheets.
+   Denser than a lesson, and built to survive a printer. Requires lesson.css. */
+
+body.reference { font-size: 17px; line-height: 1.5; }
+.reference .page { max-width: 52rem; padding-top: 3rem; }
+.reference h2 { margin-top: 2.2rem; }
+
+/* Term list — definition pairs that stay together across a page break. */
+.terms { columns: 2; column-gap: 2.4rem; margin-top: 1.2rem; }
+@media (max-width: 720px) { .terms { columns: 1; } }
+.term-entry { break-inside: avoid; margin: 0 0 1.15rem; }
+.term-entry dt { font-weight: 600; color: var(--accent); font-size: 0.95rem; }
+.term-entry dd { margin: 0.15rem 0 0; font-size: 0.88rem; color: var(--ink-muted); line-height: 1.48; }
+.term-entry .avoid {
+  display: block; font-family: var(--sans); font-size: 0.72rem;
+  color: var(--ink-faint); margin-top: 0.2rem; font-style: italic;
+}
+
+/* Rule-of-thumb strips — the things worth memorising outright. */
+.rules { list-style: none; padding: 0; margin: 1.2rem 0; }
+.rules li {
+  break-inside: avoid; padding: 0.6rem 0 0.6rem 2.2rem; position: relative;
+  border-bottom: 1px solid var(--rule); font-size: 0.93rem;
+}
+.rules li::before {
+  content: counter(r); counter-increment: r; position: absolute; left: 0; top: 0.62rem;
+  font-family: var(--sans); font-size: 0.72rem; font-weight: 700; color: var(--ink-faint);
+}
+.rules { counter-reset: r; }
+
+/* Annotated-article layout: original text left, decode right. */
+.annot { margin: 1.6rem 0; break-inside: avoid; }
+.annot .orig {
+  font-style: italic; color: var(--ink); padding-left: 1rem;
+  border-left: 3px solid var(--accent); margin: 0 0 0.55rem;
+}
+.annot .decode { font-size: 0.9rem; color: var(--ink-muted); margin: 0 0 0 1rem; }
+.annot .decode a { color: var(--accent-alt); }
+
+@media print {
+  body.reference { font-size: 9.5pt; }
+  .terms { columns: 2; }
+  a { color: #000; text-decoration: none; }
+}

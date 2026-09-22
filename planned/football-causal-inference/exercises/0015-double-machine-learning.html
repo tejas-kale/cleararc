@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Exercise sheet 15: Double machine learning</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<header class="topbar"><div><a href="../index.html">Course index</a><span>Exercise sheet 15 of 17</span></div></header>
+<main>
+  <p class="eyebrow">Exercise sheet</p>
+  <h1>Double machine learning</h1>
+  <p class="lead">7 questions drawn from <a href="../lessons/0015-double-machine-learning.html">Lesson 15</a>. Residualisation, cross-fitting, leakage-safe folds, and what flexibility does not buy.</p>
+  <div class="lesson-meta"><span>30 minutes</span><span>7 questions</span><span>Answers at the end</span></div>
+
+  <section class="sheet-intro">
+    <h2>How to use this sheet</h2>
+    <p>Work through the questions in order and write your answers down before reading any part of the answer section. Give yourself about thirty minutes in total. If one question runs long, write what you have, mark it and move on, because the answer section explains the reasoning in full.</p>
+    <p>Most questions ask for a short written answer rather than a number. The aim is a defensible statement, so a sentence or two of reasoning is worth more than a single word.</p>
+    <p>The questions are collapsed so that you can take them one at a time. Open one, answer it, then open the next. The answers are held behind a single button at the foot of the page, so nothing is revealed until you choose to reveal it.</p>
+  </section>
+
+  <details class="question">
+    <summary><span class="marks">Question 1</span><span class="q-title">Separate the parameter from the nuisances</span></summary>
+    <p>For the effect of starting in a 4-3-3 rather than a 4-4-2 on full-time goal difference, state what the causal parameter is and name the two nuisance functions. Then explain, in one sentence, why estimating the nuisances well is not the same achievement as identifying the effect.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 2</span><span class="q-title">Explain residualisation</span></summary>
+    <p>Explain what the residual of treatment on covariates represents in the formation setting, and why regressing the outcome residual on the treatment residual recovers the effect. Then say what happens to the design if the treatment residual has almost no variance, and what real-world situation would cause that.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 3</span><span class="q-title">Design the folds</span></summary>
+    <p>The dataset has ten seasons for the same 20 clubs. Explain why random match-level folds leak, name two grouping schemes, and say how you would choose between them.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 4</span><span class="q-title">Refuse a control</span></summary>
+    <p>A colleague proposes adding expected goals, possession share and half-time score to the covariate set, noting that cross-validated predictive performance improves substantially. Write your response, covering what happens to the estimand and why the improvement in prediction is beside the point.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 5</span><span class="q-title">Handle a categorical treatment</span></summary>
+    <p>Formation is a categorical variable with eight observed values, several of them rare. Explain why "the effect of formation" is not a well posed estimand, and describe how you would restructure the analysis. Name the diagnostic you would run for each contrast you keep.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 6</span><span class="q-title">Say what cross-fitting does and does not do</span></summary>
+    <p>Mark each claim true or false with a one-line reason: (a) cross-fitting removes the bias from using a flexible learner on the same data used to estimate the effect; (b) cross-fitting guarantees overlap; (c) cross-fitting means the covariate set no longer needs justification; (d) with cross-fitting, a regularised learner's bias in the nuisance functions can still affect the effect estimate.</p>
+  </details>
+
+  <details class="question">
+    <summary><span class="marks">Question 7</span><span class="q-title">Judge a study</span></summary>
+    <p>A preprint reports that a 4-3-3 raises expected points by 0.14 per match against a 4-4-2, using cross-fitted gradient boosting on 22,000 fixtures, with covariates including team identity, opponent identity, venue, pre-match injuries and bookmaker odds. Write a critique of at most seven sentences.</p>
+  </details>
+
+  <section class="answers">
+    <h2>Answers</h2>
+    <p class="answer-note">Read these only after writing your own answers. Where an answer says "a good answer includes", treat the listed points as the marking scheme rather than as the only wording that works.</p>
+
+    <details class="answer-reveal">
+      <summary>Show all answers</summary>
+      <section class="answer">
+        <span class="marks">Answer 1</span>
+        <h3>Separate the parameter from the nuisances</h3>
+      <p>The causal parameter is the contrast in expected full-time goal difference between starting 4-3-3 and starting 4-4-2, for the stated population of fixtures.</p>
+      <p>The nuisance functions are the conditional expectation of goal difference given the pre-match covariates, and the conditional probability of choosing 4-3-3 given those same covariates, which is the propensity score for the formation contrast.</p>
+      <p>Estimating them well is a prediction achievement, and prediction says nothing about whether the covariate set blocks the back-door paths, whether both formations plausibly occur for similar fixtures, or whether the formation categories correspond to well defined interventions; a flawless learner fitted to the wrong covariate set produces a precisely estimated confounded number.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 2</span>
+        <h3>Explain residualisation</h3>
+      <p>The treatment residual is the part of the formation choice not explained by pre-match covariates: the variation left after accounting for opponent strength, venue, injuries and team identity. Intuitively it is the quasi-random component of the manager's decision.</p>
+      <p>The outcome residual is the part of goal difference not explained by those same covariates. Relating the two isolates the association between the unexplained part of the decision and the unexplained part of the result, which under conditional exchangeability contains no contribution from the covariates and so is the causal effect. Orthogonalising both sides is what makes the final estimate insensitive to small errors in either nuisance model, to first order.</p>
+      <p>If the treatment residual has almost no variance, the covariates predict formation nearly perfectly and there is essentially nothing left to identify the effect from. The estimate becomes unstable, since it divides by a near-zero quantity, and the interval explodes. In football this occurs when a manager always plays the same shape against a given kind of opponent, or when team identity is included as a covariate and each team's formation is near-deterministic. It is the machine-learning face of a positivity violation, and the honest response is to narrow the population to fixtures where both formations genuinely occur.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 3</span>
+        <h3>Design the folds</h3>
+      <p>Random match-level folds place matches involving the same club, in the same season, in both the training and the held-out set. The learner can then memorise team-season specific effects, and the out-of-fold predictions are not genuinely out of sample. The nuisance predictions are too good, the residuals are too small, and the orthogonality that cross-fitting is supposed to provide is compromised.</p>
+      <p>Two schemes: group by season, holding out whole seasons at a time; or group by club-season, holding out all matches of a given club in a given season.</p>
+      <p>Choose by matching the fold structure to the dependence you are worried about and to the generalisation you intend. If the estimate is meant to apply to future seasons, hold out seasons, since that mimics the intended use. If it is meant to apply to other clubs, hold out clubs. Club-season grouping is the safer default here, because it breaks both the within-club and the within-season leakage while retaining enough folds for stable estimation. A good answer notes that this is the same reasoning used for any time-dependent or clustered prediction problem; nothing about it is specific to causal inference.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 4</span>
+        <h3>Refuse a control</h3>
+      <p>All three are measured after kick-off and are therefore consequences of the starting formation. Adding them changes the estimand from the total effect of the formation choice to something like a direct effect holding the match's realised pattern fixed, which is not the quantity a manager choosing a shape before kick-off wants.</p>
+      <p>Worse, they are also affected by unmeasured in-match events, so conditioning on them opens collider paths and can produce bias in either direction, not merely attenuation. Half-time score is the clearest case: it is squarely on the causal path.</p>
+      <p>The improvement in predictive performance is exactly what one would expect from post-treatment variables, because they contain information about the outcome that the pre-match covariates cannot have. That is a reason to exclude them, not to include them. Predictive performance is a diagnostic for the nuisance models within a fixed, causally justified covariate set; it is never a criterion for choosing that set. The covariate set is decided by the diagram, before any model is fitted.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 5</span>
+        <h3>Handle a categorical treatment</h3>
+      <p>With eight categories there is no single contrast to estimate. An effect requires two named strategies, and "formation" names neither. A regression coefficient on a multi-category variable is a bundle of implicit comparisons against a reference category, weighted by however the data happen to be distributed, and it will not correspond to any decision a manager faces.</p>
+      <p>Restructure by naming the contrasts of interest explicitly, for example 4-3-3 against 4-4-2 and 3-5-2 against 4-4-2, and estimating each as a separate binary problem with its own propensity model, restricted to fixtures where both formations plausibly occur. Rare formations should be pooled into a coherent category only if they represent a similar intervention, and otherwise dropped with the change in population stated.</p>
+      <p>For each retained contrast, the diagnostic is overlap: plot the distribution of the estimated probability of choosing the first formation, separately for fixtures where each was chosen, and confirm that both distributions have common support away from zero and one. Balance on the original covariates within the analysed region is the second check. Without those, a contrast should not be reported however good the learner is.</p>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 6</span>
+        <h3>Say what cross-fitting does and does not do</h3>
+      <ul>
+        <li>(a) True, in the relevant sense. Cross-fitting removes the own-observation overfitting bias by ensuring each observation's nuisance predictions come from models that never saw it, which is what allows flexible learners to be used without the resulting bias entering the effect estimate at first order.</li>
+        <li>(b) False. Overlap is a property of the data and the covariate set. Cross-fitting changes how the nuisance functions are fitted and has no bearing on whether both treatments occur for similar units.</li>
+        <li>(c) False. Identification precedes estimation entirely. Cross-fitting is a device for estimating nuisance functions honestly; it cannot tell a confounder from a mediator.</li>
+        <li>(d) True. The orthogonal score makes the estimate insensitive to nuisance errors to first order, but the protection is not absolute: if both nuisance functions converge slowly, the product of their errors can still be large enough to matter, which is why the rate conditions in the theory are stated as a joint requirement rather than a promise.</li>
+      </ul>
+      </section>
+
+      <section class="answer">
+        <span class="marks">Answer 7</span>
+        <h3>Judge a study</h3>
+      <p>The design is sound in outline, with a large sample, cross-fitting and a plausible set of pre-match covariates, but three issues need addressing before the number can be believed. First, bookmaker odds are an unusually powerful covariate that may already incorporate the expected formation, in which case conditioning on them removes part of the very variation being used and the estimate is attenuated towards zero. Second, including team and opponent identity as covariates risks driving the treatment residual towards zero for managers with fixed tactical preferences, so the estimate may rest on a small and unrepresentative subset of fixtures; the overlap plot and the distribution of the treatment residual should be reported. Third, the fold structure is not described, and random match-level folds across ten seasons of the same clubs would leak, so the paper must state that folds were grouped by club-season or season. Beyond these, the estimand needs a population: 0.14 points per match applies to fixtures where both formations were realistic choices, which is not all fixtures. It would also be worth knowing whether the formation label is taken from the announced line-up or from realised positional data, since the two differ often enough to raise a consistency question. As a preprint that has not been peer reviewed, it should be read as a well constructed example of the method rather than as a settled finding.</p>
+      </section>
+    </details>
+  </section>
+
+  <p class="citation"><strong>Related reading.</strong> <a href="https://arxiv.org/abs/2602.16830">Ruiz-Menarguez and Badiella (2026)</a>, a preprint; Hernan and Robins, Sections 18.3 and 18.4; Ruiz de Villa, Chapters 4 and 8.</p>
+  <p>If your answer and the suggested answer disagree and you cannot see why, ask your teaching agent to work through that question with you rather than assuming the sheet is right.</p>
+  <nav class="lesson-nav"><a href="0014-longitudinal-g-methods.html">Previous sheet: Longitudinal g-methods</a><a href="0016-causal-mediation.html">Next sheet: Causal mediation</a></nav>
+</main>
+</body>
+</html>

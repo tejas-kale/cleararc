@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reference · ICE-ing the Economy glossary</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+<link rel="stylesheet" href="../assets/reference.css">
+</head>
+<body class="reference">
+<main class="page">
+
+<header class="masthead">
+  <p class="eyebrow">Reference · ICE-ing the Economy</p>
+  <h1>Glossary</h1>
+  <p class="standfirst">Canonical vocabulary for reading Hernandez (2026). Aliases to avoid are the words that collapse distinct objects.</p>
+  <p class="meta">Prints to one or two pages</p>
+</header>
+
+<dl class="terms">
+  <div class="term-entry"><dt>POI</dt><dd>A geocoded commercial establishment in Advan or SafeGraph.<span class="avoid">Avoid: “store” when workplaces are in the sample</span></dd></div>
+  <div class="term-entry"><dt>CBSA / metro</dt><dd>The treatment unit. Eleven large areas use Metropolitan Divisions.<span class="avoid">Avoid: county, unless you are talking about someone else’s paper</span></dd></div>
+  <div class="term-entry"><dt>Enforcement event</dt><dd>A news-extracted, geocodable interior operation or presence. 5,388 after dedup and audit.<span class="avoid">Avoid: ICE arrest count — that is yield, not presence</span></dd></div>
+  <div class="term-entry"><dt>Onset (absorbing)</dt><dd>First post-20 Jan 2025 week with 3+ events in 14 days. 100 of 935 metros. Stays on.<span class="avoid">Avoid: “the week of the raid at this POI”</span></dd></div>
+  <div class="term-entry"><dt>Shift-share instrument</dt><dd>2010 ACS foreign-born share × national weekly event count. Instruments onset in 2SLS with POI and state×week FE, cluster CBSA.</dd></div>
+  <div class="term-entry"><dt>Spatial intensity</dt><dd>Running-minimum miles to the nearest raid to date, binned, estimated in treated metros with POI and CBSA×week FE. No instrument.</dd></div>
+  <div class="term-entry"><dt>IHS</dt><dd>Inverse hyperbolic sine of visits or spend. Approximate percent interpretation; handles zeros. The draft sometimes writes “sign.”</dd></div>
+  <div class="term-entry"><dt>Chilling</dt><dd>Withdrawal of activity by people who are not themselves detained, via perceived risk.<span class="avoid">Avoid: using it as a synonym for the IV coefficient</span></dd></div>
+  <div class="term-entry"><dt>Focused vs general</dt><dd>Prior regimes weighted toward people with criminal records; 2025 interior operations are described as broader and more visible (East, Cox and Patler).</dd></div>
+  <div class="term-entry"><dt>Design A / Design B</dt><dd>This course’s names for metro-onset IV versus within-metro distance. The paper does not number them this way.</dd></div>
+</dl>
+
+<nav class="lesson-nav">
+  <span><a href="../index.html">← Course index</a></span>
+  <span><a href="cheatsheet.html">Cheat sheet</a> · <a href="paper-decoded.html">Paper decoded</a></span>
+</nav>
+
+</main>
+</body>
+</html>

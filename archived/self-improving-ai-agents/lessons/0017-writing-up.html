@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 17 · Writing up what you found</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+<link rel="stylesheet" href="../assets/quiz.css">
+</head>
+<body>
+<main class="page">
+
+<header class="masthead">
+  <p class="eyebrow">Lesson 17 of 17 · Arc V · Self-improving AI agents</p>
+  <h1>Writing up what you found</h1>
+  <p class="standfirst">One page, five parts, written whether the result was positive or null. The writeup is what turns a month of runs into something you and other people can use.</p>
+  <p class="meta">About 8 minutes · Closes the course · Produces the artefact</p>
+</header>
+
+<p>The temptation at the end of an experiment is to note the answer, apply it, and move on. Resist it for one afternoon. A month from now you will remember the conclusion and not the conditions under which it held, and the conditions are what determine whether it still applies.</p>
+
+<p>You are not writing a paper. One page is the right length, and it has five parts.</p>
+
+<h2>The five parts</h2>
+
+<ol class="steps">
+  <li><strong>The question and the prediction,</strong> copied verbatim from your pre-registration. Copying rather than rewriting is the point, because it preserves what you actually believed before you saw the data.</li>
+  <li><strong>The setup,</strong> in enough detail to repeat it. The task set and its size, the model string, the conditions, the grader, and the number of runs. This is the part you will need most later and the part most likely to be skipped.</li>
+  <li><strong>The result,</strong> as a number with its spread, next to the noise floor from your null experiment. One small table or one chart is plenty.</li>
+  <li><strong>What surprised you.</strong> The gap between your prediction and the outcome, plus anything you found while reading raw runs by hand. This is usually the most valuable paragraph in the document.</li>
+  <li><strong>What you would do next, and what you now believe.</strong> Two or three sentences, written as a claim with its scope attached.</li>
+</ol>
+
+<div class="callout">
+  <span class="label">The scope sentence</span>
+  <p>Every finding needs its boundary stated in the same breath. Not "richer error messages help", but "richer error messages cut turns-to-fix by about a third on SQL tasks where the failure was a schema mismatch, with no measurable effect on tasks that failed for logical reasons". The second version is usable a year later by someone else. The first is a slogan, and slogans get applied where they do not hold.</p>
+</div>
+
+<h2>Write the null up too</h2>
+
+<p>A null result is a real result and it is worth the same page. It stops you repeating the attempt in six months, it stops a colleague starting the same experiment, and it is genuine evidence about your domain. The field has a publication bias against nulls, and you do not have to inherit it, because your writeup answers to you rather than to a reviewer.</p>
+
+<p>The only null worth discarding is the one your experiment could not have detected, and Lesson 16's null experiment tells you which kind you have. If your noise floor was larger than any plausible effect, write down that the experiment was underpowered and what a better-powered version would need. That is a finding about your method rather than about your hypothesis, and it is still worth knowing.</p>
+
+<div class="quiz" data-answer="a">
+  <span class="label">Check yourself</span>
+  <p class="q">Which sentence belongs in a writeup as a finding?</p>
+  <div class="opts">
+    <button class="opt">Ensembling three judges beat the best single judge by 11 points, against a 3-point noise floor.</button>
+    <button class="opt">Ensembling judges works considerably better than relying on a single judge model does.</button>
+    <button class="opt">We found that verification quality is the main constraint on this particular agent workflow.</button>
+    <button class="opt">The ensemble approach seems promising and is worth exploring further across other teams.</button>
+  </div>
+  <div class="answer-reveal">
+    <p>The first has an effect size and a noise floor, so a reader can judge it and you can compare it against a future run. The second states a direction with no magnitude and no comparison. The third is a conclusion that the stated experiment probably cannot support on its own. The fourth is a feeling. The test to apply to your own sentences is whether someone could disagree with them using data, and only the first passes.</p>
+  </div>
+</div>
+
+<h2>Where the writeup goes</h2>
+
+<p>Put it in this workspace, in a <code>projects/</code> directory, named with the date and the question. Then do two more things with it.</p>
+
+<p><strong>Write a learning record</strong> in <code>learning-records/</code> capturing what the result changes about how you work. The writeup records what happened, and the learning record records what it means for the next decision. Those are different documents and the second one is what future sessions read.</p>
+
+<p><strong>Show it to someone who runs agents.</strong> This is the wisdom half of the course, and it is the half a workspace cannot supply. A result about your own workflows gets sharper the moment someone with different workflows asks why you think it generalises. <code>RESOURCES.md</code> lists places where that conversation happens, and one thoughtful reader is worth more than a hundred views.</p>
+
+<div class="project-hook">
+  <span class="label">Do this now</span>
+  <p class="question">Write the page. Then write the one-sentence version of your finding, with its scope attached, and check whether you would still believe it if someone applied it to a workflow two steps removed from yours.</p>
+  <p class="measure"><span>Measure</span> If the sentence survives that test unchanged, the scope is too vague. A well-scoped finding should visibly stop applying somewhere.</p>
+</div>
+
+<div class="recall">
+  <span class="label">Retrieval practice, and the close of the course</span>
+  <p class="prompt">In Lesson 1 you wrote down which axis your workflow sat on and which ingredient it lacked. In Lesson 14 you revised it. Now write what you know about that workflow that you could not have known without running the experiment.</p>
+  <textarea placeholder="This is the difference between having read the course and having done it."></textarea>
+  <div class="model-answer">
+    <p>The shape of a good answer is a number attached to a decision. Something like: "coverage on my analysis tasks is 71 percent while pass@1 is 34 percent, so the gap is where my effort belongs, and the three-verifier ensemble closed about a third of it for two hours of work. What I could not have predicted is that the deterministic check contributed almost nothing, because it never fired on real failures, and the value came from the rubric judge from a different model family." Notice that the surprising part is specific to your data and could not have been read out of any paper. That is what running it buys.</p>
+  </div>
+</div>
+
+<h2>Where this leaves you</h2>
+<p>You have done the thing the original course asks its students for. A question, an experiment with a control, a measured result, and a written account of what it means, at a scale one person can carry. That is a different kind of knowledge from the fourteen lessons before it, because it is about your system rather than about the field.</p>
+<p>The loop from here is short. A result raises the next question, and the next question is usually smaller and sharper than the first one was. That is what the project hooks are for, and there are sixteen of them left.</p>
+
+<div class="ask">
+  <strong>Bring the writeup.</strong> The most useful conversation in the whole course is the one about what your result does and does not license you to conclude, and it is much better had with the numbers in front of both of us. After that we pick the next question, which will be a better one than the first.
+</div>
+
+<div class="source-box">
+  <span class="label">Read one thing</span>
+  <ol>
+    <li id="s1"><strong>Primary source:</strong> <a href="https://www.youtube.com/watch?v=6YnLB0XbTnI">CS329A Lecture 1, Course Overview</a>, on what the course accepts as a project result. The demand for a stated hypothesis and a described improvement is the standard this arc aims at.</li>
+    <li id="s2"><a href="https://arxiv.org/abs/2503.14499">Kwa et al., <em>Measuring AI Ability to Complete Long Tasks</em></a> (METR), worth rereading as a model of scope statement. Its limitations section is more careful than most papers' results sections.</li>
+    <li id="s3"><a href="../reference/project-playbook.html">The project playbook</a>, which holds the pre-registration template and the writeup skeleton in one page you can print.</li>
+  </ol>
+</div>
+
+<nav class="lesson-nav">
+  <span><a href="0016-running-the-experiment.html">← Lesson 16</a></span>
+  <span><a href="../index.html">Course index</a></span>
+  <span><a href="../reference/glossary.html">Glossary</a> · <a href="../reference/project-playbook.html">Project playbook</a></span>
+</nav>
+
+</main>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Source 0010 · How a new chart type fits</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <article class="page">
+    <header class="lesson-head">
+      <p class="kicker"><a href="../index.html">Lessons</a> · Source 0010 of 0010 · the seam</p>
+      <h1>A new chart type only fills the drawing hole</h1>
+      <p class="lede">You have now seen every file in <code>src/</code>. Extending the library means repeating the <code>LineChart</code> / <code>BarChart</code> pattern, not copying <code>build()</code>.</p>
+    </header>
+
+    <p>The two subclasses are the same shape:</p>
+    <pre>class SomethingChart(BaseChart):
+    def __init__(...):
+        super().__init__(...)
+        self._items = []
+
+    def add_data(self, df, ...):
+        # validate DataFrame + columns
+        self._items.append({...})
+        return self
+
+    def render(self, ...):
+        # ax.scatter / ax.plot / ...
+        return self.build()</pre>
+
+    <div class="diagram">
+      <svg viewBox="0 0 640 230" role="img" aria-label="What you reuse vs what you write">
+        <rect x="16" y="16" width="300" height="198" fill="#f3f0e8" stroke="#00005f"/>
+        <text x="28" y="44" font-family="Iowan Old Style, serif" font-size="16" fill="#00005f">Reuse (base.py)</text>
+        <text x="28" y="76" font-family="IBM Plex Mono, monospace" font-size="13" fill="#1a1a1a">fig, ax, palette</text>
+        <text x="28" y="100" font-family="IBM Plex Mono, monospace" font-size="13" fill="#1a1a1a">_configure_layout</text>
+        <text x="28" y="124" font-family="IBM Plex Mono, monospace" font-size="13" fill="#1a1a1a">_clean_spines</text>
+        <text x="28" y="148" font-family="IBM Plex Mono, monospace" font-size="13" fill="#1a1a1a">label alignment</text>
+        <text x="28" y="172" font-family="IBM Plex Mono, monospace" font-size="13" fill="#1a1a1a">title / footnote</text>
+        <rect x="332" y="16" width="292" height="198" fill="#fff" stroke="#ff7800"/>
+        <text x="344" y="44" font-family="Iowan Old Style, serif" font-size="16" fill="#ff7800">Write (new file)</text>
+        <text x="344" y="76" font-family="IBM Plex Mono, monospace" font-size="13" fill="#1a1a1a">self._items = []</text>
+        <text x="344" y="100" font-family="IBM Plex Mono, monospace" font-size="13" fill="#1a1a1a">add_data → append</text>
+        <text x="344" y="124" font-family="IBM Plex Mono, monospace" font-size="13" fill="#1a1a1a">render → artists</text>
+        <text x="344" y="148" font-family="IBM Plex Mono, monospace" font-size="13" fill="#1a1a1a">return self.build()</text>
+        <text x="344" y="184" font-family="Iowan Old Style, serif" font-size="13" fill="#5c5c5c">then export in both __init__.py</text>
+      </svg>
+    </div>
+
+    <h2>Where not to put new behavior</h2>
+    <ul>
+      <li><strong>Scale and tick format</strong> (your 2.2 hatch) are Axes concerns after data exists. They belong next to <code>render()</code>, or as kwargs on it — not inside <code>_align_y_label_to_tick</code>.</li>
+      <li><strong>Layout collisions</strong> (left margin, y-label <code>-0.10</code>, footnote <code>y=0</code>) belong in <code>base.py</code>, because every chart inherits them.</li>
+      <li><strong>A one-off annotation</strong> can stay in the notebook on the returned <code>ax</code>. That is why <code>render</code> returns <code>(fig, ax)</code>.</li>
+    </ul>
+
+    <div class="example">
+      <p><strong>Example.</strong> A slopegraph is two x positions and several lines. You would still collect rows in <code>add_data</code>, call <code>ax.plot</code> in <code>render</code>, and let <code>build()</code> dress the page. You would not reimplement spines.</p>
+    </div>
+
+    <p>To make the class importable: add the class in a new module under <code>charts/</code>, then add the name to <code>charts/__init__.py</code> and <code>datavizlib/__init__.py</code> <code>__all__</code> lists. That is the entire public-API ritual from Source 0001.</p>
+
+    <div class="quiz" data-answer="0"
+         data-ok="Yes. New chart types draw, then call the inherited build()."
+         data-no="Copying _clean_spines into the subclass would fork the layout contract.">
+      <p class="quiz-q">Where should a scatter subclass call <code>build()</code>?</p>
+      <button data-choice="0">At the end of render()</button>
+      <button data-choice="1">Inside add_data, each row</button>
+      <button data-choice="2">Copied into a new build()</button>
+    </div>
+
+    <p class="primary-source"><strong>Primary source:</strong> the two existing subclasses side by side — <a href="https://github.com/phmelzer/datavizlib/blob/api-exploration-tejas/src/datavizlib/charts/line.py">line.py</a> and <a href="https://github.com/phmelzer/datavizlib/blob/api-exploration-tejas/src/datavizlib/charts/bar.py">bar.py</a> — plus the <code>NotImplementedError</code> in <a href="https://github.com/phmelzer/datavizlib/blob/api-exploration-tejas/src/datavizlib/charts/base.py"><code>BaseChart.add_data</code></a>.</p>
+
+    <div class="ask">This finishes a first pass over every file in <code>src/</code>. Ask about the next hatch (limits, formatting, margins) or we can drill one method until it is boring.</div>
+
+    <nav class="lesson-nav">
+      <a href="0009-barchart.html">← BarChart</a>
+      <a href="../index.html">Course contents →</a>
+    </nav>
+  </article>
+  <script src="../assets/quiz.js"></script>
+</body>
+</html>
