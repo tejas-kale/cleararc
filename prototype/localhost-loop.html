@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PROTOTYPE — first localhost loop</title>
+  <style>
+    :root {
+      --ink: #16130f;
+      --muted: #5c554b;
+      --paper: #fdfaf4;
+      --warm: #f5efe2;
+      --rule: #ddd4c2;
+      --accent: #8c2f16;
+      --teal: #1f4d5c;
+      --good: #2f6b40;
+      --sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      --serif: Palatino, "Book Antiqua", Georgia, serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: var(--sans);
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.5;
+    }
+    button, textarea, input { font: inherit; }
+    button { cursor: pointer; }
+    .proto-banner {
+      background: #111;
+      color: #f5efe2;
+      padding: 10px 16px;
+      font-size: 13px;
+    }
+    .proto-banner strong { color: #f0c48a; }
+    .state-dump {
+      margin: 0;
+      padding: 12px 16px 80px;
+      background: #1a1814;
+      color: #d8d0c0;
+      font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace;
+      white-space: pre-wrap;
+    }
+    .hidden { display: none !important; }
+
+    /* A — Sequential bench */
+    .a-wrap { max-width: 720px; margin: 0 auto; padding: 28px 20px 24px; }
+    .a-steps { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; font-size: 12px; }
+    .a-steps span {
+      padding: 4px 10px;
+      border: 1px solid var(--rule);
+      border-radius: 999px;
+      color: var(--muted);
+    }
+    .a-steps .now { border-color: var(--ink); color: var(--ink); font-weight: 600; }
+    .a-steps .done { background: #e8f0e8; color: var(--good); border-color: #c5d8c5; }
+    .a-wrap h1 { font-family: var(--serif); font-size: 2.1rem; margin: 0 0 8px; }
+    .a-wrap p.lead { color: var(--muted); margin: 0 0 24px; }
+    .a-card {
+      border: 1px solid var(--rule);
+      background: var(--warm);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .a-card h2 { margin: 0 0 8px; font-size: 1.1rem; }
+    .primary {
+      background: var(--ink);
+      color: var(--paper);
+      border: 0;
+      padding: 10px 16px;
+    }
+    .ghost { background: transparent; border: 1px solid var(--rule); padding: 10px 16px; }
+    .stream {
+      min-height: 160px;
+      background: #fff;
+      border: 1px solid var(--rule);
+      padding: 12px;
+      margin: 12px 0;
+      font-size: 14px;
+    }
+    .stream .ln { margin: 0 0 8px; color: var(--muted); }
+    .stream .ln.pub { color: var(--good); font-weight: 600; }
+    .lesson-prose { font-family: var(--serif); }
+    .lesson-prose h1 { font-size: 1.8rem; }
+    .quiz, .retrieval {
+      border-top: 1px solid var(--rule);
+      margin-top: 20px;
+      padding-top: 16px;
+    }
+    .opt {
+      display: block;
+      width: 100%;
+      text-align: left;
+      margin: 6px 0;
+      padding: 10px;
+      border: 1px solid var(--rule);
+      background: #fff;
+    }
+    .opt.picked { border-color: var(--teal); background: #eef4f6; }
+    .thread { border: 1px solid var(--rule); background: #fff; padding: 12px; margin-top: 12px; }
+    .msg { margin: 0 0 10px; font-size: 14px; }
+    .msg .who { font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+
+    /* B — Split studio */
+    .b-shell { display: grid; grid-template-columns: 1fr 380px; min-height: 70vh; }
+    .b-main { padding: 24px 28px; border-right: 1px solid var(--rule); }
+    .b-rail { background: var(--warm); padding: 20px; display: flex; flex-direction: column; }
+    .b-tabs { display: flex; gap: 0; margin-bottom: 12px; }
+    .b-tabs button {
+      flex: 1;
+      border: 1px solid var(--rule);
+      background: transparent;
+      padding: 8px;
+    }
+    .b-tabs button.on { background: var(--ink); color: var(--paper); }
+    .b-home { padding: 48px 28px; }
+    .b-home h1 { font-family: var(--serif); font-size: 2.4rem; margin: 0 0 12px; }
+
+    /* C — Desk + tray */
+    .c-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--rule);
+      font-size: 13px;
+    }
+    .c-desk { max-width: 680px; margin: 0 auto; padding: 36px 20px 160px; }
+    .c-hero { font-family: var(--serif); }
+    .c-hero h1 { font-size: 2.6rem; margin: 0 0 8px; letter-spacing: -0.03em; }
+    .c-sheet, .c-drawer {
+      position: fixed;
+      background: #fff;
+      border: 1px solid var(--rule);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+      z-index: 5;
+    }
+    .c-sheet {
+      inset: 40px 16px auto;
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .c-drawer {
+      left: 16px;
+      right: 16px;
+      bottom: 72px;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 16px;
+      max-height: 42vh;
+      overflow: auto;
+    }
+    .c-fab {
+      position: fixed;
+      right: 20px;
+      bottom: 80px;
+      z-index: 4;
+      background: var(--accent);
+      color: #fff;
+      border: 0;
+      padding: 12px 16px;
+      border-radius: 999px;
+    }
+
+    .switcher {
+      position: fixed;
+      left: 50%;
+      bottom: 16px;
+      transform: translateX(-50%);
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #111;
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 999px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      font-size: 13px;
+    }
+    .switcher button {
+      background: #333;
+      color: #fff;
+      border: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+  <div class="proto-banner">
+    <strong>PROTOTYPE — throwaway.</strong>
+    Chosen layout: <strong>B — Split studio</strong> (Lesson left, Teacher/Clarifier right).
+    A and C remain for comparison. In-memory only. Not production.
+  </div>
+
+  <div id="app"></div>
+  <pre class="state-dump" id="dump"></pre>
+
+  <div class="switcher" role="navigation" aria-label="Prototype variants">
+    <button type="button" id="prev" aria-label="Previous variant">←</button>
+    <span id="switch-label"></span>
+    <button type="button" id="next" aria-label="Next variant">→</button>
+  </div>
+
+  <script>
+    const VARIANTS = {
+      A: "Sequential bench",
+      B: "Split studio",
+      C: "Desk and tray"
+    };
+
+    const initial = () => ({
+      screen: "home",
+      teacherRunning: false,
+      published: false,
+      teacherLog: [],
+      clarifierOpen: false,
+      clarifierMessages: [],
+      quizPick: null,
+      retrieval: "",
+      submissions: []
+    });
+
+    let state = initial();
+
+    function variant() {
+      const p = new URLSearchParams(location.search).get("variant") || "B";
+      return VARIANTS[p] ? p : "A";
+    }
+
+    function setVariant(key) {
+      const url = new URL(location.href);
+      url.searchParams.set("variant", key);
+      history.replaceState(null, "", url);
+      render();
+    }
+
+    function cycle(dir) {
+      const keys = Object.keys(VARIANTS);
+      const i = keys.indexOf(variant());
+      setVariant(keys[(i + dir + keys.length) % keys.length]);
+    }
+
+    function act(action) {
+      if (action === "reset") state = initial();
+      if (action === "startTeacher") {
+        state.screen = "teacher";
+        state.teacherRunning = true;
+        state.teacherLog = [
+          "Reading Mission: understand Hernandez (2026) as a data scientist.",
+          "Checking primary source: SSRN 6759278.",
+          "Drafting Lesson 1 — The demand side was missing."
+        ];
+      }
+      if (action === "publish") {
+        state.teacherRunning = false;
+        state.published = true;
+        state.teacherLog.push("Published Lesson 1. Generation is publication.");
+        state.screen = "lesson";
+      }
+      if (action === "openLesson") {
+        if (state.published) state.screen = "lesson";
+      }
+      if (action === "home") state.screen = "home";
+      if (action === "toggleClarifier") state.clarifierOpen = !state.clarifierOpen;
+      if (action === "askClarifier") {
+        state.clarifierMessages.push(
+          { who: "Learner", text: "Is this just labour supply with extra steps?" },
+          { who: "Clarifier", text: "The Lesson’s reply is logical first: the unit is the metro, not the arrested person. Lesson 4 will give the quantitative split. This thread is not a Submission." }
+        );
+        state.clarifierOpen = true;
+      }
+      if (action === "pickQuiz") state.quizPick = "c";
+      if (action === "typeRetrieval") state.retrieval = "Metro-level demand shock; visits and card spend; general not focused enforcement.";
+      if (action === "submitQuiz") {
+        if (!state.quizPick) return;
+        state.submissions.push({
+          kind: "quiz",
+          course: "ice-ing-the-economy",
+          lesson: "0001",
+          prompt: "Which sentence is closest to the paper’s stated gap?",
+          answer: state.quizPick
+        });
+      }
+      if (action === "submitRetrieval") {
+        if (!state.retrieval.trim()) return;
+        state.submissions.push({
+          kind: "retrieval",
+          course: "ice-ing-the-economy",
+          lesson: "0001",
+          prompt: "State the estimand without the instrument.",
+          answer: state.retrieval
+        });
+      }
+      render();
+    }
+
+    function lessonBody() {
+      return `
+        <article class="lesson-prose">
+          <p class="lead">Lesson 1 of 5 · ICE-ing the Economy · paper walkthrough</p>
+          <h1>The demand side was missing</h1>
+          <p>The paper’s claim is not “raids are bad.” It is that interior enforcement in 2025 is a <em>general</em> local shock, and that the literature had almost no estimates on the demand side of that shock.</p>
+          <blockquote>Research has not considered whether immigration enforcement affects the demand side of the economy…</blockquote>
+          <div class="quiz">
+            <p><strong>Lesson question · quiz.</strong> Which sentence is closest to the paper’s stated gap?</p>
+            <button class="opt ${state.quizPick === "c" ? "picked" : ""}" data-act="pickQuiz">Demand-side activity after enforcement had not been estimated at national scale.</button>
+          </div>
+          <div class="retrieval">
+            <p><strong>Lesson question · retrieval.</strong> State the estimand without the instrument.</p>
+            <textarea rows="3" id="retrieval">${state.retrieval.replace(/</g, "")}</textarea>
+            <p>
+              <button class="primary" data-act="submitQuiz">Store quiz Submission</button>
+              <button class="primary" data-act="submitRetrieval">Store retrieval Submission</button>
+            </p>
+          </div>
+        </article>`;
+    }
+
+    function clarifierBox() {
+      const msgs = state.clarifierMessages.map(m =>
+        `<div class="msg"><div class="who">${m.who}</div>${m.text}</div>`
+      ).join("") || "<p class='lead'>No messages. This thread is per Lesson, not a Submission.</p>";
+      return `
+        <div class="thread">
+          <strong>Clarifier</strong> · ICE Lesson 1 · no tools
+          ${msgs}
+          <button class="ghost" data-act="askClarifier">Ask a dummy question</button>
+        </div>`;
+    }
+
+    function renderA() {
+      const step = (id, label) => {
+        const order = ["home", "teacher", "lesson"];
+        const cur = state.screen;
+        const done = (id === "home" && state.published) ||
+          (id === "teacher" && state.published) ||
+          (id === "lesson" && state.submissions.length);
+        const now = cur === id || (id === "home" && cur === "home");
+        return `<span class="${done ? "done" : ""} ${now ? "now" : ""}">${label}</span>`;
+      };
+      if (state.screen === "home") {
+        return `
+          <div class="a-wrap">
+            <div class="a-steps">${step("home", "1 Workshop")}${step("teacher", "2 Teacher")}${step("lesson", "3 Lesson")}</div>
+            <h1>Cleararc</h1>
+            <p class="lead">One Learner. First slice: Teacher writes ICE Lesson 1; you read, may ask the Clarifier, and store one Submission.</p>
+            <div class="a-card">
+              <h2>ICE-ing the Economy</h2>
+              <p>Paper walkthrough. ${state.published ? "Lesson 1 is published." : "No Lesson published yet."}</p>
+              ${state.published
+                ? `<button class="primary" data-act="openLesson">Open Lesson 1</button>`
+                : `<button class="primary" data-act="startTeacher">Ask the Teacher to write Lesson 1</button>`}
+              <button class="ghost" data-act="reset">Reset</button>
+            </div>
+          </div>`;
+      }
+      if (state.screen === "teacher") {
+        return `
+          <div class="a-wrap">
+            <div class="a-steps">${step("home", "1 Workshop")}${step("teacher", "2 Teacher")}${step("lesson", "3 Lesson")}</div>
+            <h1>Teacher</h1>
+            <p class="lead">Pi session with the paper-walkthrough skill. Write is publish.</p>
+            <div class="stream">${state.teacherLog.map(l => `<p class="ln ${l.includes("Published") ? "pub" : ""}">${l}</p>`).join("")}</div>
+            <button class="primary" data-act="publish">Publish Lesson 1</button>
+            <button class="ghost" data-act="home">Back</button>
+          </div>`;
+      }
+      return `
+        <div class="a-wrap">
+          <div class="a-steps">${step("home", "1 Workshop")}${step("teacher", "2 Teacher")}${step("lesson", "3 Lesson")}</div>
+          ${lessonBody()}
+          <p>
+            <button class="ghost" data-act="toggleClarifier">${state.clarifierOpen ? "Hide" : "Open"} Clarifier</button>
+            <button class="ghost" data-act="home">Workshop</button>
+          </p>
+          ${state.clarifierOpen ? clarifierBox() : ""}
+        </div>`;
+    }
+
+    function renderB() {
+      if (!state.published && state.screen === "home") {
+        return `
+          <div class="b-home">
+            <p class="lead">Cleararc · split studio</p>
+            <h1>Workshop</h1>
+            <p>Left will hold the Lesson. Right holds the Teacher, then the Clarifier.</p>
+            <button class="primary" data-act="startTeacher">Start Teacher</button>
+            <button class="ghost" data-act="reset">Reset</button>
+          </div>`;
+      }
+      const railMode = state.screen === "teacher" || !state.published ? "teacher" : (state.clarifierOpen ? "clarifier" : "teacher");
+      const rail = railMode === "teacher" ? `
+        <h2>Teacher</h2>
+        <div class="stream">${(state.teacherLog.length ? state.teacherLog : ["Idle."]).map(l => `<p class="ln">${l}</p>`).join("")}</div>
+        ${state.published
+          ? `<p class="lead">Published. The Lesson is on the left.</p>`
+          : `<button class="primary" data-act="publish">Publish Lesson 1</button>`}
+      ` : clarifierBox();
+      return `
+        <div class="b-shell">
+          <div class="b-main">
+            ${state.published ? lessonBody() : "<p class='lead'>Lesson appears here after publication.</p>"}
+          </div>
+          <aside class="b-rail">
+            <div class="b-tabs">
+              <button class="${!state.clarifierOpen ? "on" : ""}" data-act="closeClarifier">Teacher</button>
+              <button class="${state.clarifierOpen ? "on" : ""}" data-act="openClarifier">Clarifier</button>
+            </div>
+            ${rail}
+            <p style="margin-top:auto"><button class="ghost" data-act="home">Workshop</button> <button class="ghost" data-act="reset">Reset</button></p>
+          </aside>
+        </div>`;
+    }
+
+    function renderC() {
+      const bar = `
+        <div class="c-bar">
+          <span><strong>Cleararc</strong> · ICE-ing the Economy</span>
+          <span>${state.published ? "Lesson 1 published" : "Nothing published"} · ${state.submissions.length} Submission(s)</span>
+        </div>`;
+      if (!state.published) {
+        return bar + `
+          <div class="c-desk c-hero">
+            <p class="lead">One Course on the desk.</p>
+            <h1>ICE-ing the Economy</h1>
+            <p>Hernandez (2026), paper walkthrough. The Teacher writes on a sheet; the Lesson stays the page.</p>
+            <button class="primary" data-act="startTeacher">Call the Teacher</button>
+            <button class="ghost" data-act="reset">Reset</button>
+          </div>
+          ${state.screen === "teacher" ? `
+            <div class="c-sheet">
+              <h2>Teacher sheet</h2>
+              <div class="stream">${state.teacherLog.map(l => `<p class="ln">${l}</p>`).join("")}</div>
+              <button class="primary" data-act="publish">Publish onto the desk</button>
+              <button class="ghost" data-act="home">Put away</button>
+            </div>` : ""}`;
+      }
+      return bar + `
+        <div class="c-desk">${lessonBody()}</div>
+        <button class="c-fab" data-act="toggleClarifier">Clarifier</button>
+        ${state.clarifierOpen ? `<div class="c-drawer">${clarifierBox()}</div>` : ""}`;
+    }
+
+    function render() {
+      const v = variant();
+      document.getElementById("switch-label").textContent = `${v} — ${VARIANTS[v]}`;
+      const app = document.getElementById("app");
+      if (v === "A") app.innerHTML = renderA();
+      if (v === "B") app.innerHTML = renderB();
+      if (v === "C") app.innerHTML = renderC();
+      document.getElementById("dump").textContent = "STATE\n" + JSON.stringify(state, null, 2);
+      bind();
+    }
+
+    function bind() {
+      document.querySelectorAll("[data-act]").forEach(el => {
+        el.addEventListener("click", () => {
+          const a = el.getAttribute("data-act");
+          if (a === "openClarifier") { state.clarifierOpen = true; render(); return; }
+          if (a === "closeClarifier") { state.clarifierOpen = false; if (state.published) state.screen = "lesson"; render(); return; }
+          act(a);
+        });
+      });
+      const ta = document.getElementById("retrieval");
+      if (ta) {
+        ta.addEventListener("input", () => { state.retrieval = ta.value; document.getElementById("dump").textContent = "STATE\n" + JSON.stringify(state, null, 2); });
+      }
+    }
+
+    document.getElementById("prev").onclick = () => cycle(-1);
+    document.getElementById("next").onclick = () => cycle(1);
+    document.addEventListener("keydown", (e) => {
+      const t = e.target;
+      if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+      if (e.key === "ArrowLeft") cycle(-1);
+      if (e.key === "ArrowRight") cycle(1);
+    });
+
+    render();
+  </script>
+</body>
+</html>

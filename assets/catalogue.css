@@ -3,12 +3,6 @@
   --text: #18201b;
   --muted: #667069;
   --line: #d9ddd9;
-  --green: #23653c;
-  --green-bg: #e3f2e7;
-  --blue: #315c86;
-  --blue-bg: #e6eef6;
-  --grey: #646964;
-  --grey-bg: #ebedeb;
 }
 
 * { box-sizing: border-box; }
@@ -92,19 +86,6 @@ h1 {
   justify-content: space-between;
 }
 
-.tag {
-  display: inline-block;
-  padding: 5px 9px;
-  border-radius: 999px;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.tag.completed { color: var(--green); background: var(--green-bg); }
-.tag.planned { color: var(--blue); background: var(--blue-bg); }
-.tag.archived { color: var(--grey); background: var(--grey-bg); }
 .number { color: var(--muted); font-size: 0.75rem; }
 
 .course h3 {
@@ -153,11 +134,5 @@ h1 {
     --text: #f2f3ef;
     --muted: #a7aea8;
     --line: #363d37;
-    --green: #a9deb7;
-    --green-bg: #23452d;
-    --blue: #b4d4f1;
-    --blue-bg: #263d54;
-    --grey: #c6cbc6;
-    --grey-bg: #3a3e3a;
   }
 }
