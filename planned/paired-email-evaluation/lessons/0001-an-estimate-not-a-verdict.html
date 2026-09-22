@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 1 · 80 out of 100 is an estimate</title>
+<link rel="stylesheet" href="../../ice-ing-the-economy/assets/lesson.css"><link rel="stylesheet" href="../../ice-ing-the-economy/assets/quiz.css">
+</head><body><main class="page">
+<header class="masthead"><p class="eyebrow">Lesson 1 of 5 · Paired email evaluation</p><h1>80 out of 100 is an estimate, not a verdict</h1><p class="standfirst">Start with a count you can see. Then ask what another reasonable sample of emails could have shown.</p><p class="meta">≈9 minutes · Single-model accuracy and Wilson intervals</p></header>
+
+<h2>One concrete result</h2>
+<p>Suppose one model classifies 80 of 100 hand-labelled emails correctly. Its <em class="term">observed accuracy</em> is <strong>80 / 100 = 0.80 = 80%</strong>. That is a faithful summary of these 100 emails.</p>
+<p>It is not automatically the model's true accuracy for your inbox. A different random draw from the same defined inbox window could contain more awkward newsletters, more ambiguous requests, or simply more of the model's weak cases. The gap between a sample result and the result that repeated samples would produce is <em class="term">sampling uncertainty</em>.</p>
+<p class="sidenote">The target here is your defined personal email population, not “all email” or every future inbox. Narrow scope does not eliminate sampling uncertainty; it makes the claim honest.</p>
+
+<div class="quiz" data-answer="b"><span class="label">Check yourself</span><p class="q">A second random sample of 100 comparable emails gives 74% accuracy. Which statement is justified?</p><div class="opts"><button class="opt">The first 80% was wrong.</button><button class="opt">Both results can be plausible samples even if the model's underlying performance did not change.</button><button class="opt">The model's true accuracy must be 77%.</button></div><div class="answer-reveal"><p>Correct. A sample proportion moves because which emails happen to be sampled. You need an interval to quantify ordinary movement; averaging two samples would estimate a different, 200-email result.</p></div></div>
+
+<h2>The ordinary binomial standard error</h2>
+<p>For a first model, pretend each sampled email is an independent correct/wrong draw with the same underlying probability <em>p</em>. A correct/wrong result has variance <em>p(1 − p)</em>. Averaging <em>n</em> such results divides variance by <em>n</em>; taking a square root gives the standard error:</p>
+<p><strong>SE(p-hat) = sqrt(p(1 − p) / n)</strong></p>
+<p>We do not know the underlying <em>p</em>, so planning commonly substitutes the observed proportion, 0.80. For 80/100:</p>
+<p><strong>SE ≈ sqrt(0.80 × 0.20 / 100) = sqrt(0.0016) = 0.040</strong>, or about 4 percentage points.</p>
+<p>“Standard error” is not an error that happened to the model. It is the typical sampling-scale wobble of the estimated proportion under this binomial approximation.</p>
+
+<h2>Why 1.96 appears</h2>
+<p>With enough independent observations, a sample proportion is approximately bell-shaped around the underlying proportion. About 95% of a standard normal bell lies within 1.96 standard deviations of its centre. That is why the simple normal interval is:</p>
+<p><strong>p-hat ± 1.96 × SE</strong></p>
+<p>Here that is <strong>0.80 ± 1.96 × 0.040 = 0.80 ± 0.078</strong>, or roughly 72.2% to 87.8%. “95%” describes the long-run procedure: if we repeatedly sampled and built intervals this way, about 95% would cover the fixed underlying accuracy. It does not mean a 95% chance that this particular fixed value is in the interval.</p>
+
+<h2>Why use Wilson instead?</h2>
+<p>The normal interval is a useful derivation, but it treats the estimated proportion's standard error as fixed. Near 0% or 100%, or with small samples, it can be too optimistic and can even run below 0 or above 100. The <em class="term">Wilson score interval</em> solves the score-test inequality instead. It has better coverage for proportions and stays in the possible range.</p>
+<p>For <em>p-hat = 0.80</em>, <em>n = 100</em>, and <em>z = 1.95996</em>, so <em>z² = 3.84146</em>:</p>
+<ol><li><strong>Denominator:</strong> 1 + z²/n = 1 + 3.84146/100 = <strong>1.03841</strong>.</li><li><strong>Centre:</strong> (p-hat + z²/(2n)) / denominator = (0.80 + 3.84146/200) / 1.03841 = <strong>0.7889</strong>.</li><li><strong>Half-width:</strong> z × sqrt[p-hat(1 − p-hat)/n + z²/(4n²)] / denominator = 1.95996 × sqrt(0.0016 + 0.0000960) / 1.03841 = <strong>0.0777</strong>.</li><li><strong>Interval:</strong> 0.7889 ± 0.0777 = <strong>71.1% to 86.7%</strong>.</li></ol>
+<div class="callout"><span class="label">Read the result precisely</span><p>80/100 is evidence consistent with accuracy around 80%, but the notebook's 95% Wilson interval is 71.1%–86.7%. It supports an exploratory description, not a precise claim that the model is exactly 80% accurate.</p></div>
+<div class="recall"><span class="label">Retrieval practice</span><p class="prompt">Why does multiplying a standard error by 1.96 make a 95% interval only approximately, rather than exactly?</p><textarea placeholder="One or two sentences."></textarea><div class="model-answer"><p>The multiplier comes from the standard normal bell. The sample proportion only approaches that bell under assumptions and sufficient sample size; its estimated standard error is also imperfect. Wilson improves the proportion interval's actual coverage, especially at small samples or near boundaries.</p></div></div>
+<nav class="lesson-nav"><span><a href="../index.html">← Course index</a></span><span><a href="0002-precision-and-rare-classes.html">Lesson 2: Why 200 changes the picture →</a></span></nav>
+</main><script src="../../ice-ing-the-economy/assets/quiz.js"></script></body></html>
