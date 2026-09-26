@@ -15,6 +15,10 @@ import tomllib
 class ConfigError(ValueError):
     """A configuration file is missing, malformed, or unsafe to use."""
 
+    def __init__(self, message: str, *, missing_settings: tuple[str, ...] = ()) -> None:
+        super().__init__(message)
+        self.missing_settings = missing_settings
+
 
 @dataclass(frozen=True)
 class DeliveryConfig:
@@ -82,17 +86,16 @@ def import_readpack_config() -> tuple[Path, Path]:
         "email.smtp_host": email.get("smtp_host"),
         "email.password_command": email.get("password_command"),
     }
-    missing = [field for field, value in required.items() if not isinstance(value, str) or not value.strip()]
+    missing = _missing_settings(required)
     if missing:
         raise ConfigError(
             "Readpack configuration is missing required non-secret setting(s): "
             + ", ".join(missing)
-            + ". The source was not changed."
+            + ". The source was not changed.",
+            missing_settings=missing,
         )
 
-    port = email.get("smtp_port", 587)
-    if not isinstance(port, int) or isinstance(port, bool) or not 1 <= port <= 65535:
-        raise ConfigError("Readpack email.smtp_port must be an integer from 1 to 65535.")
+    port = _smtp_port(email)
 
     payload = _render_config(
         kindle["address"], email["sender"], email["smtp_host"], port,
@@ -128,12 +131,13 @@ def load_config(path: Path | None = None) -> DeliveryConfig:
         "email.username": email.get("username"),
         "email.password_command": email.get("password_command"),
     }
-    missing = [field for field, value in required.items() if not isinstance(value, str) or not value.strip()]
+    missing = _missing_settings(required)
     if missing:
-        raise ConfigError("Missing required configuration setting(s): " + ", ".join(missing) + ".")
-    port = email.get("smtp_port", 587)
-    if not isinstance(port, int) or isinstance(port, bool) or not 1 <= port <= 65535:
-        raise ConfigError("email.smtp_port must be an integer from 1 to 65535.")
+        raise ConfigError(
+            "Missing required configuration setting(s): " + ", ".join(missing) + ".",
+            missing_settings=missing,
+        )
+    port = _smtp_port(email)
 
     return DeliveryConfig(
         kindle_address=kindle["address"],
@@ -203,8 +207,7 @@ def configuration_diagnostics(path: Path | None = None) -> list[ConfigDiagnostic
         else:
             diagnostics.extend(
                 ConfigDiagnostic(f"Configure {field} in config.toml.", True)
-                for field in ("kindle.address", "email.sender", "email.smtp_host", "email.username", "email.password_command")
-                if field in message
+                for field in error.missing_settings
             )
         config = None
 
@@ -228,6 +231,21 @@ def configuration_diagnostics(path: Path | None = None) -> list[ConfigDiagnostic
 
 def books_app_available() -> bool:
     return any(Path(location).exists() for location in ("/System/Applications/Books.app", "/Applications/Books.app"))
+
+
+def _missing_settings(settings: dict[str, object]) -> tuple[str, ...]:
+    return tuple(
+        field
+        for field, value in settings.items()
+        if not isinstance(value, str) or not value.strip()
+    )
+
+
+def _smtp_port(email_settings: dict[str, object]) -> int:
+    port = email_settings.get("smtp_port", 587)
+    if not isinstance(port, int) or isinstance(port, bool) or not 1 <= port <= 65535:
+        raise ConfigError("email.smtp_port must be an integer from 1 to 65535.")
+    return port
 
 
 def _render_config(
