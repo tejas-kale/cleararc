@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path, PurePosixPath
 import posixpath
 import re
@@ -77,13 +77,14 @@ class ValidatedEditions:
         return self.apple if target is Edition.APPLE else self.kindle
 
 
-EditionBuilder = Callable[[Course, Path], Path]
+EditionBuilder = Callable[[Course, Path, date | None], Path]
 
 
 def build_and_validate_course(
     course: Course,
     repository_root: Path,
     builders: Mapping[Edition, EditionBuilder] | None = None,
+    publication_date: date | None = None,
 ) -> ValidatedEditions:
     """Build both editions, then return them only when the paired gate passes."""
     edition_builders = builders or {
@@ -94,7 +95,7 @@ def build_and_validate_course(
     diagnostics: list[ValidationDiagnostic] = []
     for target in Edition:
         try:
-            paths[target] = edition_builders[target](course, repository_root)
+            paths[target] = edition_builders[target](course, repository_root, publication_date)
         except EditionBuildError as error:
             diagnostics.append(
                 _diagnostic(course, target, course.source, "edition-build", str(error))

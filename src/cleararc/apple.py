@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from enum import StrEnum
 from html import escape, unescape
 from html.parser import HTMLParser
@@ -105,17 +105,26 @@ th, td {
 """
 
 
-def build_apple_pilot(course: Course, repository_root: Path) -> Path:
+def build_apple_pilot(
+    course: Course, repository_root: Path, publication_date: date | None = None
+) -> Path:
     """Build the supported Apple edition for the first end-to-end course pilot."""
-    return _build_pilot(course, repository_root, edition=Edition.APPLE)
+    return _build_pilot(course, repository_root, Edition.APPLE, publication_date)
 
 
-def build_kindle_pilot(course: Course, repository_root: Path) -> Path:
+def build_kindle_pilot(
+    course: Course, repository_root: Path, publication_date: date | None = None
+) -> Path:
     """Build the supported static Kindle edition for the first course pilot."""
-    return _build_pilot(course, repository_root, edition=Edition.KINDLE)
+    return _build_pilot(course, repository_root, Edition.KINDLE, publication_date)
 
 
-def _build_pilot(course: Course, repository_root: Path, edition: Edition) -> Path:
+def _build_pilot(
+    course: Course,
+    repository_root: Path,
+    edition: Edition,
+    publication_date: date | None,
+) -> Path:
     if course.course_id != "datavizlib-source-walkthrough":
         raise EditionBuildError(
             f"Course {course.course_id!r} is not the supported pilot; only "
@@ -131,13 +140,14 @@ def _build_pilot(course: Course, repository_root: Path, edition: Edition) -> Pat
 
     documents = _load_documents(course, repository_root, source_root, edition)
     assets = _load_assets(source_root, edition)
-    destination = repository_root / "build" / f"{course.course_id}.{edition.value}.epub"
+    dated_suffix = f".{publication_date.isoformat()}" if publication_date else ""
+    destination = repository_root / "build" / f"{course.course_id}{dated_suffix}.{edition.value}.epub"
     destination.parent.mkdir(parents=True, exist_ok=True)
 
     with NamedTemporaryFile(dir=destination.parent, suffix=".epub", delete=False) as temporary_file:
         temporary_path = Path(temporary_file.name)
     try:
-        _write_epub(temporary_path, course, documents, assets, cover, edition)
+        _write_epub(temporary_path, course, documents, assets, cover, edition, publication_date)
         temporary_path.replace(destination)
     finally:
         temporary_path.unlink(missing_ok=True)
@@ -424,14 +434,18 @@ def _write_epub(
     assets: dict[PurePosixPath, bytes],
     cover: Path,
     edition: Edition,
+    publication_date: date | None,
 ) -> None:
     with ZipFile(destination, "w", compression=ZIP_DEFLATED) as archive:
         archive.writestr("mimetype", "application/epub+zip", compress_type=ZIP_STORED)
         archive.writestr("META-INF/container.xml", _container_xml())
-        archive.writestr("OEBPS/content.opf", _package_document(course, documents, assets, edition))
+        archive.writestr(
+            "OEBPS/content.opf",
+            _package_document(course, documents, assets, edition, publication_date),
+        )
         archive.writestr("OEBPS/nav.xhtml", _navigation_document(course, documents))
         archive.writestr("OEBPS/text/cover.xhtml", _cover_page())
-        archive.writestr("OEBPS/text/title.xhtml", _title_page(course))
+        archive.writestr("OEBPS/text/title.xhtml", _title_page(course, publication_date))
         archive.writestr("OEBPS/text/contents.xhtml", _contents_page(documents))
         for document in documents:
             archive.writestr(f"OEBPS/{document.target}", document.content)
@@ -449,7 +463,11 @@ def _container_xml() -> str:
 
 
 def _package_document(
-    course: Course, documents: tuple[EpubDocument, ...], assets: dict[PurePosixPath, bytes], edition: Edition
+    course: Course,
+    documents: tuple[EpubDocument, ...],
+    assets: dict[PurePosixPath, bytes],
+    edition: Edition,
+    publication_date: date | None,
 ) -> str:
     modified = datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z")
     manifest = [
@@ -473,6 +491,7 @@ def _package_document(
             f'<item id="asset-{index}" href="assets/{escape(str(path), quote=True)}" '
             f'media-type="{_media_type(path)}" />'
         )
+    dated_metadata = f"    <dc:date>{publication_date.isoformat()}</dc:date>\n" if publication_date else ""
     return f"""<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="book-id" xml:lang="en-GB">
   <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
@@ -481,7 +500,7 @@ def _package_document(
     <dc:creator>{escape(course.author)}</dc:creator>
     <dc:publisher>{escape(course.collection)}</dc:publisher>
     <dc:language>en-GB</dc:language>
-    <meta property="dcterms:modified">{modified}</meta>
+{dated_metadata}    <meta property="dcterms:modified">{modified}</meta>
     <meta name="cover" content="cover-image" />
   </metadata>
   <manifest>
@@ -551,14 +570,25 @@ def _cover_page() -> str:
 """
 
 
-def _title_page(course: Course) -> str:
+def _title_page(course: Course, publication_date: date | None) -> str:
+    dated_edition = (
+        f"<p>Edition date: {_human_date(publication_date)}</p>" if publication_date else ""
+    )
     return f"""<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-GB">
   <head><title>{escape(course.display_title)}</title><link rel="stylesheet" href="../assets/lesson.css" /></head>
-  <body><main class="title-page"><p class="kicker">{escape(course.collection)}</p><h1>{escape(course.display_title)}</h1><p>By {escape(course.author)}</p></main></body>
+  <body><main class="title-page"><p class="kicker">{escape(course.collection)}</p><h1>{escape(course.display_title)}</h1><p>By {escape(course.author)}</p>{dated_edition}</main></body>
 </html>
 """
+
+
+def _human_date(publication_date: date) -> str:
+    months = (
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December",
+    )
+    return f"{publication_date.day} {months[publication_date.month - 1]} {publication_date.year}"
 
 
 def _contents_page(documents: tuple[EpubDocument, ...]) -> str:
