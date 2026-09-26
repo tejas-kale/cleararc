@@ -12,10 +12,10 @@ Create the private configuration template with:
 uv run cleararc config init
 ```
 
-The command creates `config.toml` in `${XDG_CONFIG_HOME:-~/.config}/cleararc/` with owner-only permissions, and it will not replace an existing file. Edit its `[kindle]` and `[email]` values. Set `email.password_command` to a macOS Keychain lookup in this form:
+The command creates `config.toml` in `${XDG_CONFIG_HOME:-~/.config}/cleararc/` with owner-only permissions, and it will not replace an existing file. Edit its `[kindle]` and `[email]` values. Set `email.password_command` to a macOS Keychain lookup. Replace `SERVICE` and `ACCOUNT` with the Keychain item values, and omit the `-a ACCOUNT` part when no account selector is needed. For example:
 
 ```toml
-password_command = "security find-generic-password -s SERVICE [-a ACCOUNT] -w"
+password_command = "security find-generic-password -s cleararc-smtp -a smtp-user -w"
 ```
 
 Do not put the SMTP password in this file. `cleararc config import-readpack` can create the Cleararc file from the non-secret settings in the adjacent `readpack` configuration if Cleararc configuration does not already exist. It is a one-time copy; Cleararc does not read `readpack` configuration during normal operation.
