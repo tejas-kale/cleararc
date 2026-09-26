@@ -3,6 +3,7 @@ from html.parser import HTMLParser
 import posixpath
 import pytest
 from pathlib import Path
+import time
 from urllib.parse import urlsplit
 from xml.etree import ElementTree
 from zipfile import ZIP_STORED, ZipFile
@@ -262,4 +263,51 @@ def test_build_creates_a_static_kindle_pilot_with_visible_teaching_fallbacks() -
                     if parts.scheme or parts.netloc or not parts.path:
                         continue
                     target = posixpath.normpath(str(Path(name).parent / parts.path))
-                    assert target in names, f"{name} has a broken local reference: {reference}"
+                assert target in names, f"{name} has a broken local reference: {reference}"
+
+
+def test_build_all_creates_and_validates_every_active_course_edition_without_delivery() -> None:
+    result = CliRunner().invoke(main, ["build", "--all"])
+
+    assert result.exit_code == 0, result.output
+    assert result.output.count("Built and validated Apple edition:") == 7
+    assert result.output.count("Built and validated Kindle edition:") == 7
+    assert "Delivered" not in result.output
+
+    paired_kindle = PROJECT_ROOT / "build/paired-email-evaluation.kindle.epub"
+    football_kindle = PROJECT_ROOT / "build/football-causal-inference.kindle.epub"
+    bicycle_apple = PROJECT_ROOT / "build/used-bicycle-buying-berlin.apple.epub"
+    assert paired_kindle.is_file()
+    assert football_kindle.is_file()
+    assert bicycle_apple.is_file()
+
+    with ZipFile(paired_kindle) as archive:
+        names = set(archive.namelist())
+        assert "OEBPS/assets/external/planned/ice-ing-the-economy/assets/lesson.css" in names
+        lesson = archive.read("OEBPS/text/lessons/0001-an-estimate-not-a-verdict.xhtml").decode()
+        assert 'class="quiz-static"' in lesson
+        assert "Both results can be plausible samples" in lesson
+
+    with ZipFile(football_kindle) as archive:
+        lesson = archive.read("OEBPS/text/lessons/0001-from-question-to-estimand.xhtml").decode()
+        assert 'class="quiz-static"' in lesson
+        assert "Five-match dismissal effect among clubs that dismissed coaches" in lesson
+
+    with ZipFile(bicycle_apple) as archive:
+        lesson = archive.read("OEBPS/text/lessons/0001-buy-a-safe-bike-at-the-flohmarkt.xhtml").decode()
+        assert "bike-anatomy-fit.png" in lesson
+
+    first_builds = {
+        path.name: path.read_bytes()
+        for path in PROJECT_ROOT.glob("build/*.epub")
+        if ".2026-09-26." not in path.name
+    }
+    time.sleep(1.1)
+    repeated = CliRunner().invoke(main, ["build", "--all"])
+
+    assert repeated.exit_code == 0, repeated.output
+    assert {
+        path.name: path.read_bytes()
+        for path in PROJECT_ROOT.glob("build/*.epub")
+        if ".2026-09-26." not in path.name
+    } == first_builds

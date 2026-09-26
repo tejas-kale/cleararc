@@ -79,20 +79,40 @@ def list(registry_path: Path | None) -> None:
 
 
 @main.command()
-@click.option("--target", type=click.Choice(["apple", "kindle"]), default="apple", show_default=True)
-@click.argument("course_id")
-def build(target: str, course_id: str) -> None:
-    """Build a supported Apple or Kindle edition for COURSE_ID."""
+@click.option("--target", type=click.Choice(["apple", "kindle"]))
+@click.option("--all", "build_all", is_flag=True, help="Build and validate every active course edition.")
+@click.argument("course_id", required=False)
+def build(target: str | None, build_all: bool, course_id: str | None) -> None:
+    """Build a course edition, or all paired editions with --all."""
     try:
-        course = next(course for course in load_course_registry() if course.course_id == course_id)
-    except StopIteration as error:
-        raise click.ClickException(f"Unknown course {course_id!r}.") from error
+        courses = load_course_registry()
     except RegistryError as error:
         raise click.ClickException(str(error)) from error
 
     repository_root = Path(__file__).resolve().parents[2]
+    if build_all:
+        if course_id is not None or target is not None:
+            raise click.ClickException("--all cannot be combined with COURSE_ID or --target.")
+        for course in courses:
+            try:
+                editions = build_and_validate_course(course, repository_root)
+            except PublicationGateError as error:
+                raise click.ClickException(str(error)) from error
+            for edition in Edition:
+                click.echo(
+                    f"Built and validated {edition.value.title()} edition: "
+                    f"{editions.path_for(edition)}"
+                )
+        return
+
+    if course_id is None:
+        raise click.ClickException("COURSE_ID is required unless --all is supplied.")
     try:
-        edition = Edition(target)
+        course = next(course for course in courses if course.course_id == course_id)
+    except StopIteration as error:
+        raise click.ClickException(f"Unknown course {course_id!r}.") from error
+    try:
+        edition = Edition(target or Edition.APPLE)
         builder = {
             Edition.APPLE: build_apple_pilot,
             Edition.KINDLE: build_kindle_pilot,

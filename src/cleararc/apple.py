@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import UTC, date, datetime
+from datetime import date
 from enum import StrEnum
 from html import escape, unescape
 from html.parser import HTMLParser
@@ -12,7 +12,7 @@ import posixpath
 import re
 from tempfile import NamedTemporaryFile
 from urllib.parse import urlsplit, urlunsplit
-from zipfile import ZIP_DEFLATED, ZIP_STORED, ZipFile
+from zipfile import ZIP_DEFLATED, ZIP_STORED, ZipFile, ZipInfo
 
 from cleararc.registry import Course
 
@@ -33,19 +33,33 @@ _EXTERNAL_SCHEMES = frozenset({"data", "http", "https", "mailto", "tel"})
 _ATTRIBUTE = re.compile(r"(?P<name>href|src)=(?P<quote>[\"'])(?P<value>.*?)(?P=quote)", re.IGNORECASE)
 _H1 = re.compile(r"<h1\b[^>]*>(?P<title>.*?)</h1>", re.IGNORECASE | re.DOTALL)
 _TAGS = re.compile(r"<[^>]+>")
+_ASSET_SUFFIXES = frozenset({".css", ".gif", ".jpeg", ".jpg", ".js", ".png", ".svg", ".woff", ".woff2"})
+_BUILD_EPOCH = date(1980, 1, 1)
 
 _APPLE_QUIZ_SCRIPT = """(function () {
   function bindQuiz(root) {
-    var answered = false;
-    var answer = root.getAttribute("data-answer");
+    var answer = (root.getAttribute("data-answer") || "").toLowerCase();
     var buttons = root.querySelectorAll("button[data-choice]");
+    if (!buttons.length) {
+      buttons = root.querySelectorAll("button.opt");
+    }
     buttons.forEach(function (button) {
       button.addEventListener("click", function () {
-        if (answered) return;
-        answered = true;
-        var correct = button.getAttribute("data-choice") === answer;
+        if (root.getAttribute("data-answered")) return;
+        root.setAttribute("data-answered", "true");
+        var choice = button.getAttribute("data-choice") || button.getAttribute("data-opt");
+        if (!choice) {
+          choice = String.fromCharCode(97 + Array.prototype.indexOf.call(buttons, button));
+          button.setAttribute("data-opt", choice);
+        }
+        var correct = choice.toLowerCase() === answer;
         buttons.forEach(function (other) {
-          var right = other.getAttribute("data-choice") === answer;
+          var otherChoice = other.getAttribute("data-choice") || other.getAttribute("data-opt");
+          if (!otherChoice) {
+            otherChoice = String.fromCharCode(97 + Array.prototype.indexOf.call(buttons, other));
+            other.setAttribute("data-opt", otherChoice);
+          }
+          var right = otherChoice.toLowerCase() === answer;
           other.setAttribute("data-state", right ? "right" : "wrong");
           other.disabled = true;
         });
@@ -57,6 +71,22 @@ _APPLE_QUIZ_SCRIPT = """(function () {
         root.appendChild(feedback);
       });
     });
+    var check = root.querySelector("button:not([data-choice]):not(.opt)");
+    if (root.hasAttribute("data-quiz") && check) {
+      check.addEventListener("click", function () {
+        var picked = root.querySelector("input:checked");
+        var feedback = root.querySelector(".feedback");
+        if (!feedback) return;
+        if (!picked) {
+          feedback.textContent = "Choose an answer first.";
+          return;
+        }
+        var correct = picked.value.toLowerCase() === answer;
+        feedback.textContent = correct
+          ? root.getAttribute("data-correct") || "Correct."
+          : root.getAttribute("data-incorrect") || "Not quite.";
+      });
+    }
   }
 
   document.querySelectorAll(".quiz").forEach(bindQuiz);
@@ -108,29 +138,23 @@ th, td {
 def build_apple_pilot(
     course: Course, repository_root: Path, publication_date: date | None = None
 ) -> Path:
-    """Build the supported Apple edition for the first end-to-end course pilot."""
-    return _build_pilot(course, repository_root, Edition.APPLE, publication_date)
+    """Build the Apple edition from a course's canonical HTML."""
+    return _build_edition(course, repository_root, Edition.APPLE, publication_date)
 
 
 def build_kindle_pilot(
     course: Course, repository_root: Path, publication_date: date | None = None
 ) -> Path:
-    """Build the supported static Kindle edition for the first course pilot."""
-    return _build_pilot(course, repository_root, Edition.KINDLE, publication_date)
+    """Build the static Kindle edition from a course's canonical HTML."""
+    return _build_edition(course, repository_root, Edition.KINDLE, publication_date)
 
 
-def _build_pilot(
+def _build_edition(
     course: Course,
     repository_root: Path,
     edition: Edition,
     publication_date: date | None,
 ) -> Path:
-    if course.course_id != "datavizlib-source-walkthrough":
-        raise EditionBuildError(
-            f"Course {course.course_id!r} is not the supported pilot; only "
-            "'datavizlib-source-walkthrough' can be built at this stage."
-        )
-
     source_root = repository_root / course.source
     cover = repository_root / course.cover
     if not source_root.is_dir():
@@ -138,8 +162,17 @@ def _build_pilot(
     if not cover.is_file():
         raise EditionBuildError(f"Course {course.course_id!r} cover {cover} is missing.")
 
-    documents = _load_documents(course, repository_root, source_root, edition)
-    assets = _load_assets(source_root, edition)
+    source_paths = tuple(PurePosixPath(document) for document in course.documents)
+    document_targets = {
+        source_path: _document_target(source_path.relative_to(course.source))
+        for source_path in source_paths
+    }
+    assets, asset_targets = _load_assets(
+        repository_root, source_root, source_paths, edition
+    )
+    documents = _load_documents(
+        course, repository_root, source_paths, document_targets, asset_targets, edition
+    )
     dated_suffix = f".{publication_date.isoformat()}" if publication_date else ""
     destination = repository_root / "build" / f"{course.course_id}{dated_suffix}.{edition.value}.epub"
     destination.parent.mkdir(parents=True, exist_ok=True)
@@ -155,51 +188,99 @@ def _build_pilot(
 
 
 def _load_documents(
-    course: Course, repository_root: Path, source_root: Path, edition: Edition
+    course: Course,
+    repository_root: Path,
+    source_paths: tuple[PurePosixPath, ...],
+    document_targets: dict[PurePosixPath, PurePosixPath],
+    asset_targets: dict[PurePosixPath, PurePosixPath],
+    edition: Edition,
 ) -> tuple["EpubDocument", ...]:
-    source_paths = tuple(PurePosixPath(document) for document in course.documents)
-    relative_paths = tuple(path.relative_to(course.source) for path in source_paths)
-    targets = {relative_path: _document_target(relative_path) for relative_path in relative_paths}
     documents: list[EpubDocument] = []
-    for relative_path in relative_paths:
-        source_path = source_root / relative_path
+    for source in source_paths:
+        source_path = repository_root / source
         if not source_path.is_file():
             raise EditionBuildError(
-                f"Course {course.course_id!r} source document {repository_root / course.source / relative_path} is missing."
+                f"Course {course.course_id!r} source document {source_path} is missing."
             )
-        source = source_path.read_text(encoding="utf-8")
-        title = _document_title(source, source_path)
+        contents = source_path.read_text(encoding="utf-8")
+        title = _document_title(contents, source_path)
         transformed = _normalise_xhtml(
-            _rewrite_local_references(source, relative_path, targets, targets[relative_path]), edition
+            _rewrite_local_references(
+                contents, source, document_targets, asset_targets, document_targets[source]
+            ),
+            edition,
         )
         documents.append(
             EpubDocument(
-                relative_path,
-                targets[relative_path],
+                source.relative_to(course.source),
+                document_targets[source],
                 title,
                 transformed,
-                edition is Edition.APPLE and "<script" in source.lower(),
+                edition is Edition.APPLE and "<script" in contents.lower(),
             )
         )
     return tuple(documents)
 
 
-def _load_assets(source_root: Path, edition: Edition) -> dict[PurePosixPath, bytes]:
+def _load_assets(
+    repository_root: Path,
+    source_root: Path,
+    source_documents: tuple[PurePosixPath, ...],
+    edition: Edition,
+) -> tuple[dict[PurePosixPath, bytes], dict[PurePosixPath, PurePosixPath]]:
     assets_root = source_root / "assets"
-    if not assets_root.is_dir():
-        raise EditionBuildError(f"Course source {source_root} has no assets directory.")
+    asset_sources = {
+        PurePosixPath(path.relative_to(repository_root).as_posix())
+        for path in assets_root.rglob("*")
+        if path.is_file()
+    } if assets_root.is_dir() else set()
+    asset_sources.update(_referenced_asset_sources(repository_root, source_documents))
+
+    asset_targets = {
+        source: _asset_target(source, source_root, repository_root)
+        for source in asset_sources
+    }
     assets: dict[PurePosixPath, bytes] = {}
-    for path in sorted(asset for asset in assets_root.rglob("*") if asset.is_file()):
-        relative_path = PurePosixPath(path.relative_to(assets_root).as_posix())
-        if edition is Edition.KINDLE and relative_path.suffix.lower() == ".js":
+    for source, target in sorted(asset_targets.items()):
+        if edition is Edition.KINDLE and source.suffix.lower() == ".js":
             continue
-        contents = path.read_bytes()
-        if relative_path == PurePosixPath("lesson.css"):
+        contents = (repository_root / source).read_bytes()
+        if source.name == "lesson.css":
             contents += _EPUB_STYLE.encode()
-        if relative_path == PurePosixPath("quiz.js"):
+        if source.name == "quiz.js":
             contents = _APPLE_QUIZ_SCRIPT.encode()
-        assets[relative_path] = contents
+        assets[target.relative_to("assets")] = contents
+    assets[PurePosixPath("cleararc.css")] = _EPUB_STYLE.encode()
+    return assets, asset_targets
+
+
+def _referenced_asset_sources(
+    repository_root: Path, source_documents: tuple[PurePosixPath, ...]
+) -> set[PurePosixPath]:
+    assets: set[PurePosixPath] = set()
+    for source_document in source_documents:
+        contents = (repository_root / source_document).read_text(encoding="utf-8")
+        for match in _ATTRIBUTE.finditer(contents):
+            parts = urlsplit(match.group("value"))
+            if parts.scheme or parts.netloc or not parts.path:
+                continue
+            candidate = PurePosixPath(
+                posixpath.normpath(str(source_document.parent / parts.path))
+            )
+            if candidate.suffix.lower() not in _ASSET_SUFFIXES:
+                continue
+            if (repository_root / candidate).is_file():
+                assets.add(candidate)
     return assets
+
+
+def _asset_target(source: PurePosixPath, source_root: Path, repository_root: Path) -> PurePosixPath:
+    source_root_path = PurePosixPath(source_root.relative_to(repository_root).as_posix())
+    assets_root = source_root_path / "assets"
+    try:
+        return PurePosixPath("assets") / source.relative_to(assets_root)
+    except ValueError:
+        return PurePosixPath("assets/external") / source
 
 
 def _document_target(relative_path: PurePosixPath) -> PurePosixPath:
@@ -222,11 +303,14 @@ def _rewrite_local_references(
     source: str,
     source_path: PurePosixPath,
     document_targets: dict[PurePosixPath, PurePosixPath],
+    asset_targets: dict[PurePosixPath, PurePosixPath],
     target_path: PurePosixPath,
 ) -> str:
     def replace(match: re.Match[str]) -> str:
         value = match.group("value")
-        rewritten = _rewrite_reference(value, source_path, target_path, document_targets)
+        rewritten = _rewrite_reference(
+            value, source_path, target_path, document_targets, asset_targets
+        )
         return f'{match.group("name")}={match.group("quote")}{rewritten}{match.group("quote")}'
 
     return _ATTRIBUTE.sub(replace, source)
@@ -237,6 +321,7 @@ def _rewrite_reference(
     source_path: PurePosixPath,
     target_path: PurePosixPath,
     document_targets: dict[PurePosixPath, PurePosixPath],
+    asset_targets: dict[PurePosixPath, PurePosixPath],
 ) -> str:
     parts = urlsplit(value)
     if parts.scheme or parts.scheme.lower() in _EXTERNAL_SCHEMES or parts.netloc or not parts.path:
@@ -245,8 +330,8 @@ def _rewrite_reference(
     resolved = PurePosixPath(posixpath.normpath(str(source_path.parent / parts.path)))
     if resolved in document_targets:
         target = document_targets[resolved]
-    elif resolved.parts and resolved.parts[0] == "assets":
-        target = PurePosixPath("assets") / PurePosixPath(*resolved.parts[1:])
+    elif resolved in asset_targets:
+        target = asset_targets[resolved]
     else:
         target = PurePosixPath("text/contents.xhtml")
     relative = posixpath.relpath(str(target), start=str(target_path.parent))
@@ -272,6 +357,7 @@ class _XhtmlNormaliser(HTMLParser):
         self._quiz_attributes: dict[str, str] | None = None
         self._quiz_parts: list[str] = []
         self._quiz_depth = 0
+        self._quiz_tag: str | None = None
 
     def _append(self, content: str) -> None:
         if self._quiz_attributes is None:
@@ -297,7 +383,7 @@ class _XhtmlNormaliser(HTMLParser):
             if tag not in _VOID_ELEMENTS:
                 self._ignored_elements.append(tag)
             return
-        if self._edition is Edition.KINDLE and (
+        if self._edition is Edition.KINDLE and self._quiz_attributes is None and (
             tag in {
                 "script",
                 "style",
@@ -308,6 +394,9 @@ class _XhtmlNormaliser(HTMLParser):
                 "video",
                 "object",
                 "embed",
+                "input",
+                "select",
+                "textarea",
                 "animate",
                 "animatecolor",
                 "animatemotion",
@@ -320,19 +409,38 @@ class _XhtmlNormaliser(HTMLParser):
             if tag not in _VOID_ELEMENTS:
                 self._ignored_elements.append(tag)
             return
-        if self._edition is Edition.KINDLE and tag == "div" and "quiz" in values.get("class", "").split():
+        if self._edition is Edition.KINDLE and "quiz" in values.get("class", "").split():
             self._quiz_attributes = {
                 key: values[key]
-                for key in ("data-answer", "data-ok")
+                for key in ("data-answer", "data-correct", "data-ok", "data-no", "data-incorrect")
                 if values.get(key) is not None
             }
             self._quiz_parts = []
             self._quiz_depth = 1
+            self._quiz_tag = tag
             return
-        if self._quiz_attributes is not None and tag == "div":
+        if self._edition is Edition.KINDLE and tag == "details":
+            classes = " ".join(
+                value for name, value in attributes if name == "class" and value
+            )
+            suffix = f" {escape(classes, quote=True)}" if classes else ""
+            self._append(f'<section class="disclosure-static{suffix}">')
+            self._open_elements.append(tag)
+            return
+        if self._edition is Edition.KINDLE and tag == "summary":
+            self._append("<h3>")
+            self._open_elements.append(tag)
+            return
+        if self._quiz_attributes is not None and tag not in _VOID_ELEMENTS:
             self._quiz_depth += 1
+        if self._quiz_attributes is not None and values.get("onclick"):
+            self._quiz_attributes["_reveal"] = values["onclick"]
         if self._edition is Edition.KINDLE:
-            attributes = [(name, value) for name, value in attributes if name != "style"]
+            attributes = [
+                (name, value)
+                for name, value in attributes
+                if name != "style" and not name.lower().startswith("on")
+            ]
         if tag == "svg":
             attributes = [("viewBox" if name == "viewbox" else name, value) for name, value in attributes]
         if tag == "html" and not any(name == "xmlns" for name, _ in attributes):
@@ -345,7 +453,7 @@ class _XhtmlNormaliser(HTMLParser):
             for name, value in attributes
         )
         if tag in _VOID_ELEMENTS:
-            if self._edition is not Edition.KINDLE or tag not in {"input", "button"}:
+            if self._edition is not Edition.KINDLE or tag not in {"input", "button"} or self._quiz_attributes is not None:
                 self._append(f"<{tag}{rendered_attributes} />")
             return
         if self._edition is Edition.KINDLE and tag == "button":
@@ -365,13 +473,26 @@ class _XhtmlNormaliser(HTMLParser):
                 self._ignored_elements.pop()
             return
         if self._quiz_attributes is not None:
-            if tag == "button":
-                self._append("</span>")
-            elif tag == "div":
+            if tag == self._quiz_tag:
                 if self._quiz_depth == 1:
                     self._finish_quiz()
                     return
+            if tag not in _VOID_ELEMENTS:
                 self._quiz_depth -= 1
+            self._append("</span>" if tag == "button" else f"</{tag}>")
+            if self._open_elements and self._open_elements[-1] == tag:
+                self._open_elements.pop()
+            return
+        if self._edition is Edition.KINDLE and tag == "details":
+            self._append("</section>")
+            if self._open_elements and self._open_elements[-1] == tag:
+                self._open_elements.pop()
+            return
+        if self._edition is Edition.KINDLE and tag == "summary":
+            self._append("</h3>")
+            if self._open_elements and self._open_elements[-1] == tag:
+                self._open_elements.pop()
+            return
         self._append(f"</{tag}>")
         if self._open_elements and self._open_elements[-1] == tag:
             self._open_elements.pop()
@@ -390,14 +511,19 @@ class _XhtmlNormaliser(HTMLParser):
 
     def _finish_quiz(self) -> None:
         source = "".join(self._quiz_parts)
-        question_match = re.search(r'<p\b[^>]*class="quiz-q"[^>]*>(.*?)</p>', source, re.DOTALL)
-        choices = re.findall(r'<span[^>]*data-choice="([^"]+)"[^>]*>(.*?)</span>', source, re.DOTALL)
+        question = _quiz_question(source)
+        choices = _quiz_choices(source)
         answer = self._quiz_attributes.get("data-answer", "")
-        correct = next((content for choice, content in choices if choice == answer), "")
-        question = _plain_text(question_match.group(1)) if question_match else "Question"
+        correct = next((content for choice, content in choices if choice.lower() == answer.lower()), "")
+        if not correct:
+            correct = _quiz_revealed_answer(self._quiz_attributes.get("_reveal", "")) or _quiz_revealed_answer(source)
         rendered_choices = "\n".join(f"<li>{content}</li>" for _, content in choices)
         answer_text = _plain_text(correct)
-        explanation = escape(self._quiz_attributes.get("data-ok", ""))
+        explanation = escape(
+            self._quiz_attributes.get("data-ok")
+            or self._quiz_attributes.get("data-correct")
+            or _quiz_explanation(source)
+        )
         self._parts.append(
             '<section class="quiz-static"><h3>Question</h3>'
             f"<p>{question}</p><h4>Choices</h4><ol>{rendered_choices}</ol>"
@@ -407,6 +533,7 @@ class _XhtmlNormaliser(HTMLParser):
         self._quiz_attributes = None
         self._quiz_parts = []
         self._quiz_depth = 0
+        self._quiz_tag = None
 
     def xhtml(self) -> str:
         return "".join(self._parts)
@@ -414,6 +541,62 @@ class _XhtmlNormaliser(HTMLParser):
 
 def _plain_text(source: str) -> str:
     return escape(unescape(_TAGS.sub("", source)).strip())
+
+
+def _quiz_question(source: str) -> str:
+    for pattern in (
+        r'<p\b[^>]*class="[^"]*\bquiz-q\b[^"]*"[^>]*>(.*?)</p>',
+        r'<p\b[^>]*class="[^"]*\bq\b[^"]*"[^>]*>(.*?)</p>',
+        r"<legend\b[^>]*>(.*?)</legend>",
+        r"<p\b[^>]*>(.*?)</p>",
+    ):
+        if match := re.search(pattern, source, re.DOTALL | re.IGNORECASE):
+            return _plain_text(match.group(1))
+    return "Question"
+
+
+def _quiz_choices(source: str) -> list[tuple[str, str]]:
+    choices = re.findall(
+        r'<(?:span|button)\b[^>]*data-choice="([^"]+)"[^>]*>(.*?)</(?:span|button)>',
+        source,
+        re.DOTALL | re.IGNORECASE,
+    )
+    if choices:
+        return choices
+    options = re.findall(
+        r'<(?:span|button)\b[^>]*class="[^"]*\bopt\b[^"]*"[^>]*>(.*?)</(?:span|button)>',
+        source,
+        re.DOTALL | re.IGNORECASE,
+    )
+    if options:
+        return [(chr(ord("a") + index), option) for index, option in enumerate(options)]
+    labels = re.findall(
+        r'<label\b[^>]*>\s*<input\b[^>]*\bvalue="([^"]+)"[^>]*/?>(.*?)</label>',
+        source,
+        re.DOTALL | re.IGNORECASE,
+    )
+    if labels:
+        return labels
+    buttons = re.findall(
+        r'<span\b[^>]*>(.*?)</span>', source, re.DOTALL | re.IGNORECASE
+    )
+    return [(str(index + 1), button) for index, button in enumerate(buttons)]
+
+
+def _quiz_revealed_answer(source: str) -> str:
+    if match := re.search(r"textContent\s*=\s*['\"](.*?)['\"]", source, re.DOTALL):
+        return match.group(1)
+    return ""
+
+
+def _quiz_explanation(source: str) -> str:
+    if match := re.search(
+        r'<div\b[^>]*class="[^"]*\banswer-reveal\b[^"]*"[^>]*>(.*?)</div>',
+        source,
+        re.DOTALL | re.IGNORECASE,
+    ):
+        return _plain_text(match.group(1))
+    return ""
 
 
 @dataclass(frozen=True)
@@ -437,21 +620,52 @@ def _write_epub(
     publication_date: date | None,
 ) -> None:
     with ZipFile(destination, "w", compression=ZIP_DEFLATED) as archive:
-        archive.writestr("mimetype", "application/epub+zip", compress_type=ZIP_STORED)
-        archive.writestr("META-INF/container.xml", _container_xml())
-        archive.writestr(
+        timestamp = publication_date or _BUILD_EPOCH
+        _write_archive_entry(
+            archive, "mimetype", "application/epub+zip", timestamp, ZIP_STORED
+        )
+        _write_archive_entry(archive, "META-INF/container.xml", _container_xml(), timestamp)
+        _write_archive_entry(
+            archive,
             "OEBPS/content.opf",
             _package_document(course, documents, assets, edition, publication_date),
+            timestamp,
         )
-        archive.writestr("OEBPS/nav.xhtml", _navigation_document(course, documents))
-        archive.writestr("OEBPS/text/cover.xhtml", _cover_page())
-        archive.writestr("OEBPS/text/title.xhtml", _title_page(course, publication_date))
-        archive.writestr("OEBPS/text/contents.xhtml", _contents_page(documents))
+        _write_archive_entry(
+            archive, "OEBPS/nav.xhtml", _navigation_document(course, documents), timestamp
+        )
+        _write_archive_entry(
+            archive, "OEBPS/text/cover.xhtml", _cover_page(course), timestamp
+        )
+        _write_archive_entry(
+            archive,
+            "OEBPS/text/title.xhtml",
+            _title_page(course, publication_date),
+            timestamp,
+        )
+        _write_archive_entry(
+            archive, "OEBPS/text/contents.xhtml", _contents_page(documents), timestamp
+        )
         for document in documents:
-            archive.writestr(f"OEBPS/{document.target}", document.content)
+            _write_archive_entry(archive, f"OEBPS/{document.target}", document.content, timestamp)
         for relative_path, contents in assets.items():
-            archive.writestr(f"OEBPS/assets/{relative_path}", contents)
-        archive.write(cover, "OEBPS/images/cover.jpg")
+            _write_archive_entry(archive, f"OEBPS/assets/{relative_path}", contents, timestamp)
+        _write_archive_entry(archive, "OEBPS/images/cover.jpg", cover.read_bytes(), timestamp)
+
+
+def _write_archive_entry(
+    archive: ZipFile,
+    name: str,
+    contents: str | bytes,
+    timestamp: date,
+    compression: int = ZIP_DEFLATED,
+) -> None:
+    entry = ZipInfo(
+        name, date_time=(timestamp.year, timestamp.month, timestamp.day, 0, 0, 0)
+    )
+    entry.compress_type = compression
+    entry.external_attr = 0o600 << 16
+    archive.writestr(entry, contents)
 
 
 def _container_xml() -> str:
@@ -469,7 +683,7 @@ def _package_document(
     edition: Edition,
     publication_date: date | None,
 ) -> str:
-    modified = datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+    modified = f"{(publication_date or _BUILD_EPOCH).isoformat()}T00:00:00Z"
     manifest = [
         '<item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav" />',
         '<item id="cover-image" href="images/cover.jpg" media-type="image/jpeg" properties="cover-image" />',
@@ -560,12 +774,12 @@ def _navigation_document(course: Course, documents: tuple[EpubDocument, ...]) ->
 """
 
 
-def _cover_page() -> str:
-    return """<?xml version="1.0" encoding="utf-8"?>
+def _cover_page(course: Course) -> str:
+    return f"""<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-GB">
-  <head><title>Cover</title><link rel="stylesheet" href="../assets/lesson.css" /></head>
-  <body class="cover-page"><img src="../images/cover.jpg" alt="Cover artwork for Inside datavizlib’s Source" /></body>
+  <head><title>Cover</title><link rel="stylesheet" href="../assets/cleararc.css" /></head>
+  <body class="cover-page"><img src="../images/cover.jpg" alt="Cover artwork for {escape(course.display_title)}" /></body>
 </html>
 """
 
@@ -577,7 +791,7 @@ def _title_page(course: Course, publication_date: date | None) -> str:
     return f"""<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-GB">
-  <head><title>{escape(course.display_title)}</title><link rel="stylesheet" href="../assets/lesson.css" /></head>
+  <head><title>{escape(course.display_title)}</title><link rel="stylesheet" href="../assets/cleararc.css" /></head>
   <body><main class="title-page"><p class="kicker">{escape(course.collection)}</p><h1>{escape(course.display_title)}</h1><p>By {escape(course.author)}</p>{dated_edition}</main></body>
 </html>
 """
@@ -599,7 +813,7 @@ def _contents_page(documents: tuple[EpubDocument, ...]) -> str:
     return f"""<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-GB">
-  <head><title>Contents</title><link rel="stylesheet" href="../assets/lesson.css" /></head>
+  <head><title>Contents</title><link rel="stylesheet" href="../assets/cleararc.css" /></head>
   <body><main class="contents-page"><h1>Contents</h1><ol>
 {entries}
     </ol></main></body>

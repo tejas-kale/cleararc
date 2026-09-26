@@ -21,7 +21,7 @@ _OPF_NAMESPACE = "{http://www.idpf.org/2007/opf}"
 _DC_NAMESPACE = "{http://purl.org/dc/elements/1.1/}"
 _FORBIDDEN_KINDLE_CONTENT = re.compile(
     r"<(?:script|form|button|canvas|iframe|audio|video|style|object|embed|input|select|textarea)\b"
-    r"|\bon[a-z]+\s*=|javascript\s*:|\banimation(?:-name|-duration|-delay|-iteration-count)?\s*:",
+    r"|<[^>]*\bon[a-z]+\s*=|javascript\s*:|\banimation(?:-name|-duration|-delay|-iteration-count)?\s*:",
     re.IGNORECASE,
 )
 _REFERENCE_ATTRIBUTE = re.compile(
