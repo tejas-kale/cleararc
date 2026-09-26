@@ -5,6 +5,12 @@ from pathlib import Path
 import click
 
 from cleararc.apple import Edition, EditionBuildError, build_apple_pilot, build_kindle_pilot
+from cleararc.config import (
+    ConfigError,
+    configuration_diagnostics,
+    import_readpack_config,
+    init_config,
+)
 from cleararc.registry import RegistryError, load_course_registry
 from cleararc.validation import PublicationGateError, build_and_validate_course
 
@@ -12,6 +18,42 @@ from cleararc.validation import PublicationGateError, build_and_validate_course
 @click.group()
 def main() -> None:
     """Build and publish private Cleararc course editions."""
+
+
+@main.group()
+def config() -> None:
+    """Create and inspect private delivery configuration."""
+
+
+@config.command("init")
+def config_init() -> None:
+    """Create a private delivery configuration template."""
+    try:
+        path = init_config()
+    except ConfigError as error:
+        raise click.ClickException(str(error)) from error
+    click.echo(f"Created Cleararc configuration template: {path}")
+
+
+@config.command("import-readpack")
+def config_import_readpack() -> None:
+    """Import non-secret settings from readpack once."""
+    try:
+        source, destination = import_readpack_config()
+    except ConfigError as error:
+        raise click.ClickException(str(error)) from error
+    click.echo(f"Imported non-secret settings from {source} to {destination}.")
+
+
+@config.command("check")
+def config_check() -> None:
+    """Check delivery settings, Keychain command resolution, and Books availability."""
+    diagnostics = configuration_diagnostics()
+    for diagnostic in diagnostics:
+        prefix = "Error" if diagnostic.is_error else "OK"
+        click.echo(f"{prefix}: {diagnostic.message}")
+    if any(diagnostic.is_error for diagnostic in diagnostics):
+        raise click.ClickException("Fix the configuration issues above before delivery.")
 
 
 @main.command()
