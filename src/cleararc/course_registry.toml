@@ -1,0 +1,167 @@
+[[courses]]
+id = "football-causal-inference"
+title = "Football Causal Inference"
+source = "planned/football-causal-inference"
+reading_order = 1
+author = "Tejas Kale"
+collection = "Cleararc"
+cover = "assets/covers/football-causal-inference.jpg"
+publication_ids = { apple = "2b705ef1-5534-4df9-b318-4e535fc3ccd0", kindle = "ecc34b80-3987-4c85-9878-0c6d80fd0522" }
+documents = [
+  "planned/football-causal-inference/index.html",
+  "planned/football-causal-inference/lessons/0001-from-question-to-estimand.html",
+  "planned/football-causal-inference/exercises/0001-from-question-to-estimand.html",
+  "planned/football-causal-inference/lessons/0002-cluster-randomisation-and-itt.html",
+  "planned/football-causal-inference/exercises/0002-cluster-randomisation-and-itt.html",
+  "planned/football-causal-inference/lessons/0003-dags-and-back-door-identification.html",
+  "planned/football-causal-inference/exercises/0003-dags-and-back-door-identification.html",
+  "planned/football-causal-inference/lessons/0004-emulate-a-target-trial.html",
+  "planned/football-causal-inference/exercises/0004-emulate-a-target-trial.html",
+  "planned/football-causal-inference/lessons/0005-matching-and-propensity-scores.html",
+  "planned/football-causal-inference/exercises/0005-matching-and-propensity-scores.html",
+  "planned/football-causal-inference/lessons/0006-weighting-standardisation-and-aipw.html",
+  "planned/football-causal-inference/exercises/0006-weighting-standardisation-and-aipw.html",
+  "planned/football-causal-inference/lessons/0007-fixed-effects-and-the-ashenfelter-dip.html",
+  "planned/football-causal-inference/exercises/0007-fixed-effects-and-the-ashenfelter-dip.html",
+  "planned/football-causal-inference/lessons/0008-difference-in-differences.html",
+  "planned/football-causal-inference/exercises/0008-difference-in-differences.html",
+  "planned/football-causal-inference/lessons/0009-event-studies-and-staggered-timing.html",
+  "planned/football-causal-inference/exercises/0009-event-studies-and-staggered-timing.html",
+  "planned/football-causal-inference/lessons/0010-regression-discontinuity.html",
+  "planned/football-causal-inference/exercises/0010-regression-discontinuity.html",
+  "planned/football-causal-inference/lessons/0011-instrumental-variables-and-late.html",
+  "planned/football-causal-inference/exercises/0011-instrumental-variables-and-late.html",
+  "planned/football-causal-inference/lessons/0012-synthetic-control.html",
+  "planned/football-causal-inference/exercises/0012-synthetic-control.html",
+  "planned/football-causal-inference/lessons/0013-interrupted-time-series.html",
+  "planned/football-causal-inference/exercises/0013-interrupted-time-series.html",
+  "planned/football-causal-inference/lessons/0014-longitudinal-g-methods.html",
+  "planned/football-causal-inference/exercises/0014-longitudinal-g-methods.html",
+  "planned/football-causal-inference/lessons/0015-double-machine-learning.html",
+  "planned/football-causal-inference/exercises/0015-double-machine-learning.html",
+  "planned/football-causal-inference/lessons/0016-causal-mediation.html",
+  "planned/football-causal-inference/exercises/0016-causal-mediation.html",
+  "planned/football-causal-inference/lessons/0017-causal-survival-analysis.html",
+  "planned/football-causal-inference/exercises/0017-causal-survival-analysis.html",
+  "planned/football-causal-inference/exercises/index.html",
+  "planned/football-causal-inference/reference/glossary.html",
+  "planned/football-causal-inference/reference/design-field-guide.html",
+]
+
+[[courses]]
+id = "fx-and-central-banks"
+title = "FX and Central Banks"
+source = "completed/fx-and-central-banks"
+reading_order = 2
+author = "Tejas Kale"
+collection = "Cleararc"
+cover = "assets/covers/fx-and-central-banks.jpg"
+publication_ids = { apple = "51f132d4-eb40-456a-9b6c-24e223aea7d7", kindle = "e049b0a7-d686-4ba9-9463-0e9352140722" }
+documents = [
+  "completed/fx-and-central-banks/index.html",
+  "completed/fx-and-central-banks/lessons/0001-the-exchange-rate-is-a-price.html",
+  "completed/fx-and-central-banks/lessons/0002-reserves-and-intervention.html",
+  "completed/fx-and-central-banks/lessons/0003-bonds-and-the-consolidated-state.html",
+  "completed/fx-and-central-banks/lessons/0004-the-carry-trade-decoded.html",
+  "completed/fx-and-central-banks/reference/glossary.html",
+  "completed/fx-and-central-banks/reference/cheatsheet.html",
+  "completed/fx-and-central-banks/reference/article-decoded.html",
+]
+
+[[courses]]
+id = "iphone-air-autumn-photography"
+title = "iPhone Air Autumn Photography"
+source = "planned/iphone-air-autumn-photography"
+reading_order = 3
+author = "Tejas Kale"
+collection = "Cleararc"
+cover = "assets/covers/iphone-air-autumn-photography.jpg"
+publication_ids = { apple = "c7b41768-0702-4923-a5b4-bebaab6712c9", kindle = "ccfe4aac-9377-460a-9e0e-330508ffe8df" }
+documents = [
+  "planned/iphone-air-autumn-photography/index.html",
+  "planned/iphone-air-autumn-photography/lessons/0001-the-camera-you-actually-have.html",
+  "planned/iphone-air-autumn-photography/lessons/0002-configure-the-air-once.html",
+  "planned/iphone-air-autumn-photography/lessons/0003-protect-the-yellow.html",
+  "planned/iphone-air-autumn-photography/lessons/0004-compose-without-an-ultra-wide.html",
+  "planned/iphone-air-autumn-photography/lessons/0005-two-scales-without-macro.html",
+  "planned/iphone-air-autumn-photography/lessons/0006-cull-edit-publish.html",
+  "planned/iphone-air-autumn-photography/reference/glossary.html",
+  "planned/iphone-air-autumn-photography/reference/field-checklist.html",
+]
+
+[[courses]]
+id = "used-bicycle-buying-berlin"
+title = "Berlin Used Bicycle Guide"
+source = "completed/used-bicycle-buying-berlin"
+reading_order = 4
+author = "Tejas Kale"
+collection = "Cleararc"
+cover = "assets/covers/used-bicycle-buying-berlin.jpg"
+publication_ids = { apple = "8bf94cb1-fc85-4d0e-af3a-ae87ba7df62c", kindle = "1ef13606-92f5-4a59-944a-a8a56f29e292" }
+documents = [
+  "completed/used-bicycle-buying-berlin/index.html",
+  "completed/used-bicycle-buying-berlin/lessons/0001-buy-a-safe-bike-at-the-flohmarkt.html",
+  "completed/used-bicycle-buying-berlin/reference/quick-reference.html",
+]
+
+[[courses]]
+id = "ice-ing-the-economy"
+title = "ICE and the Economy"
+source = "planned/ice-ing-the-economy"
+reading_order = 5
+author = "Tejas Kale"
+collection = "Cleararc"
+cover = "assets/covers/ice-ing-the-economy.jpg"
+publication_ids = { apple = "bf0a3f5e-ef5c-471e-bcfa-992388be9885", kindle = "07293417-e6b5-4dd9-8d66-d0c4b6d62e4c" }
+documents = [
+  "planned/ice-ing-the-economy/index.html",
+  "planned/ice-ing-the-economy/lessons/0001-the-demand-side-was-missing.html",
+  "planned/ice-ing-the-economy/lessons/0002-what-was-actually-measured.html",
+  "planned/ice-ing-the-economy/lessons/0003-two-designs.html",
+  "planned/ice-ing-the-economy/lessons/0004-what-the-estimates-say.html",
+  "planned/ice-ing-the-economy/lessons/0005-what-a-reviewer-still-owns.html",
+  "planned/ice-ing-the-economy/reference/glossary.html",
+  "planned/ice-ing-the-economy/reference/cheatsheet.html",
+  "planned/ice-ing-the-economy/reference/paper-decoded.html",
+]
+
+[[courses]]
+id = "datavizlib-source-walkthrough"
+title = "Inside datavizlib’s Source"
+source = "completed/datavizlib-source-walkthrough"
+reading_order = 6
+author = "Tejas Kale"
+collection = "Cleararc"
+cover = "assets/covers/datavizlib-source-walkthrough.jpg"
+publication_ids = { apple = "3937a58c-2584-46d3-9469-98f9364ec3e0", kindle = "a411dff7-03bf-44d2-8581-b4fafee0449d" }
+documents = [
+  "completed/datavizlib-source-walkthrough/index.html",
+  "completed/datavizlib-source-walkthrough/lessons/0001-src-layout-and-public-api.html",
+  "completed/datavizlib-source-walkthrough/lessons/0002-basechart-contract.html",
+  "completed/datavizlib-source-walkthrough/lessons/0003-add-data-render-build.html",
+  "completed/datavizlib-source-walkthrough/lessons/0004-layout-margins.html",
+  "completed/datavizlib-source-walkthrough/lessons/0005-declutter-spines-and-type.html",
+  "completed/datavizlib-source-walkthrough/lessons/0006-measure-then-shift.html",
+  "completed/datavizlib-source-walkthrough/lessons/0007-title-and-footnote-anchors.html",
+  "completed/datavizlib-source-walkthrough/lessons/0008-linechart.html",
+  "completed/datavizlib-source-walkthrough/lessons/0009-barchart.html",
+  "completed/datavizlib-source-walkthrough/lessons/0010-extend-basechart.html",
+]
+
+[[courses]]
+id = "paired-email-evaluation"
+title = "Paired Email Evaluation"
+source = "planned/paired-email-evaluation"
+reading_order = 7
+author = "Tejas Kale"
+collection = "Cleararc"
+cover = "assets/covers/paired-email-evaluation.jpg"
+publication_ids = { apple = "09b1bb47-0220-4fcd-a93f-b386454b2a05", kindle = "c2c57d5c-3e89-40ab-95b9-9b18d8e6401f" }
+documents = [
+  "planned/paired-email-evaluation/index.html",
+  "planned/paired-email-evaluation/lessons/0001-an-estimate-not-a-verdict.html",
+  "planned/paired-email-evaluation/lessons/0002-precision-and-rare-classes.html",
+  "planned/paired-email-evaluation/lessons/0003-paired-comparisons.html",
+  "planned/paired-email-evaluation/lessons/0004-dependence-and-calibration.html",
+  "planned/paired-email-evaluation/lessons/0005-a-defensible-case-study.html",
+]
