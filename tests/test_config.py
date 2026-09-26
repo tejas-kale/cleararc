@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from click.testing import CliRunner
+import pytest
 
 import cleararc.config as config_module
 from cleararc.cli import main
@@ -13,7 +14,10 @@ def _config_home(monkeypatch, tmp_path: Path) -> Path:
     return config_home
 
 
-def _write_readpack_config(config_home: Path, password_command: str = "security find-generic-password -s readpack-smtp -w") -> Path:
+def _write_readpack_config(
+    config_home: Path,
+    password_command: str = "security find-generic-password -s readpack-smtp -a readpack-account -w",
+) -> Path:
     source = config_home / "readpack" / "config.toml"
     source.parent.mkdir(parents=True)
     source.write_text(
@@ -74,7 +78,7 @@ def test_import_readpack_copies_only_non_secret_delivery_settings(
     monkeypatch, tmp_path: Path
 ) -> None:
     config_home = _config_home(monkeypatch, tmp_path)
-    source = _write_readpack_config(config_home, "security find-generic-password -s readpack-smtp -w")
+    source = _write_readpack_config(config_home)
 
     result = CliRunner().invoke(main, ["config", "import-readpack"])
     imported = (config_home / "cleararc" / "config.toml").read_text()
@@ -86,7 +90,7 @@ def test_import_readpack_copies_only_non_secret_delivery_settings(
     assert 'smtp_host = "smtp.example.com"' in imported
     assert "smtp_port = 2525" in imported
     assert 'username = "sender@example.com"' in imported
-    assert 'password_command = "security find-generic-password -s readpack-smtp -w"' in imported
+    assert 'password_command = "security find-generic-password -s readpack-smtp -a readpack-account -w"' in imported
     assert "password =" not in imported
     assert "secret-never-copy" not in imported
 
@@ -198,13 +202,69 @@ password_command = "security find-generic-password -s cleararc-smtp -w; echo lea
     assert "leaked" not in result.output
 
 
+def test_config_check_accepts_imported_readpack_service_and_account_command(
+    monkeypatch, tmp_path: Path
+) -> None:
+    monkeypatch.setattr(config_module, "books_app_available", lambda: True)
+    config_home = _config_home(monkeypatch, tmp_path)
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    fake_security = bin_dir / "security"
+    fake_security.write_text("#!/bin/sh\nexit 0\n")
+    fake_security.chmod(0o755)
+    monkeypatch.setenv("PATH", str(bin_dir))
+    _write_readpack_config(config_home)
+
+    imported = CliRunner().invoke(main, ["config", "import-readpack"])
+    checked = CliRunner().invoke(main, ["config", "check"])
+
+    assert imported.exit_code == 0, imported.output
+    assert checked.exit_code == 0, checked.output
+    assert "Keychain" not in checked.output
+
+
+@pytest.mark.parametrize(
+    "command",
+    [
+        "security find-generic-password -s readpack-smtp -a account -w; echo leaked",
+        "security find-generic-password -s readpack-smtp -a account -g",
+        "security find-generic-password -s readpack-smtp -a -w",
+        "security find-generic-password -s readpack-smtp -a first -a second -w",
+    ],
+)
+def test_config_check_rejects_unsafe_or_malformed_keychain_options(
+    monkeypatch, tmp_path: Path, command: str
+) -> None:
+    monkeypatch.setattr(config_module, "books_app_available", lambda: True)
+    config_home = _config_home(monkeypatch, tmp_path)
+    target = config_home / "cleararc" / "config.toml"
+    target.parent.mkdir(parents=True)
+    target.write_text(
+        """\
+[kindle]
+address = "reader@kindle.example"
+[email]
+sender = "sender@example.com"
+smtp_host = "smtp.example.com"
+username = "sender@example.com"
+password_command = """ + repr(command) + "\n"
+    )
+
+    result = CliRunner().invoke(main, ["config", "check"])
+
+    assert result.exit_code == 1
+    assert "email.password_command must be" in result.output
+    assert "leaked" not in result.output
+
+
 def test_password_resolution_uses_fake_keychain_command_and_keeps_output_private(
     monkeypatch, tmp_path: Path
 ) -> None:
     bin_dir = tmp_path / "bin"
     bin_dir.mkdir()
     fake_security = bin_dir / "security"
-    fake_security.write_text("#!/bin/sh\necho fake-secret\n")
+    arguments_log = tmp_path / "keychain-arguments"
+    fake_security.write_text(f"#!/bin/sh\nprintf '%s\\n' \"$@\" > {arguments_log}\necho fake-secret\n")
     fake_security.chmod(0o755)
     monkeypatch.setenv("PATH", str(bin_dir))
     config = DeliveryConfig(
@@ -213,10 +273,18 @@ def test_password_resolution_uses_fake_keychain_command_and_keeps_output_private
         smtp_host="smtp.example.com",
         smtp_port=587,
         username="sender@example.com",
-        password_command="security find-generic-password -s test-service -w",
+        password_command="security find-generic-password -s test-service -a test-account -w",
     )
 
     assert resolve_smtp_password(config) == "fake-secret"
+    assert arguments_log.read_text().splitlines() == [
+        "find-generic-password",
+        "-s",
+        "test-service",
+        "-a",
+        "test-account",
+        "-w",
+    ]
 
 
 def test_password_resolution_redacts_keychain_error_output(monkeypatch, tmp_path: Path) -> None:

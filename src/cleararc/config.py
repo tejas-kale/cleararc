@@ -155,16 +155,27 @@ def validate_password_command(command: str) -> str:
         parts = shlex.split(command)
     except ValueError as error:
         raise ConfigError("email.password_command must be a valid Keychain command.") from error
-    if not (
+    valid_lookup = (
         len(parts) == 5
+        and parts[2] == "-s"
+        and _is_option_value(parts[3])
+        and parts[4] == "-w"
+    ) or (
+        len(parts) == 7
+        and parts[2] == "-s"
+        and _is_option_value(parts[3])
+        and parts[4] == "-a"
+        and _is_option_value(parts[5])
+        and parts[6] == "-w"
+    )
+    if not (
+        len(parts) >= 2
         and parts[0] in {"security", "/usr/bin/security"}
         and parts[1] == "find-generic-password"
-        and parts[2] == "-s"
-        and bool(parts[3])
-        and parts[4] == "-w"
+        and valid_lookup
     ):
         raise ConfigError(
-            "email.password_command must be 'security find-generic-password -s SERVICE -w'."
+            "email.password_command must be 'security find-generic-password -s SERVICE [-a ACCOUNT] -w'."
         )
     executable = shutil.which(parts[0]) if not Path(parts[0]).is_absolute() else parts[0]
     if not executable or not os.access(executable, os.X_OK):
@@ -172,6 +183,10 @@ def validate_password_command(command: str) -> str:
             "The configured Keychain command could not be found. Install macOS Keychain access or correct email.password_command."
         )
     return executable
+
+
+def _is_option_value(value: str) -> bool:
+    return bool(value) and not value.startswith("-")
 
 
 def resolve_smtp_password(config: DeliveryConfig) -> str:
