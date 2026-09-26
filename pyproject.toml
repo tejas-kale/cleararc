@@ -1,0 +1,22 @@
+[project]
+name = "cleararc"
+version = "0.1.0"
+description = "Build private course editions from Cleararc's canonical HTML."
+requires-python = ">=3.12"
+dependencies = ["click>=8.1,<9"]
+
+[project.scripts]
+cleararc = "cleararc.cli:main"
+
+[dependency-groups]
+dev = ["pytest>=8.0,<9"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/cleararc"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

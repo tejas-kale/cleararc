@@ -32,7 +32,7 @@
       <li><strong>Display</strong> — pixels (or points, depending on backend). <code>get_window_extent</code> returns this.</li>
     </ul>
 
-    <div class="diagram" data-coord-board>
+    <div class="diagram" data-coord-board data-edition="apple">
       <svg viewBox="0 0 640 280" role="img" aria-label="Clickable figure, axes, and display spaces">
         <rect data-space="figure" data-active="false"
               data-explain="Figure space: fig.text(x, y, …) and subplots_adjust use this. Title x comes from a bbox converted with fig.transFigure.inverted()."
@@ -50,6 +50,20 @@
       <p class="coord-out" data-coord-out>Click the white frame, the inner plot, or the orange dot.</p>
       <p class="caption">Three spaces, one figure. Alignment code hops between them on purpose.</p>
     </div>
+
+    <section class="diagram" data-edition="kindle" aria-label="Static coordinate guide">
+      <h2>Static coordinate guide</h2>
+      <p><strong>Figure space:</strong> <code>fig.text(x, y, …)</code> and <code>subplots_adjust</code> use the whole page. Its origin is the bottom-left.</p>
+      <p><strong>Axes space:</strong> <code>set_label_coords(x, y)</code> uses fractions of the plot rectangle. Its origin is bottom-left; <code>(0, 1)</code> is the top-left.</p>
+      <p><strong>Display space:</strong> <code>get_window_extent</code> returns a measured box in pixels or points. Convert it back with an inverse transform before shifting a label.</p>
+      <ol>
+        <li>Park the y-label at <code>(-0.10, 0.5)</code> in axes space.</li>
+        <li>Draw the canvas, then measure the text box in display space.</li>
+        <li>Use <code>ax.transAxes.inverted()</code> to express that box in axes space.</li>
+        <li>Compute <code>shift = 1.0 - bbox_axes.y1</code>, then move the label to <code>(-0.10, 0.5 + shift)</code>.</li>
+      </ol>
+      <p class="caption">The interactive frame and dot are replaced here by a complete static sequence. Colour is not needed to tell the three spaces apart.</p>
+    </section>
 
     <h2>The y-label recipe</h2>
     <p><code>_align_y_label_to_tick</code>:</p>
