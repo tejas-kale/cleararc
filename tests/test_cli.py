@@ -151,6 +151,7 @@ def test_build_creates_the_scripted_apple_pilot_epub_without_changing_lessons() 
         assert 'aria-label="Clickable figure, axes, and display spaces"' in interaction
         assert '<script src="../../assets/coords.js"></script>' in interaction
         assert "data-answer=\"2\"" in interaction
+        assert "Static coordinate guide" not in interaction
 
         styles = archive.read("OEBPS/assets/lesson.css").decode()
         assert "white-space: pre-wrap" in styles
@@ -165,3 +166,91 @@ def test_build_creates_the_scripted_apple_pilot_epub_without_changing_lessons() 
                     continue
                 target = posixpath.normpath(str(Path(name).parent / parts.path))
                 assert target in names, f"{name} has a broken local reference: {reference}"
+
+
+def test_build_creates_a_static_kindle_pilot_with_visible_teaching_fallbacks() -> None:
+    result = CliRunner().invoke(
+        main,
+        ["build", "datavizlib-source-walkthrough", "--target", "kindle"],
+    )
+
+    assert result.exit_code == 0, result.output
+    epub_path = PROJECT_ROOT / "build/datavizlib-source-walkthrough.kindle.epub"
+    assert result.output == f"Built Kindle edition: {epub_path}\n"
+    assert epub_path.is_file()
+
+    with ZipFile(epub_path) as archive:
+        assert archive.getinfo("mimetype").compress_type == ZIP_STORED
+        names = set(archive.namelist())
+        assert "OEBPS/images/cover.jpg" in names
+        assert "OEBPS/text/lessons/0010-extend-basechart.xhtml" in names
+        assert "OEBPS/assets/lesson.css" in names
+        assert "OEBPS/assets/quiz.js" not in names
+        assert "OEBPS/assets/coords.js" not in names
+
+        package = archive.read("OEBPS/content.opf").decode()
+        assert "a411dff7-03bf-44d2-8581-b4fafee0449d" in package
+        assert 'properties="scripted"' not in package
+        package_root = ElementTree.fromstring(package)
+        namespace = {"opf": "http://www.idpf.org/2007/opf"}
+        assert [item.get("idref") for item in package_root.findall("opf:spine/opf:itemref", namespace)] == [
+            "cover",
+            "title",
+            "contents",
+            *[f"document-{number}" for number in range(1, 12)],
+        ]
+
+        lesson_text = "\n".join(
+            archive.read(name).decode()
+            for name in sorted(names)
+            if name.startswith("OEBPS/text/lessons/") and name.endswith(".xhtml")
+        )
+        assert "<script" not in lesson_text
+        assert "<form" not in lesson_text
+        assert "<button" not in lesson_text
+        assert "<canvas" not in lesson_text
+        assert "<iframe" not in lesson_text
+        assert "<video" not in lesson_text
+        assert "<audio" not in lesson_text
+        assert "<style" not in lesson_text
+        assert "animation" not in lesson_text.lower()
+        kindle_styles = archive.read("OEBPS/assets/lesson.css").decode().lower()
+        assert "animation" not in kindle_styles
+        assert "white-space: pre-wrap" in kindle_styles
+        assert "<pre>" in lesson_text
+        assert "<code>" in lesson_text
+        assert '<svg viewBox="0 0 640 280" role="img" aria-label="File tree of src/datavizlib" xmlns="http://www.w3.org/2000/svg">' in lesson_text
+        assert "<table" not in lesson_text  # The pilot source contains no tables to convert.
+
+        quiz = archive.read("OEBPS/text/lessons/0006-measure-then-shift.xhtml").decode()
+        assert "In which space is the y-label shift computed?" in quiz
+        assert "Axes fractions after invert" in quiz
+        assert "<strong>Answer:</strong> Axes fractions after invert" in quiz
+        assert "Display pixels are converted back to axes fractions before the shift." in quiz
+        assert lesson_text.count('class="quiz-static"') == 10
+        assert lesson_text.count("<strong>Answer:</strong>") == 10
+        assert lesson_text.count("<strong>Explanation:</strong>") == 10
+
+        coordinates = archive.read("OEBPS/text/lessons/0006-measure-then-shift.xhtml").decode()
+        assert "Static coordinate guide" in coordinates
+        assert "Figure space" in coordinates
+        assert "Axes space" in coordinates
+        assert "Display space" in coordinates
+        assert "Click the white frame" not in coordinates
+        assert "Clickable figure, axes, and display spaces" not in coordinates
+        assert "Colour is not needed to tell the three spaces apart." in coordinates
+
+        for name in names:
+            if name.endswith(".xhtml"):
+                content = archive.read(name).decode()
+                assert 'data-edition="apple"' not in content
+                assert 'data-edition="kindle"' not in content
+                ElementTree.fromstring(content)
+                references = _LocalReferences()
+                references.feed(content)
+                for reference in references.values:
+                    parts = urlsplit(reference)
+                    if parts.scheme or parts.netloc or not parts.path:
+                        continue
+                    target = posixpath.normpath(str(Path(name).parent / parts.path))
+                    assert target in names, f"{name} has a broken local reference: {reference}"

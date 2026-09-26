@@ -1,4 +1,4 @@
-"""Build the Apple EPUB pilot from canonical course HTML."""
+"""Build Apple and Kindle EPUB pilots from canonical course HTML."""
 
 from __future__ import annotations
 
@@ -16,8 +16,8 @@ from zipfile import ZIP_DEFLATED, ZIP_STORED, ZipFile
 from cleararc.registry import Course
 
 
-class AppleBuildError(ValueError):
-    """The pilot Apple edition cannot be built safely."""
+class EditionBuildError(ValueError):
+    """A pilot course edition cannot be built safely."""
 
 
 _VOID_ELEMENTS = frozenset({"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"})
@@ -99,35 +99,46 @@ th, td {
 
 def build_apple_pilot(course: Course, repository_root: Path) -> Path:
     """Build the supported Apple edition for the first end-to-end course pilot."""
+    return _build_pilot(course, repository_root, edition="apple")
+
+
+def build_kindle_pilot(course: Course, repository_root: Path) -> Path:
+    """Build the supported static Kindle edition for the first course pilot."""
+    return _build_pilot(course, repository_root, edition="kindle")
+
+
+def _build_pilot(course: Course, repository_root: Path, edition: str) -> Path:
     if course.course_id != "datavizlib-source-walkthrough":
-        raise AppleBuildError(
-            f"Course {course.course_id!r} is not the Apple pilot; only "
+        raise EditionBuildError(
+            f"Course {course.course_id!r} is not the supported pilot; only "
             "'datavizlib-source-walkthrough' can be built at this stage."
         )
 
     source_root = repository_root / course.source
     cover = repository_root / course.cover
     if not source_root.is_dir():
-        raise AppleBuildError(f"Course {course.course_id!r} source directory {source_root} is missing.")
+        raise EditionBuildError(f"Course {course.course_id!r} source directory {source_root} is missing.")
     if not cover.is_file():
-        raise AppleBuildError(f"Course {course.course_id!r} cover {cover} is missing.")
+        raise EditionBuildError(f"Course {course.course_id!r} cover {cover} is missing.")
 
-    documents = _load_documents(course, repository_root, source_root)
-    assets = _load_assets(source_root)
-    destination = repository_root / "build" / f"{course.course_id}.apple.epub"
+    documents = _load_documents(course, repository_root, source_root, edition)
+    assets = _load_assets(source_root, edition)
+    destination = repository_root / "build" / f"{course.course_id}.{edition}.epub"
     destination.parent.mkdir(parents=True, exist_ok=True)
 
     with NamedTemporaryFile(dir=destination.parent, suffix=".epub", delete=False) as temporary_file:
         temporary_path = Path(temporary_file.name)
     try:
-        _write_epub(temporary_path, course, documents, assets, cover)
+        _write_epub(temporary_path, course, documents, assets, cover, edition)
         temporary_path.replace(destination)
     finally:
         temporary_path.unlink(missing_ok=True)
     return destination
 
 
-def _load_documents(course: Course, repository_root: Path, source_root: Path) -> tuple["EpubDocument", ...]:
+def _load_documents(
+    course: Course, repository_root: Path, source_root: Path, edition: str
+) -> tuple["EpubDocument", ...]:
     source_paths = tuple(PurePosixPath(document) for document in course.documents)
     relative_paths = tuple(path.relative_to(course.source) for path in source_paths)
     targets = {relative_path: _document_target(relative_path) for relative_path in relative_paths}
@@ -135,27 +146,35 @@ def _load_documents(course: Course, repository_root: Path, source_root: Path) ->
     for relative_path in relative_paths:
         source_path = source_root / relative_path
         if not source_path.is_file():
-            raise AppleBuildError(
+            raise EditionBuildError(
                 f"Course {course.course_id!r} source document {repository_root / course.source / relative_path} is missing."
             )
         source = source_path.read_text(encoding="utf-8")
         title = _document_title(source, source_path)
         transformed = _normalise_xhtml(
-            _rewrite_local_references(source, relative_path, targets, targets[relative_path])
+            _rewrite_local_references(source, relative_path, targets, targets[relative_path]), edition
         )
         documents.append(
-            EpubDocument(relative_path, targets[relative_path], title, transformed, "<script" in source.lower())
+            EpubDocument(
+                relative_path,
+                targets[relative_path],
+                title,
+                transformed,
+                edition == "apple" and "<script" in source.lower(),
+            )
         )
     return tuple(documents)
 
 
-def _load_assets(source_root: Path) -> dict[PurePosixPath, bytes]:
+def _load_assets(source_root: Path, edition: str) -> dict[PurePosixPath, bytes]:
     assets_root = source_root / "assets"
     if not assets_root.is_dir():
-        raise AppleBuildError(f"Course source {source_root} has no assets directory.")
+        raise EditionBuildError(f"Course source {source_root} has no assets directory.")
     assets: dict[PurePosixPath, bytes] = {}
     for path in sorted(asset for asset in assets_root.rglob("*") if asset.is_file()):
         relative_path = PurePosixPath(path.relative_to(assets_root).as_posix())
+        if edition == "kindle" and relative_path.suffix.lower() == ".js":
+            continue
         contents = path.read_bytes()
         if relative_path == PurePosixPath("lesson.css"):
             contents += _EPUB_STYLE.encode()
@@ -174,10 +193,10 @@ def _document_target(relative_path: PurePosixPath) -> PurePosixPath:
 def _document_title(source: str, source_path: Path) -> str:
     match = _H1.search(source)
     if not match:
-        raise AppleBuildError(f"Source document {source_path} has no h1 for EPUB navigation.")
+        raise EditionBuildError(f"Source document {source_path} has no h1 for EPUB navigation.")
     title = unescape(_TAGS.sub("", match.group("title"))).strip()
     if not title:
-        raise AppleBuildError(f"Source document {source_path} has an empty h1 for EPUB navigation.")
+        raise EditionBuildError(f"Source document {source_path} has an empty h1 for EPUB navigation.")
     return title
 
 
@@ -216,8 +235,8 @@ def _rewrite_reference(
     return urlunsplit(("", "", relative, parts.query, parts.fragment))
 
 
-def _normalise_xhtml(source: str) -> str:
-    parser = _XhtmlNormaliser()
+def _normalise_xhtml(source: str, edition: str = "apple") -> str:
+    parser = _XhtmlNormaliser(edition)
     parser.feed(source)
     parser.close()
     return '<?xml version="1.0" encoding="utf-8"?>\n' + parser.xhtml()
@@ -226,52 +245,157 @@ def _normalise_xhtml(source: str) -> str:
 class _XhtmlNormaliser(HTMLParser):
     """Render the canonical HTML as XHTML while retaining its teaching content."""
 
-    def __init__(self) -> None:
+    def __init__(self, edition: str) -> None:
         super().__init__(convert_charrefs=True)
+        self._edition = edition
         self._parts: list[str] = []
         self._open_elements: list[str] = []
+        self._ignored_elements: list[str] = []
+        self._quiz_attributes: dict[str, str] | None = None
+        self._quiz_parts: list[str] = []
+        self._quiz_depth = 0
+
+    def _append(self, content: str) -> None:
+        if self._quiz_attributes is None:
+            self._parts.append(content)
+        else:
+            self._quiz_parts.append(content)
 
     def handle_decl(self, declaration: str) -> None:
+        if self._ignored_elements:
+            return
         if declaration.lower() != "doctype html":
-            self._parts.append(f"<!{declaration}>")
+            self._append(f"<!{declaration}>")
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         attributes = list(attrs)
+        values = dict(attributes)
+        if self._ignored_elements:
+            if tag not in _VOID_ELEMENTS:
+                self._ignored_elements.append(tag)
+            return
+        target = values.get("data-edition")
+        if target and target != self._edition:
+            if tag not in _VOID_ELEMENTS:
+                self._ignored_elements.append(tag)
+            return
+        if self._edition == "kindle" and (
+            tag in {
+                "script",
+                "style",
+                "form",
+                "canvas",
+                "iframe",
+                "audio",
+                "video",
+                "object",
+                "embed",
+                "animate",
+                "animatecolor",
+                "animatemotion",
+                "animatetransform",
+                "discard",
+                "marquee",
+                "set",
+            }
+        ):
+            if tag not in _VOID_ELEMENTS:
+                self._ignored_elements.append(tag)
+            return
+        if self._edition == "kindle" and tag == "div" and "quiz" in values.get("class", "").split():
+            self._quiz_attributes = {
+                key: values[key]
+                for key in ("data-answer", "data-ok")
+                if values.get(key) is not None
+            }
+            self._quiz_parts = []
+            self._quiz_depth = 1
+            return
+        if self._quiz_attributes is not None and tag == "div":
+            self._quiz_depth += 1
+        if self._edition == "kindle":
+            attributes = [(name, value) for name, value in attributes if name != "style"]
+        if tag == "svg":
+            attributes = [("viewBox" if name == "viewbox" else name, value) for name, value in attributes]
         if tag == "html" and not any(name == "xmlns" for name, _ in attributes):
             attributes.append(("xmlns", "http://www.w3.org/1999/xhtml"))
+        if tag == "svg" and not any(name == "xmlns" for name, _ in attributes):
+            attributes.append(("xmlns", "http://www.w3.org/2000/svg"))
+        attributes = [(name, value) for name, value in attributes if name != "data-edition"]
         rendered_attributes = "".join(
             f' {name}="{escape(value if value is not None else name, quote=True)}"'
             for name, value in attributes
         )
         if tag in _VOID_ELEMENTS:
-            self._parts.append(f"<{tag}{rendered_attributes} />")
+            if self._edition != "kindle" or tag not in {"input", "button"}:
+                self._append(f"<{tag}{rendered_attributes} />")
             return
-        self._parts.append(f"<{tag}{rendered_attributes}>")
+        if self._edition == "kindle" and tag == "button":
+            self._append(f"<span{rendered_attributes}>")
+        else:
+            self._append(f"<{tag}{rendered_attributes}>")
         self._open_elements.append(tag)
 
     def handle_startendtag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
-        rendered_attributes = "".join(
-            f' {name}="{escape(value if value is not None else name, quote=True)}"'
-            for name, value in attrs
-        )
-        self._parts.append(f"<{tag}{rendered_attributes} />")
+        self.handle_starttag(tag, attrs)
+        if tag not in _VOID_ELEMENTS:
+            self.handle_endtag(tag)
 
     def handle_endtag(self, tag: str) -> None:
-        self._parts.append(f"</{tag}>")
+        if self._ignored_elements:
+            if tag == self._ignored_elements[-1]:
+                self._ignored_elements.pop()
+            return
+        if self._quiz_attributes is not None:
+            if tag == "button":
+                self._append("</span>")
+            elif tag == "div":
+                if self._quiz_depth == 1:
+                    self._finish_quiz()
+                    return
+                self._quiz_depth -= 1
+        self._append(f"</{tag}>")
         if self._open_elements and self._open_elements[-1] == tag:
             self._open_elements.pop()
 
     def handle_data(self, data: str) -> None:
+        if self._ignored_elements:
+            return
         if self._open_elements and self._open_elements[-1] in {"script", "style"}:
-            self._parts.append(data)
+            self._append(data)
         else:
-            self._parts.append(escape(data))
+            self._append(escape(data))
 
     def handle_comment(self, data: str) -> None:
-        self._parts.append(f"<!--{data}-->")
+        if not self._ignored_elements:
+            self._append(f"<!--{data}-->")
+
+    def _finish_quiz(self) -> None:
+        source = "".join(self._quiz_parts)
+        question_match = re.search(r'<p\b[^>]*class="quiz-q"[^>]*>(.*?)</p>', source, re.DOTALL)
+        choices = re.findall(r'<span[^>]*data-choice="([^"]+)"[^>]*>(.*?)</span>', source, re.DOTALL)
+        answer = self._quiz_attributes.get("data-answer", "")
+        correct = next((content for choice, content in choices if choice == answer), "")
+        question = _plain_text(question_match.group(1)) if question_match else "Question"
+        rendered_choices = "\n".join(f"<li>{content}</li>" for _, content in choices)
+        answer_text = _plain_text(correct)
+        explanation = escape(self._quiz_attributes.get("data-ok", ""))
+        self._parts.append(
+            '<section class="quiz-static"><h3>Question</h3>'
+            f"<p>{question}</p><h4>Choices</h4><ol>{rendered_choices}</ol>"
+            f"<p><strong>Answer:</strong> {answer_text}</p>"
+            f"<p><strong>Explanation:</strong> {explanation}</p></section>"
+        )
+        self._quiz_attributes = None
+        self._quiz_parts = []
+        self._quiz_depth = 0
 
     def xhtml(self) -> str:
         return "".join(self._parts)
+
+
+def _plain_text(source: str) -> str:
+    return escape(unescape(_TAGS.sub("", source)).strip())
 
 
 @dataclass(frozen=True)
@@ -291,11 +415,12 @@ def _write_epub(
     documents: tuple[EpubDocument, ...],
     assets: dict[PurePosixPath, bytes],
     cover: Path,
+    edition: str,
 ) -> None:
     with ZipFile(destination, "w", compression=ZIP_DEFLATED) as archive:
         archive.writestr("mimetype", "application/epub+zip", compress_type=ZIP_STORED)
         archive.writestr("META-INF/container.xml", _container_xml())
-        archive.writestr("OEBPS/content.opf", _package_document(course, documents, assets))
+        archive.writestr("OEBPS/content.opf", _package_document(course, documents, assets, edition))
         archive.writestr("OEBPS/nav.xhtml", _navigation_document(course, documents))
         archive.writestr("OEBPS/text/cover.xhtml", _cover_page())
         archive.writestr("OEBPS/text/title.xhtml", _title_page(course))
@@ -315,7 +440,9 @@ def _container_xml() -> str:
 """
 
 
-def _package_document(course: Course, documents: tuple[EpubDocument, ...], assets: dict[PurePosixPath, bytes]) -> str:
+def _package_document(
+    course: Course, documents: tuple[EpubDocument, ...], assets: dict[PurePosixPath, bytes], edition: str
+) -> str:
     modified = datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z")
     manifest = [
         '<item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav" />',
@@ -341,7 +468,7 @@ def _package_document(course: Course, documents: tuple[EpubDocument, ...], asset
     return f"""<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="book-id" xml:lang="en-GB">
   <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
-    <dc:identifier id="book-id">urn:uuid:{escape(course.publication_identities.apple)}</dc:identifier>
+    <dc:identifier id="book-id">urn:uuid:{escape(getattr(course.publication_identities, edition))}</dc:identifier>
     <dc:title>{escape(course.display_title)}</dc:title>
     <dc:creator>{escape(course.author)}</dc:creator>
     <dc:publisher>{escape(course.collection)}</dc:publisher>
@@ -374,7 +501,7 @@ def _media_type(path: PurePosixPath) -> str:
     try:
         return media_types[path.suffix.lower()]
     except KeyError as error:
-        raise AppleBuildError(f"Cannot package local asset {path}: unsupported media type.") from error
+        raise EditionBuildError(f"Cannot package local asset {path}: unsupported media type.") from error
 
 
 def _navigation_document(course: Course, documents: tuple[EpubDocument, ...]) -> str:
