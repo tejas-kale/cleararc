@@ -66,9 +66,10 @@ uv run cleararc build --all
 uv run cleararc config check
 ```
 
-Publish one course at a time in registry reading order. Use one date for this rollout; the example below uses `2026-09-26`:
+Publish one course at a time in registry reading order. Use one date for this rollout; the example below uses `2026-09-26`. If you run the commands as a block, `set -e` stops the sequence at the first failed course so that you can retry that target before continuing:
 
 ```sh
+set -e
 uv run cleararc publish football-causal-inference --date 2026-09-26
 uv run cleararc publish fx-and-central-banks --date 2026-09-26
 uv run cleararc publish iphone-air-autumn-photography --date 2026-09-26
