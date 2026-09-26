@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import UTC, datetime
+from enum import StrEnum
 from html import escape, unescape
 from html.parser import HTMLParser
 from pathlib import Path, PurePosixPath
@@ -18,6 +19,13 @@ from cleararc.registry import Course
 
 class EditionBuildError(ValueError):
     """A pilot course edition cannot be built safely."""
+
+
+class Edition(StrEnum):
+    """A supported reading platform for a course edition."""
+
+    APPLE = "apple"
+    KINDLE = "kindle"
 
 
 _VOID_ELEMENTS = frozenset({"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"})
@@ -99,15 +107,15 @@ th, td {
 
 def build_apple_pilot(course: Course, repository_root: Path) -> Path:
     """Build the supported Apple edition for the first end-to-end course pilot."""
-    return _build_pilot(course, repository_root, edition="apple")
+    return _build_pilot(course, repository_root, edition=Edition.APPLE)
 
 
 def build_kindle_pilot(course: Course, repository_root: Path) -> Path:
     """Build the supported static Kindle edition for the first course pilot."""
-    return _build_pilot(course, repository_root, edition="kindle")
+    return _build_pilot(course, repository_root, edition=Edition.KINDLE)
 
 
-def _build_pilot(course: Course, repository_root: Path, edition: str) -> Path:
+def _build_pilot(course: Course, repository_root: Path, edition: Edition) -> Path:
     if course.course_id != "datavizlib-source-walkthrough":
         raise EditionBuildError(
             f"Course {course.course_id!r} is not the supported pilot; only "
@@ -123,7 +131,7 @@ def _build_pilot(course: Course, repository_root: Path, edition: str) -> Path:
 
     documents = _load_documents(course, repository_root, source_root, edition)
     assets = _load_assets(source_root, edition)
-    destination = repository_root / "build" / f"{course.course_id}.{edition}.epub"
+    destination = repository_root / "build" / f"{course.course_id}.{edition.value}.epub"
     destination.parent.mkdir(parents=True, exist_ok=True)
 
     with NamedTemporaryFile(dir=destination.parent, suffix=".epub", delete=False) as temporary_file:
@@ -137,7 +145,7 @@ def _build_pilot(course: Course, repository_root: Path, edition: str) -> Path:
 
 
 def _load_documents(
-    course: Course, repository_root: Path, source_root: Path, edition: str
+    course: Course, repository_root: Path, source_root: Path, edition: Edition
 ) -> tuple["EpubDocument", ...]:
     source_paths = tuple(PurePosixPath(document) for document in course.documents)
     relative_paths = tuple(path.relative_to(course.source) for path in source_paths)
@@ -160,20 +168,20 @@ def _load_documents(
                 targets[relative_path],
                 title,
                 transformed,
-                edition == "apple" and "<script" in source.lower(),
+                edition is Edition.APPLE and "<script" in source.lower(),
             )
         )
     return tuple(documents)
 
 
-def _load_assets(source_root: Path, edition: str) -> dict[PurePosixPath, bytes]:
+def _load_assets(source_root: Path, edition: Edition) -> dict[PurePosixPath, bytes]:
     assets_root = source_root / "assets"
     if not assets_root.is_dir():
         raise EditionBuildError(f"Course source {source_root} has no assets directory.")
     assets: dict[PurePosixPath, bytes] = {}
     for path in sorted(asset for asset in assets_root.rglob("*") if asset.is_file()):
         relative_path = PurePosixPath(path.relative_to(assets_root).as_posix())
-        if edition == "kindle" and relative_path.suffix.lower() == ".js":
+        if edition is Edition.KINDLE and relative_path.suffix.lower() == ".js":
             continue
         contents = path.read_bytes()
         if relative_path == PurePosixPath("lesson.css"):
@@ -235,7 +243,7 @@ def _rewrite_reference(
     return urlunsplit(("", "", relative, parts.query, parts.fragment))
 
 
-def _normalise_xhtml(source: str, edition: str = "apple") -> str:
+def _normalise_xhtml(source: str, edition: Edition = Edition.APPLE) -> str:
     parser = _XhtmlNormaliser(edition)
     parser.feed(source)
     parser.close()
@@ -245,7 +253,7 @@ def _normalise_xhtml(source: str, edition: str = "apple") -> str:
 class _XhtmlNormaliser(HTMLParser):
     """Render the canonical HTML as XHTML while retaining its teaching content."""
 
-    def __init__(self, edition: str) -> None:
+    def __init__(self, edition: Edition) -> None:
         super().__init__(convert_charrefs=True)
         self._edition = edition
         self._parts: list[str] = []
@@ -279,7 +287,7 @@ class _XhtmlNormaliser(HTMLParser):
             if tag not in _VOID_ELEMENTS:
                 self._ignored_elements.append(tag)
             return
-        if self._edition == "kindle" and (
+        if self._edition is Edition.KINDLE and (
             tag in {
                 "script",
                 "style",
@@ -302,7 +310,7 @@ class _XhtmlNormaliser(HTMLParser):
             if tag not in _VOID_ELEMENTS:
                 self._ignored_elements.append(tag)
             return
-        if self._edition == "kindle" and tag == "div" and "quiz" in values.get("class", "").split():
+        if self._edition is Edition.KINDLE and tag == "div" and "quiz" in values.get("class", "").split():
             self._quiz_attributes = {
                 key: values[key]
                 for key in ("data-answer", "data-ok")
@@ -313,7 +321,7 @@ class _XhtmlNormaliser(HTMLParser):
             return
         if self._quiz_attributes is not None and tag == "div":
             self._quiz_depth += 1
-        if self._edition == "kindle":
+        if self._edition is Edition.KINDLE:
             attributes = [(name, value) for name, value in attributes if name != "style"]
         if tag == "svg":
             attributes = [("viewBox" if name == "viewbox" else name, value) for name, value in attributes]
@@ -327,10 +335,10 @@ class _XhtmlNormaliser(HTMLParser):
             for name, value in attributes
         )
         if tag in _VOID_ELEMENTS:
-            if self._edition != "kindle" or tag not in {"input", "button"}:
+            if self._edition is not Edition.KINDLE or tag not in {"input", "button"}:
                 self._append(f"<{tag}{rendered_attributes} />")
             return
-        if self._edition == "kindle" and tag == "button":
+        if self._edition is Edition.KINDLE and tag == "button":
             self._append(f"<span{rendered_attributes}>")
         else:
             self._append(f"<{tag}{rendered_attributes}>")
@@ -415,7 +423,7 @@ def _write_epub(
     documents: tuple[EpubDocument, ...],
     assets: dict[PurePosixPath, bytes],
     cover: Path,
-    edition: str,
+    edition: Edition,
 ) -> None:
     with ZipFile(destination, "w", compression=ZIP_DEFLATED) as archive:
         archive.writestr("mimetype", "application/epub+zip", compress_type=ZIP_STORED)
@@ -441,7 +449,7 @@ def _container_xml() -> str:
 
 
 def _package_document(
-    course: Course, documents: tuple[EpubDocument, ...], assets: dict[PurePosixPath, bytes], edition: str
+    course: Course, documents: tuple[EpubDocument, ...], assets: dict[PurePosixPath, bytes], edition: Edition
 ) -> str:
     modified = datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z")
     manifest = [
@@ -468,7 +476,7 @@ def _package_document(
     return f"""<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="book-id" xml:lang="en-GB">
   <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
-    <dc:identifier id="book-id">urn:uuid:{escape(getattr(course.publication_identities, edition))}</dc:identifier>
+    <dc:identifier id="book-id">urn:uuid:{escape(_publication_identity(course, edition))}</dc:identifier>
     <dc:title>{escape(course.display_title)}</dc:title>
     <dc:creator>{escape(course.author)}</dc:creator>
     <dc:publisher>{escape(course.collection)}</dc:publisher>
@@ -484,6 +492,12 @@ def _package_document(
   </spine>
 </package>
 """
+
+
+def _publication_identity(course: Course, edition: Edition) -> str:
+    if edition is Edition.APPLE:
+        return course.publication_identities.apple
+    return course.publication_identities.kindle
 
 
 def _media_type(path: PurePosixPath) -> str:

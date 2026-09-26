@@ -205,15 +205,24 @@ def test_build_creates_a_static_kindle_pilot_with_visible_teaching_fallbacks() -
             for name in sorted(names)
             if name.startswith("OEBPS/text/lessons/") and name.endswith(".xhtml")
         )
-        assert "<script" not in lesson_text
-        assert "<form" not in lesson_text
-        assert "<button" not in lesson_text
-        assert "<canvas" not in lesson_text
-        assert "<iframe" not in lesson_text
-        assert "<video" not in lesson_text
-        assert "<audio" not in lesson_text
-        assert "<style" not in lesson_text
-        assert "animation" not in lesson_text.lower()
+        all_xhtml = "\n".join(
+            archive.read(name).decode() for name in sorted(names) if name.endswith(".xhtml")
+        )
+        unsupported_elements = (
+            "<script",
+            "<form",
+            "<button",
+            "<canvas",
+            "<iframe",
+            "<video",
+            "<audio",
+            "<style",
+        )
+        for unsupported in unsupported_elements:
+            assert unsupported not in all_xhtml
+        assert "animation" not in all_xhtml.lower()
+        assert "javascript:" not in all_xhtml.lower()
+        assert " onclick=" not in all_xhtml.lower()
         kindle_styles = archive.read("OEBPS/assets/lesson.css").decode().lower()
         assert "animation" not in kindle_styles
         assert "white-space: pre-wrap" in kindle_styles

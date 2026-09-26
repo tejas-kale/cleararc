@@ -4,7 +4,7 @@ from pathlib import Path
 
 import click
 
-from cleararc.apple import EditionBuildError, build_apple_pilot, build_kindle_pilot
+from cleararc.apple import Edition, EditionBuildError, build_apple_pilot, build_kindle_pilot
 from cleararc.registry import RegistryError, load_course_registry
 
 
@@ -45,8 +45,12 @@ def build(target: str, course_id: str) -> None:
 
     repository_root = Path(__file__).resolve().parents[2]
     try:
-        builder = build_apple_pilot if target == "apple" else build_kindle_pilot
+        edition = Edition(target)
+        builder = {
+            Edition.APPLE: build_apple_pilot,
+            Edition.KINDLE: build_kindle_pilot,
+        }[edition]
         destination = builder(course, repository_root)
     except EditionBuildError as error:
         raise click.ClickException(str(error)) from error
-    click.echo(f"Built {target.title()} edition: {destination}")
+    click.echo(f"Built {edition.value.title()} edition: {destination}")
