@@ -6,6 +6,7 @@ import click
 
 from cleararc.apple import Edition, EditionBuildError, build_apple_pilot, build_kindle_pilot
 from cleararc.registry import RegistryError, load_course_registry
+from cleararc.validation import PublicationGateError, build_and_validate_course
 
 
 @click.group()
@@ -54,3 +55,23 @@ def build(target: str, course_id: str) -> None:
     except EditionBuildError as error:
         raise click.ClickException(str(error)) from error
     click.echo(f"Built {edition.value.title()} edition: {destination}")
+
+
+@main.command()
+@click.argument("course_id")
+def validate(course_id: str) -> None:
+    """Validate both target editions for COURSE_ID before publication."""
+    try:
+        course = next(course for course in load_course_registry() if course.course_id == course_id)
+    except StopIteration as error:
+        raise click.ClickException(f"Unknown course {course_id!r}.") from error
+    except RegistryError as error:
+        raise click.ClickException(str(error)) from error
+
+    repository_root = Path(__file__).resolve().parents[2]
+    try:
+        editions = build_and_validate_course(course, repository_root)
+    except PublicationGateError as error:
+        raise click.ClickException(str(error)) from error
+    for target in Edition:
+        click.echo(f"Validated {target.value.title()} edition: {editions.path_for(target)}")
